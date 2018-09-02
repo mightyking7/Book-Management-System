@@ -53,9 +53,23 @@ public class MenuController implements Initializable
 			
 			ViewManager manager = ViewManager.getInstance();
 			
+			// set the root node to manage
 			manager.setCurrentPane(rootNode);
 			
-			manager.switchView("View/BookList.fxml");
+			try
+			{
+				URL viewUrl = this.getClass().getResource("/View/BookList.fxml");
+				
+				manager.switchView(viewUrl , new BookListController());
+			} 
+			catch(IOException e)
+			{
+				logger.error(this.getClass().getName() + ":" + e.getMessage());
+			}
+			catch(Exception e)
+			{
+				logger.error(this.getClass().getName() + ":" + e.getMessage());
+			}
 		}
 	}
 	

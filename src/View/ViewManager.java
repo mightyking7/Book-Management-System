@@ -10,7 +10,7 @@ import javafx.scene.layout.*;
 /*
  * Responsible for loading a new view into the application border pane
  * Aug 29, 2018
- * isaacbuitrago
+ * @author isaacbuitrago
  */
 
 public class ViewManager 
@@ -52,7 +52,7 @@ public class ViewManager
 	}
 
 	/**
-	 * 
+	 * Used to set the Pane that needs to manage view switching
 	 * @param currentPane
 	 */
 	public void setCurrentPane(BorderPane currentPane) 
@@ -62,16 +62,17 @@ public class ViewManager
 	
 	/**
 	 * Used to change the view of the current Pane 
-	 * 
-	 * @param parent Relative URL of the of the new view to load
+	 * @param parent Relative URL of the view to load
+	 * @param controller to set for the new view
 	 * @throws IOException if parent is null
 	 * @throws IOException if the parent is not a valid URL or was null
+	 *
 	 */
-	public void switchView(String parent) throws IOException, NullPointerException
+	public <T> void switchView(URL parent,T controller ) throws IOException, NullPointerException
 	{
-		 URL parentUrl = this.getClass().getResource(parent);
+		 FXMLLoader loader = new FXMLLoader(parent);
 		 
-		 FXMLLoader loader = new FXMLLoader(parentUrl);
+		 loader.setController(controller);
 		 
 		 Parent parentNode = loader.load();
 				
@@ -80,6 +81,7 @@ public class ViewManager
 		{
 			throw new NullPointerException("BorderPane must have a reference");
 		}
+		
 		
 		borderPane.setCenter(parentNode);
 	}
