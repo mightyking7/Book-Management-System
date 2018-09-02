@@ -1,3 +1,4 @@
+package App;
 import Controller.MenuController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +24,7 @@ public class Launcher extends Application
 	@Override
 	public void start(Stage stage) throws Exception 
 	{
-		URL menu = this.getClass().getResource("View/menu.fxml");
+		URL menu = this.getClass().getResource("/View/menu.fxml");
 		
 		FXMLLoader loader = new FXMLLoader(menu);
 		
