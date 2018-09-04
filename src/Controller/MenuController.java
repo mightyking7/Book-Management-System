@@ -58,7 +58,7 @@ public class MenuController implements Initializable
 			
 			try
 			{
-				URL viewUrl = this.getClass().getResource("/View/BookList.fxml");
+				URL viewUrl = this.getClass().getResource("/View/BookListView.fxml");
 				
 				manager.switchView(viewUrl , new BookListController());
 			} 
