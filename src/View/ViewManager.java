@@ -63,9 +63,10 @@ public class ViewManager
 	/**
 	 * Used to change the view of the current Pane 
 	 * @param parent Relative URL of the view to load
-	 * @param controller to set for the new view
-	 * @throws IOException if parent is null
-	 * @throws IOException if the parent is not a valid URL or was null
+	 * @param controller Controller to set for the new view
+	 * @throws IOException If parent is null
+	 * @throws IOException If the parent is not a valid URL or was null
+	 * @throws NullPointerException If the managed Layout Pane is null
 	 *
 	 */
 	public <T> void switchView(URL parent,T controller ) throws IOException, NullPointerException
@@ -81,7 +82,6 @@ public class ViewManager
 		{
 			throw new NullPointerException("BorderPane must have a reference");
 		}
-		
 		
 		borderPane.setCenter(parentNode);
 	}
