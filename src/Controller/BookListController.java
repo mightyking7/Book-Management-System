@@ -70,13 +70,13 @@ public class BookListController implements Initializable
 							logger.info(String.format("book selected"));
 							
 							// Retrieve the view manager to show details about the book
-							URL bookDetails = this.getClass().getResource("/View/Sample.fxml");
+							URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
 							
 							view = ViewManager.getInstance();
 							
 							view.setCurrentPane(rootNode);
 							
-							view.switchView(bookDetails, new BookDetailController());
+							view.switchView(bookDetails, new BookDetailController(bookList.getSelectionModel().getSelectedItem(),"Random text" + System.lineSeparator() + "More Random Text", "42397fs98f", "2015", 2015, "Book-2.png"));
 							
 						} catch(Exception e)
 						{
