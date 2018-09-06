@@ -8,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.*;
 
 /*
- * Responsible for loading a new view into the application border pane
+ * Singleton responsible for loading a new view into the application border pane
  * Aug 29, 2018
  * @author isaacbuitrago
  */
@@ -64,8 +64,7 @@ public class ViewManager
 	 * Used to change the view of the current Pane 
 	 * @param parent Relative URL of the view to load
 	 * @param controller Controller to set for the new view
-	 * @throws IOException If parent is null
-	 * @throws IOException If the parent is not a valid URL or was null
+	 * @throws IOException If @param parent is not a valid URL, was null, or could not be loaded
 	 * @throws NullPointerException If the managed Layout Pane is null
 	 *
 	 */

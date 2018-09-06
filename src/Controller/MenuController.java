@@ -48,9 +48,7 @@ public class MenuController implements Initializable
 			System.exit(0);
 		}
 		else if(event.getSource() == bookList)
-		{
-			logger.info("Book list selected");
-			
+		{	
 			ViewManager manager = ViewManager.getInstance();
 			
 			// set the root node to manage
@@ -65,6 +63,10 @@ public class MenuController implements Initializable
 			catch(IOException e)
 			{
 				logger.error(this.getClass().getName() + ":" + e.getMessage());
+			}
+			catch(NullPointerException e)
+			{
+				logger.error(this.getClass().getName()+ ":" + e.getMessage());
 			}
 			catch(Exception e)
 			{

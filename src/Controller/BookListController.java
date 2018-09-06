@@ -7,9 +7,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,58 +41,54 @@ public class BookListController implements Initializable
 	
 	private static Logger logger = LogManager.getLogger(BookListController.class);
 	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) 
+	private static final int NUM_CLICKS = 2;
+	
+	/**
+	 * Constructor
+	 */
+	public BookListController()
 	{
 		bookTitles.addAll("Lone Survivor", "Brothers Kamarozov", "War and Peace", "Animal Farm");
-		
-		bookList.setItems(bookTitles);
-		
-		// add listener to respond to selection changes and display the BookDetailView
-		setListCellChangedListener();
 	}
 	
 	/**
-	 * Used to define the Callback that will be called when a List item is selected
+	 * Used to set the mouse clicked event handler
 	 */
-	private void setListCellChangedListener()
+	@Override
+	public void initialize(URL location, ResourceBundle resources) 
 	{
-		bookList.getSelectionModel().selectedItemProperty().addListener(
-				
-				new ChangeListener<String>(){
-
-					@Override
-					public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) 
+		bookList.setItems(bookTitles);
+		
+		// The book detail view should open when a list item is double clicked
+		
+		bookList.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			
+			@Override
+			public void handle(MouseEvent event) 
+			{
+				if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == NUM_CLICKS)
+				{
+					try {
+						// log the event
+						logger.info(String.format("%s selected", bookList.getSelectionModel().getSelectedItem()));
+						
+						// Retrieve the view manager to show details about the book
+						URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
+						
+						view = ViewManager.getInstance();
+						
+						view.setCurrentPane(rootNode);
+						
+						view.switchView(bookDetails, new BookDetailController( bookList.getSelectionModel().getSelectedItem(),"Random text" + System.lineSeparator() + "More Random Text", "42397fs98f", "2015", 2015, "Book-2.png"));
+						
+					} catch(Exception e)
 					{
-						
-						//TODO add support for configuration files
-						
-						try {
-							
-							// log the event
-							logger.info(String.format("book selected"));
-							
-							// Retrieve the view manager to show details about the book
-							URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
-							
-							view = ViewManager.getInstance();
-							
-							view.setCurrentPane(rootNode);
-							
-							view.switchView(bookDetails, new BookDetailController(bookList.getSelectionModel().getSelectedItem(),"Random text" + System.lineSeparator() + "More Random Text", "42397fs98f", "2015", 2015, "Book-2.png"));
-							
-						} catch(Exception e)
-						{
-							logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
-						}
-						
+						logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
 					}
-				});
+				
+				}
+			}
+		});
 	}
-	
-	
-	
-	
-	
-	
+		
 }
