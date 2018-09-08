@@ -1,7 +1,14 @@
 package Controller;
 
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,12 +32,13 @@ public class BookDetailController implements Initializable {
 	private String title;
 	private String summary;
 	private String isbn;
-	private String dateAdded;
+	private LocalDate dateAdded;
 	private int yearPublished;
 	private Image image;
 	
-	public BookDetailController(String Title, String Summary, String ISBN, String DateAdded, int YearPublished, String imageName)
+	public BookDetailController(String Title, String Summary, String ISBN, LocalDate DateAdded, int YearPublished, String imageName)
 	{
+		
 		title = Title;
 		summary = Summary;
 		isbn = ISBN;
@@ -87,7 +95,7 @@ public class BookDetailController implements Initializable {
 		isbnFieldID.setText(isbn);
 		
 		dateAddedFieldID.setEditable(false);
-		dateAddedFieldID.setText(dateAdded);
+		dateAddedFieldID.setText(dateAdded.getMonthValue() + "/" + dateAdded.getDayOfMonth() + "/" + dateAdded.getYear());
 		
 		imageBoxID.setImage(image);
 		
