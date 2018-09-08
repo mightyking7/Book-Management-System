@@ -48,9 +48,7 @@ public class MenuController implements Initializable
 			System.exit(0);
 		}
 		else if(event.getSource() == bookList)
-		{
-			logger.info("Book list selected");
-			
+		{	
 			ViewManager manager = ViewManager.getInstance();
 			
 			// set the root node to manage
@@ -58,13 +56,17 @@ public class MenuController implements Initializable
 			
 			try
 			{
-				URL viewUrl = this.getClass().getResource("/View/BookList.fxml");
+				URL viewUrl = this.getClass().getResource("/View/BookListView.fxml");
 				
 				manager.switchView(viewUrl , new BookListController());
 			} 
 			catch(IOException e)
 			{
 				logger.error(this.getClass().getName() + ":" + e.getMessage());
+			}
+			catch(NullPointerException e)
+			{
+				logger.error(this.getClass().getName()+ ":" + e.getMessage());
 			}
 			catch(Exception e)
 			{
