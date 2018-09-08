@@ -99,7 +99,7 @@ public class BookDetailController implements Initializable {
 		   @Override 
 		   public void handle(MouseEvent e) { 
 
-			   logger.info(String.format("%s : %s", this.getClass().getName(), "Save button pressed"));
+			   logger.info(String.format("%s", "Save button pressed"));
 		   } 
 	 };   
 

@@ -37,7 +37,7 @@ public class BookListController implements Initializable
 	
 	private ViewManager view;
 	
-	private static ObservableList<String> bookTitles  = FXCollections.observableArrayList();
+	private ObservableList<String> bookTitles  = FXCollections.observableArrayList();
 	
 	private static Logger logger = LogManager.getLogger(BookListController.class);
 	
