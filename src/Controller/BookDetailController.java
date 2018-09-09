@@ -1,14 +1,8 @@
 package Controller;
 
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +17,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+/**
+ * 
+ * @author HercHja
+ * Gets the book details input from the BookListController through its constructor 
+ * and uses the BookDetailedView view to display the bookDetailedView GUI
+ */
 
 
 public class BookDetailController implements Initializable {
@@ -68,6 +69,9 @@ public class BookDetailController implements Initializable {
 	@FXML
 	private ImageView imageBoxID;
 	
+	/**
+	 * Sets up GUI and checks some input logic for errors
+	 */
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -102,6 +106,11 @@ public class BookDetailController implements Initializable {
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, save);
 
 	}
+	
+	/**
+	 *  EventHandler: Handles the mouse click events on the save button
+	 * 
+	 */
 	
 	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() { 
 		   @Override 
