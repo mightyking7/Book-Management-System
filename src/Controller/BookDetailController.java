@@ -88,6 +88,7 @@ public class BookDetailController implements Initializable {
 		{
 			
 			yearPublishedFieldID.setText("Year error found");
+			logger.error(String.format("Year input: Outside of valid year-range"));
 		}
 		else
 		{
