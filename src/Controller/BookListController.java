@@ -2,7 +2,9 @@ package Controller;
 
 import View.ViewManager;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.time.Month;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -79,7 +81,7 @@ public class BookListController implements Initializable
 						
 						view.setCurrentPane(rootNode);
 						
-						view.switchView(bookDetails, new BookDetailController( bookList.getSelectionModel().getSelectedItem(),"Random text" + System.lineSeparator() + "More Random Text", "42397fs98f", "2015", 2015, "Book-2.png"));
+						view.switchView(bookDetails, new BookDetailController( bookList.getSelectionModel().getSelectedItem(),"Random text" + System.lineSeparator() + "More Random Text", "42397fs98f", LocalDate.of( 2015 , Month.FEBRUARY , 18), 2015, "Book-2.png"));
 						
 					} catch(Exception e)
 					{

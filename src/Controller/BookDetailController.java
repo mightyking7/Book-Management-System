@@ -1,6 +1,7 @@
 package Controller;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -17,6 +18,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * 
+ * @author HercHja
+ * Gets the book details input from the BookListController through its constructor 
+ * and uses the BookDetailedView view to display the bookDetailedView GUI
+ */
+
 
 public class BookDetailController implements Initializable {
 	
@@ -25,12 +33,13 @@ public class BookDetailController implements Initializable {
 	private String title;
 	private String summary;
 	private String isbn;
-	private String dateAdded;
+	private LocalDate dateAdded;
 	private int yearPublished;
 	private Image image;
 	
-	public BookDetailController(String Title, String Summary, String ISBN, String DateAdded, int YearPublished, String imageName)
+	public BookDetailController(String Title, String Summary, String ISBN, LocalDate DateAdded, int YearPublished, String imageName)
 	{
+		
 		title = Title;
 		summary = Summary;
 		isbn = ISBN;
@@ -60,6 +69,9 @@ public class BookDetailController implements Initializable {
 	@FXML
 	private ImageView imageBoxID;
 	
+	/**
+	 * Sets up GUI and checks some input logic for errors
+	 */
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -76,6 +88,7 @@ public class BookDetailController implements Initializable {
 		{
 			
 			yearPublishedFieldID.setText("Year error found");
+			logger.error(String.format("Year input: Outside of valid year-range"));
 		}
 		else
 		{
@@ -87,13 +100,18 @@ public class BookDetailController implements Initializable {
 		isbnFieldID.setText(isbn);
 		
 		dateAddedFieldID.setEditable(false);
-		dateAddedFieldID.setText(dateAdded);
+		dateAddedFieldID.setText(dateAdded.getMonthValue() + "/" + dateAdded.getDayOfMonth() + "/" + dateAdded.getYear());
 		
 		imageBoxID.setImage(image);
 		
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, save);
 
 	}
+	
+	/**
+	 *  EventHandler: Handles the mouse click events on the save button
+	 * 
+	 */
 	
 	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() { 
 		   @Override 

@@ -13,7 +13,7 @@ import java.net.URL;
  * Launcher for Book inventory system
  * 
  * @author isaacbuitrago
- *
+ * CS 4743 Assignment 1 by Hercules Hjalmarsson & Isaac Buitrago
  */
 public class Launcher extends Application 
 {
