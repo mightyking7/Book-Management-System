@@ -1,6 +1,8 @@
 package Controller;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -25,11 +27,11 @@ public class BookDetailController implements Initializable {
 	private String title;
 	private String summary;
 	private String isbn;
-	private String dateAdded;
+	private LocalDateTime dateAdded;
 	private int yearPublished;
 	private Image image;
 	
-	public BookDetailController(String Title, String Summary, String ISBN, String DateAdded, int YearPublished, String imageName)
+	public BookDetailController(String Title, String Summary, String ISBN, LocalDateTime DateAdded, int YearPublished, String imageName)
 	{
 		title = Title;
 		summary = Summary;
@@ -76,6 +78,7 @@ public class BookDetailController implements Initializable {
 		{
 			
 			yearPublishedFieldID.setText("Year error found");
+			logger.error(String.format("Year input: Outside of valid year-range"));
 		}
 		else
 		{
@@ -87,7 +90,7 @@ public class BookDetailController implements Initializable {
 		isbnFieldID.setText(isbn);
 		
 		dateAddedFieldID.setEditable(false);
-		dateAddedFieldID.setText(dateAdded);
+		dateAddedFieldID.setText(dateAdded.getMonthValue() + "/" + dateAdded.getDayOfMonth() + "/" + dateAdded.getYear());
 		
 		imageBoxID.setImage(image);
 		
