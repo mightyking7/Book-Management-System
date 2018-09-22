@@ -13,15 +13,19 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
  * @author isaacbuitrago
  */
 
-public class DatabaseConnection 
+public class DBConnection 
 {
 	private MysqlDataSource mysql;	// mysql instance
 	
 	private Connection conn;		// connection to the database
 	
-	private static DatabaseConnection instance;
+	private static DBConnection instance;
 	
-	private DatabaseConnection() throws SQLException
+	/**
+	 * Constructor establishes the database connection
+	 * @throws SQLException if the connection could not be established
+	 */
+	private DBConnection() throws SQLException
 	{
 		mysql = new MysqlDataSource();
 		
@@ -34,17 +38,27 @@ public class DatabaseConnection
 		conn = mysql.getConnection();
 	}
 	
-	public static DatabaseConnection getInstance() throws SQLException
+	/**
+	 * Used to get the single connection to the database
+	 * @return
+	 * @throws SQLException if the connection could not be established
+	 */
+	public static DBConnection getInstance() throws SQLException
 	{
 		if(instance == null)
 		{
-			instance = new DatabaseConnection();
+			instance = new DBConnection();
 		}
 		
 		return(instance);
 	}
 	
-	private Connection getConnection()
+	/**
+	 * 
+	 * @return connection to the database
+	 */
+	// close the connection as soon as possible
+	public Connection getConnection()
 	{
 		return (conn);
 	}
