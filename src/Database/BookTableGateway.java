@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import Model.BookModel;
 
@@ -31,13 +30,18 @@ public class BookTableGateway
 		this.conn = conn;
 	}
 	
-	public List<BookModel> getBooks() throws SQLException
+	/**
+	 * Used to retrieve all books in the database
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<BookModel> getBooks() throws SQLException
 	{
 		String sql = "select * from Books";
 		
 		ResultSet keys;
 		
-		List<BookModel> books = new ArrayList<BookModel>();
+		ArrayList<BookModel> books = new ArrayList<BookModel>();
 		
 		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 		
@@ -63,11 +67,13 @@ public class BookTableGateway
 			
 			Date date = rs.getDate("date_added");
 			
-			LocalDateTime dateAdded = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+			LocalDateTime dateAdded = rs.getTimestamp("date_added").toLocalDateTime();
 			
 			book.setDateAdded(dateAdded);
 			
 			books.add(book);	
+			
+			System.out.println(book);
 		}
 		
 		return (books);
