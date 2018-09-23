@@ -1,5 +1,6 @@
 package App;
 import Controller.MenuController;
+import Database.DBConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -44,6 +45,19 @@ public class Launcher extends Application
 
 	}
 	
+	
+	/**
+	 * Used to close the connection to the database
+	 */
+	@Override
+	public void stop() throws Exception 
+	{
+		// close the MySQL connection
+		DBConnection.getInstance().getConnection().close();
+	}
+
+
+
 	/**
 	 * Entry point for Book inventory system
 	 * @param args
