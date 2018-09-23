@@ -2,13 +2,19 @@ package Model;
 
 import java.time.LocalDateTime;
 
-public class BookModel {
-	
+
+public class BookModel 
+{	
 	private int id;
+	
 	private String title;
+	
 	private String summary;
+	
 	private int yearPublished;
+	
 	private String isbn;
+	
 	private LocalDateTime dateAdded;
 	
 	public BookModel()
@@ -56,6 +62,15 @@ public class BookModel {
 	}
 	public void setDateAdded(LocalDateTime dateAdded) {
 		this.dateAdded = dateAdded;
+	}
+	
+	/**
+	 * Used to return the string representation of a Book
+	 */
+	@Override
+	public String toString()
+	{
+		return String.format("%s %s %d %s", this.title, this.summary, this.yearPublished, this.isbn);	
 	}
 
 }

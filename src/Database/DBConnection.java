@@ -29,7 +29,7 @@ public class DBConnection
 	{
 		mysql = new MysqlDataSource();
 		
-		mysql.setUrl("dbc:mysql://easel2.fulgentcorp.com:3306/hwt460");
+		mysql.setUrl("jdbc:mysql://easel2.fulgentcorp.com:3306/hwt460");
 		
 		mysql.setUser("hwt460");
 		
