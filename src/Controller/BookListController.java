@@ -58,19 +58,12 @@ public class BookListController implements Initializable
 	// dependencies are wrapped all over the place, can be difficult to reason, check, and design
 	
 	/**
-	 * set up logger and
+	 * Constructor for logger, creating a DB instance and fetch for all DB books
 	 */
 	public BookListController()
 	{	
 		logger = LogManager.getLogger(BookListController.class);
-	}
-	
-	/**
-	 * Used to set the mouse clicked event handler
-	 */
-	@Override
-	public void initialize(URL location, ResourceBundle resources)
-	{
+		
 		try 
 		{
 			// obtain instance to the database
@@ -80,15 +73,21 @@ public class BookListController implements Initializable
 			
 			books = FXCollections.observableArrayList(bookGateway.getBooks());
 			
-			bookList.setItems(books);
-			
 		} catch (SQLException e)
 		{
-			
-			String error = String.format("%s", e.getMessage());
-			
+			String error = String.format("Could not establish connection to the database %s", e.getMessage());
 			logger.error(error);
 		}
+	}
+	
+	/**
+	 * Used to set the mouse clicked event handler
+	 */
+	@Override
+	public void initialize(URL location, ResourceBundle resources)
+	{
+		
+		bookList.setItems(books);
 		
 		// The book detail view should open when a list item is double clicked
 		
@@ -118,7 +117,7 @@ public class BookListController implements Initializable
 						view.setCurrentPane(rootNode);
 						
 						// pass in the selected book model into the controller
-						view.switchView(bookDetails, new BookDetailController(selectedBook));
+						view.switchView(bookDetails, new BookDetailController(selectedBook, bookGateway));
 						
 					} catch(Exception e)
 					{

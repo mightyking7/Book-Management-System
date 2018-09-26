@@ -1,6 +1,8 @@
 package Model;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 
 
 public class Book 
@@ -17,6 +19,8 @@ public class Book
 	
 	private LocalDateTime dateAdded;
 	
+	private boolean dateWasSet;
+	
 	public Book()
 	{
 		id = 0;
@@ -25,6 +29,98 @@ public class Book
 		yearPublished = 0;
 		isbn = null;
 		dateAdded = null;
+		dateWasSet = false;
+	}
+	
+	/**
+	 * Save function which uses validation methods to validate book requirements in the current book object and if error found throws exception
+	 * @throws Exception
+	 * @throws SQLException
+	 */
+	
+	public void save(boolean updateDatabase) throws SQLException,Exception
+	{
+		
+		if(!titleIsValid())
+		{
+			throw new Exception("Title length error");
+		}
+		
+		if(!summaryIsValid())
+		{
+			throw new Exception("Summary length error");
+		}
+		
+		if(!yearPublishedIsValid())
+		{
+			throw new Exception("Year Published past current year error");
+		}
+		
+		if(!isbnIsValid())
+		{
+			throw new Exception("ISBN length error");
+		}
+		
+		if(!dateAddedIsValid())
+		{
+			throw new Exception("Date added was not set error");
+		}
+		
+		if(!updateDatabase)
+		{
+			throw new SQLException("Error saving book to database");
+		}
+	
+	}
+	
+	public boolean titleIsValid()
+	{
+		if(getTitle().length() < 1 || getTitle().length() > 255)
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean summaryIsValid()
+	{
+		if(getSummary().length() > 65536)
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean yearPublishedIsValid()
+	{
+		if(getYearPublished() > (int)Calendar.getInstance().get(Calendar.YEAR))
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean isbnIsValid()
+	{
+		if(getIsbn().length() > 13)
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean dateAddedIsValid()
+	{
+		if(!dateWasSet)
+		{
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public int getId() {
@@ -61,7 +157,12 @@ public class Book
 		return dateAdded;
 	}
 	public void setDateAdded(LocalDateTime dateAdded) {
-		this.dateAdded = dateAdded;
+		
+		if(this.dateAdded == null && !dateWasSet)
+		{
+			this.dateWasSet = true;
+			this.dateAdded = dateAdded;
+		}
 	}
 	
 	/**
@@ -70,7 +171,7 @@ public class Book
 	@Override
 	public String toString()
 	{
-		return String.format("%s %s %d %s", this.title, this.summary, this.yearPublished, this.isbn);	
+		return String.format("Book Title: %s, Year Published: %d", this.getTitle(), this.getYearPublished());
 	}
 
 }

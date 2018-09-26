@@ -82,6 +82,38 @@ public class BookTableGateway
 		return (books);
 	}
 	
+	/**
+	 * Used to update a book in the database through the model save function
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public boolean UpdateBook(Book book) throws SQLException
+	{
+		try{
+			//String query = "update statement";
+			//PreparedStatement preparedStmt = conn.prepareStatement(query);
+			//preparedStmt.setString(0, "update");
+			//preparedStmt.executeUpdate();
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * Used to remove a book in the database
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public void deleteMethod()
+	{
+		
+	}
 	
 	
 }
