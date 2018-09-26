@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import Model.Book;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
@@ -25,21 +26,18 @@ public class BookDetailController implements Initializable {
 	private static Logger logger = LogManager.getLogger(BookDetailController.class);
 	
 	private String title;
+	
 	private String summary;
+	
 	private String isbn;
+	
 	private LocalDateTime dateAdded;
+	
 	private int yearPublished;
+	
 	private Image image;
 	
-	public BookDetailController(String Title, String Summary, String ISBN, LocalDateTime DateAdded, int YearPublished, String imageName)
-	{
-		title = Title;
-		summary = Summary;
-		isbn = ISBN;
-		dateAdded = DateAdded;
-		yearPublished = YearPublished;
-		image = new Image("/View/" + imageName);
-	}
+	private Book book;		// the book to report on
 	
 	@FXML
 	private TextField titleFieldID;
@@ -62,10 +60,33 @@ public class BookDetailController implements Initializable {
 	@FXML
 	private ImageView imageBoxID;
 	
+	public BookDetailController(String Title, String Summary, String ISBN, LocalDateTime DateAdded, int YearPublished, String imageName)
+	{
+		title = Title;
+		summary = Summary;
+		isbn = ISBN;
+		dateAdded = DateAdded;
+		yearPublished = YearPublished;
+		image = new Image("/View/" + imageName);
+	}
 	
+	/**
+	 * Accepts a Book to render in the UI
+	 * @param book
+	 */
+	public BookDetailController(Book book)
+	{
+		this.book = book;
+		
+		setBook(this.book);
+	}
+	
+	/**
+	 * Used to initialize the BookDetailController
+	 */
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-	
+	public void initialize(URL location, ResourceBundle resources) 
+	{		
 		titleFieldID.setEditable(false);
 		titleFieldID.setText(title);
 		
@@ -104,6 +125,23 @@ public class BookDetailController implements Initializable {
 
 			   logger.info(String.format("%s", "Save button pressed"));
 		   } 
-	 };   
+	 }; 
+	 
+	 /**
+	  *  Binds the GUI's controls to the current book
+	  */
+	 private void setBook(Book book)
+	 {
+		 this.title = book.getTitle();
+		 
+		 this.summary = book.getSummary();
+		 
+		 this.yearPublished = book.getYearPublished();
+		 
+		 this.isbn = book.getIsbn();
+		 
+		 this.dateAdded = book.getDateAdded();
+		 
+	 }
 
 }

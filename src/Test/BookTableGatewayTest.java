@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import Database.BookTableGateway;
 import Database.DBConnection;
-import Model.BookModel;
+import Model.Book;
 
 /**
  * Sep 22, 2018
@@ -36,7 +36,7 @@ public class BookTableGatewayTest
 	{
 		try {
 			
-		ArrayList<BookModel> books = gateway.getBooks();
+		ArrayList<Book> books = gateway.getBooks();
 		
 		assert(books != null);
 		

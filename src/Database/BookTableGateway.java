@@ -5,11 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 
-import Model.BookModel;
+import Model.Book;
 
 /**
  * Sep 17, 2018
@@ -25,9 +23,22 @@ public class BookTableGateway
 
 	private ResultSet rs;			// result returned from MySQL
 	
+	/**
+	 * Constructor with specified connection
+	 * @param conn
+	 */
 	public BookTableGateway(Connection conn)
 	{
 		this.conn = conn;
+	}
+	
+	/**
+	 * Constructor with default connection
+	 * @throws SQLException if connection could not be established 
+	 */
+	public BookTableGateway() throws SQLException
+	{
+		this.conn = DBConnection.getInstance().getConnection();
 	}
 	
 	/**
@@ -35,27 +46,21 @@ public class BookTableGateway
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<BookModel> getBooks() throws SQLException
+	public ArrayList<Book> getBooks() throws SQLException
 	{
 		String sql = "select * from Books";
 		
-		ResultSet keys;
+		ArrayList<Book> books = new ArrayList<Book>();
 		
-		ArrayList<BookModel> books = new ArrayList<BookModel>();
-		
-		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		stmt = conn.prepareStatement(sql);
 		
 		rs = stmt.executeQuery();
 		
-		keys = stmt.getGeneratedKeys();
-		
-		keys.next();
-		
 		while(rs.next())
 		{
-			BookModel book = new BookModel();
+			Book book = new Book();
 			
-			book.setId(keys.getRow());
+			book.setId(rs.getInt("id"));
 			
 			book.setTitle(rs.getString("title"));
 			
@@ -64,8 +69,6 @@ public class BookTableGateway
 			book.setYearPublished(rs.getInt("year_published"));
 			
 			book.setIsbn(rs.getString("isbn"));
-			
-			Date date = rs.getDate("date_added");
 			
 			LocalDateTime dateAdded = rs.getTimestamp("date_added").toLocalDateTime();
 			

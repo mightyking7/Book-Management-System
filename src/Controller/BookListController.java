@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 
 import Database.BookTableGateway;
 import Database.DBConnection;
-import Model.BookModel;
+import Model.Book;
 
 /**
  * Sep 1, 2018
@@ -39,18 +39,14 @@ public class BookListController implements Initializable
 {
 
 	@FXML
-	private ListView<BookModel> bookList;
+	private ListView<Book> bookList;			// list of books to render
 	
 	@FXML
 	private BorderPane rootNode;
 	
-	private ViewManager view;
+	private ObservableList<Book> books;
 	
-	private ObservableList<String> bookTitles = FXCollections.observableArrayList();
-	
-	private ObservableList<BookModel> books;
-	
-	private static Logger logger = LogManager.getLogger(BookListController.class);
+	private static Logger logger;
 	
 	private static final int NUM_CLICKS = 2;
 	
@@ -62,11 +58,11 @@ public class BookListController implements Initializable
 	// dependencies are wrapped all over the place, can be difficult to reason, check, and design
 	
 	/**
-	 * Constructor
+	 * set up logger and
 	 */
 	public BookListController()
-	{
-		//bookTitles.addAll("Lone Survivor", "Brothers Kamarozov", "War and Peace", "Animal Farm");
+	{	
+		logger = LogManager.getLogger(BookListController.class);
 	}
 	
 	/**
@@ -88,7 +84,9 @@ public class BookListController implements Initializable
 			
 		} catch (SQLException e)
 		{
-			String error = String.format("Could not establish connection to the database %s", e.getMessage());
+			
+			String error = String.format("%s", e.getMessage());
+			
 			logger.error(error);
 		}
 		
@@ -99,12 +97,18 @@ public class BookListController implements Initializable
 			@Override
 			public void handle(MouseEvent event) 
 			{
+				Book selectedBook;
+				
+				ViewManager view;
+				
 				if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == NUM_CLICKS)
 				{
 					try {
 						
+						selectedBook = bookList.getSelectionModel().getSelectedItem();
+						
 						// log the event
-						logger.info(String.format("%s selected", bookList.getSelectionModel().getSelectedItem()));
+						logger.info(String.format("%s selected", selectedBook));
 						
 						// Retrieve the view manager to show details about the book
 						URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
@@ -113,7 +117,8 @@ public class BookListController implements Initializable
 						
 						view.setCurrentPane(rootNode);
 						
-						//view.switchView(bookDetails, new BookDetailController( bookList.getSelectionModel().getSelectedItem(),"Random text" + System.lineSeparator() + "More Random Text", "42397fs98f", LocalDateTime.of( 2015 , Month.FEBRUARY , 18, 0, 0), 2015, "Book-2.png"));
+						// pass in the selected book model into the controller
+						view.switchView(bookDetails, new BookDetailController(selectedBook));
 						
 					} catch(Exception e)
 					{
