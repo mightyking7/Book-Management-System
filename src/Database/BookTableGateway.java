@@ -91,9 +91,11 @@ public class BookTableGateway
 	public boolean UpdateBook(Book book) throws SQLException
 	{
 		try{
-			//String query = "update statement";
+			//String query = "UPDATE books SET title = ? , " + "comment = ? " + "WHERE id = " + book.getID();
 			//PreparedStatement preparedStmt = conn.prepareStatement(query);
-			//preparedStmt.setString(0, "update");
+			//preparedStmt.setString(1, book.getTitle());
+			//preparedStmt.setString(2, book.getComment());
+			//...
 			//preparedStmt.executeUpdate();
 			return true;
 		}
