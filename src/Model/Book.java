@@ -3,7 +3,7 @@ package Model;
 import java.time.LocalDateTime;
 
 
-public class BookModel 
+public class Book 
 {	
 	private int id;
 	
@@ -17,7 +17,7 @@ public class BookModel
 	
 	private LocalDateTime dateAdded;
 	
-	public BookModel()
+	public Book()
 	{
 		id = 0;
 		title = null;
