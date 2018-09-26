@@ -112,9 +112,20 @@ public class BookTableGateway
 	 * @throws SQLException
 	 */
 	
-	public void deleteMethod()
+	public void deleteMethod(Book book)
 	{
+		try{
+			//String query = "DELETE books SET title = ? , " + "comment = ? " + "WHERE id = " + book.getID();
+			//PreparedStatement preparedStmt = conn.prepareStatement(query);
+			//preparedStmt.setString(1, book.getTitle());
+			//preparedStmt.setString(2, book.getComment());
+			//...
+			//preparedStmt.executeUpdate();
+		}
+		catch(Exception e)
+		{
 		
+		}
 	}
 	
 	

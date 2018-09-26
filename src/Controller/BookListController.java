@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -38,6 +39,9 @@ import Model.Book;
 public class BookListController implements Initializable
 {
 
+	@FXML
+	private Button deleteButtonID;
+	
 	@FXML
 	private ListView<Book> bookList;			// list of books to render
 	
@@ -78,6 +82,8 @@ public class BookListController implements Initializable
 			String error = String.format("Could not establish connection to the database %s", e.getMessage());
 			logger.error(error);
 		}
+		
+		
 	}
 	
 	/**
@@ -88,6 +94,8 @@ public class BookListController implements Initializable
 	{
 		
 		bookList.setItems(books);
+		
+		deleteButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, delete);
 		
 		// The book detail view should open when a list item is double clicked
 		
@@ -128,5 +136,33 @@ public class BookListController implements Initializable
 			}
 		});
 	}
+	
+	EventHandler<MouseEvent> delete = new EventHandler<MouseEvent>() { 
+		   @Override 
+		   public void handle(MouseEvent e) { 
+			   
+			   try {
+				   
+				   if(bookList.getSelectionModel().getSelectedItem() != null)
+				   {
+					   Book book = bookList.getSelectionModel().getSelectedItem();
+					   System.out.println("Book to be deleted: " + bookList.getSelectionModel().getSelectedItem());
+					   //Deletes book
+					   bookGateway.deleteMethod(book);
+					   //Update book list after deletion
+					   books = FXCollections.observableArrayList(bookGateway.getBooks());
+					   bookList.setItems(books);
+				   }
+				   
+			   } 
+			   catch (Exception exception)
+			   {
+				   logger.error(String.format("%s: %s", "Couldn't delete book error", exception.getMessage()));
+			   }
+
+			   logger.info(String.format("%s", "delete button pressed"));
+			   
+		   } 
+	 }; 
 		
 }

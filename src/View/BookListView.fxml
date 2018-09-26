@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -10,6 +11,11 @@
       <VBox prefHeight="440.0" prefWidth="476.0" BorderPane.alignment="CENTER">
          <children>
             <ListView fx:id="bookList" prefHeight="254.0" prefWidth="476.0" />
+            <Button fx:id="deleteButtonID" mnemonicParsing="false" text="Delete book">
+               <VBox.margin>
+                  <Insets left="180.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </center>
