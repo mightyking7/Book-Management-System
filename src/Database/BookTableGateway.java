@@ -91,12 +91,21 @@ public class BookTableGateway
 	public boolean UpdateBook(Book book) throws SQLException
 	{
 		try{
-			//String query = "UPDATE books SET title = ? , " + "comment = ? " + "WHERE id = " + book.getID();
-			//PreparedStatement preparedStmt = conn.prepareStatement(query);
-			//preparedStmt.setString(1, book.getTitle());
-			//preparedStmt.setString(2, book.getComment());
-			//...
-			//preparedStmt.executeUpdate();
+			
+			
+			String query = "UPDATE Books "
+	                + "SET title = ? "
+	                + ",summary = ? "
+	                + ",year_published = ? "
+	                + ",isbn = ? "
+	                + "WHERE id = " + book.getId();
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setString(1, book.getTitle());
+			preparedStmt.setString(2, book.getSummary());
+			preparedStmt.setInt(3, book.getYearPublished());
+			preparedStmt.setString(4, book.getIsbn());
+			preparedStmt.executeUpdate();
+			
 			return true;
 		}
 		catch(Exception e)
@@ -115,12 +124,9 @@ public class BookTableGateway
 	public void deleteMethod(Book book)
 	{
 		try{
-			//String query = "DELETE books SET title = ? , " + "comment = ? " + "WHERE id = " + book.getID();
-			//PreparedStatement preparedStmt = conn.prepareStatement(query);
-			//preparedStmt.setString(1, book.getTitle());
-			//preparedStmt.setString(2, book.getComment());
-			//...
-			//preparedStmt.executeUpdate();
+			String query = "DELETE FROM Books WHERE id = " + book.getId();
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.executeUpdate();
 		}
 		catch(Exception e)
 		{
