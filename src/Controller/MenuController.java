@@ -11,6 +11,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import Database.BookTableGateway;
+import Model.Book;
 import View.ViewManager;
 
 /**
@@ -27,10 +30,13 @@ public class MenuController implements Initializable
 	private MenuBar menuBar;
 	
 	@FXML
-	private MenuItem quit;
+	private MenuItem quitMenuItem;
 	
 	@FXML
-	private MenuItem bookList;
+	private MenuItem bookListMenuItem;
+	
+	@FXML
+	private MenuItem addBookMenuItem;
 	
 	private static Logger logger = LogManager.getLogger(MenuController.class);
 
@@ -41,28 +47,61 @@ public class MenuController implements Initializable
 	 */
 	@FXML private void handleMenuAction(ActionEvent event) throws IOException
 	{	
-		if(event.getSource() == quit)
+		
+		URL viewUrl;				// View URL to load for a menu item
+		
+		ViewManager viewManager;	// ViewManager instance to switch views
+		
+		if(event.getSource() == quitMenuItem)
 		{
 			logger.info("Exiting the system");
 			
 			System.exit(0);
 		}
-		else if(event.getSource() == bookList)
+		else if(event.getSource() == bookListMenuItem)
 		{	
-			ViewManager manager = ViewManager.getInstance();
+			viewManager = ViewManager.getInstance();
 			
 			// set the root node to manage
-			manager.setCurrentPane(rootNode);
+			viewManager.setCurrentPane(rootNode);
 			
 			try
 			{
-				URL viewUrl = this.getClass().getResource("/View/BookListView.fxml");
+				viewUrl = this.getClass().getResource("/View/BookListView.fxml");
 				
-				manager.switchView(viewUrl , new BookListController());
+				viewManager.switchView(viewUrl , new BookListController());
 			} 
 			catch(IOException e)
 			{
 				logger.error(this.getClass().getName() + ":" + e.getMessage());
+			}
+			catch(NullPointerException e)
+			{
+				logger.error(this.getClass().getName()+ ":" + e.getMessage());
+			}
+			catch(Exception e)
+			{
+				logger.error(this.getClass().getName() + ":" + e.getMessage());
+			}
+		}
+		else if(event.getSource() == addBookMenuItem)
+		{
+			viewManager = ViewManager.getInstance();
+			
+			// set the root node to manage
+			viewManager.setCurrentPane(rootNode);
+			
+			try 
+			{
+				viewUrl = this.getClass().getResource("/View/BookDetailedView.fxml");
+				
+				BookTableGateway gateway = new BookTableGateway();
+				
+				viewManager.switchView(viewUrl, new BookDetailController(new Book(), gateway));
+				
+			} catch(IOException e)
+			{
+				logger.error(this.getClass().getName() + ":" + e.getStackTrace());
 			}
 			catch(NullPointerException e)
 			{
