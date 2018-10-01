@@ -36,7 +36,7 @@ public class BookTableGatewayTest
 	{
 		try {
 			
-		ArrayList<Book> books = gateway.getBooks();
+		ArrayList<Book> books = (ArrayList<Book>) gateway.getBooks();
 		
 		assert(books != null);
 		

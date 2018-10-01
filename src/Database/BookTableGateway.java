@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import Model.Book;
 
@@ -13,7 +14,8 @@ import Model.Book;
  * Sep 17, 2018
  * isaacbuitrago
  * 
- * Used as an abstraction between the Book model and the database
+ * Manages interaction between the 
+ * Book model and the Book table in the database.
  */
 public class BookTableGateway 
 {
@@ -46,7 +48,7 @@ public class BookTableGateway
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Book> getBooks() throws SQLException
+	public List<Book> getBooks() throws SQLException
 	{
 		String sql = "select * from Books";
 		
@@ -75,8 +77,6 @@ public class BookTableGateway
 			book.setDateAdded(dateAdded);
 			
 			books.add(book);	
-			
-			System.out.println(book);
 		}
 		
 		return (books);
