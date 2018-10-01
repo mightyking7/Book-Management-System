@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
@@ -7,23 +8,42 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane layoutY="-1.0" prefHeight="400.0" prefWidth="600.0">
          <children>
-            <Text fx:id="titleID" layoutX="63.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title:" wrappingWidth="35.0" AnchorPane.bottomAnchor="325.689453125" AnchorPane.leftAnchor="63.0" AnchorPane.rightAnchor="502.0" AnchorPane.topAnchor="63.0" />
-            <Text fx:id="yearPublishedID" layoutX="63.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year Published:" wrappingWidth="105.0" AnchorPane.bottomAnchor="195.689453125" AnchorPane.leftAnchor="63.0" AnchorPane.rightAnchor="432.0" AnchorPane.topAnchor="193.0" />
-            <ImageView fx:id="imageBoxID" fitHeight="318.0" fitWidth="241.0" layoutX="322.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="322.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="42.0" />
-            <TextArea fx:id="SummaryFieldID" layoutX="59.0" layoutY="114.0" prefHeight="69.0" prefWidth="241.0" AnchorPane.bottomAnchor="223.0" AnchorPane.leftAnchor="59.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="114.0" />
-            <Text fx:id="summaryID" layoutX="64.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Summary:" wrappingWidth="68.0" AnchorPane.bottomAnchor="290.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="468.0" AnchorPane.topAnchor="97.0" />
-            <Text fx:id="isbnID" layoutX="63.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ISBN:" wrappingWidth="35.0" AnchorPane.bottomAnchor="157.2578125" AnchorPane.leftAnchor="63.0" AnchorPane.rightAnchor="502.0" AnchorPane.topAnchor="231.431640625" />
-            <Text fx:id="dateAddedID" layoutX="63.0" layoutY="284.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Date Added:" wrappingWidth="95.0" AnchorPane.bottomAnchor="116.0" AnchorPane.leftAnchor="63.0" AnchorPane.rightAnchor="442.0" AnchorPane.topAnchor="271.0" />
-            <Button fx:id="saveButtonID" layoutX="207.0" layoutY="318.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" AnchorPane.bottomAnchor="56.689453125" AnchorPane.leftAnchor="207.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="318.0" />
-            <TextField fx:id="titleFieldID" layoutX="99.0" layoutY="58.0" prefHeight="27.0" prefWidth="200.0" />
-            <TextField fx:id="yearPublishedFieldID" layoutX="163.0" layoutY="188.0" prefHeight="27.0" prefWidth="137.0" />
-            <TextField fx:id="isbnFieldID" layoutX="108.0" layoutY="226.0" prefHeight="27.0" prefWidth="194.0" />
-            <TextField fx:id="dateAddedFieldID" layoutX="146.0" layoutY="266.0" prefHeight="27.0" prefWidth="155.0" />
+            <ImageView fx:id="imageBoxID" fitHeight="285.0" fitWidth="226.0" layoutX="365.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="42.0" />
+            <GridPane hgap="8.0" layoutX="14.0" layoutY="50.0" prefHeight="253.0" prefWidth="329.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="163.0" minWidth="10.0" prefWidth="143.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="186.0" minWidth="10.0" prefWidth="186.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Text fx:id="titleID" strokeType="OUTSIDE" strokeWidth="0.0" text="Title" wrappingWidth="27.0" />
+                  <Text fx:id="summaryID" strokeType="OUTSIDE" strokeWidth="0.0" text="Summary" wrappingWidth="58.0" GridPane.rowIndex="1" />
+                  <Text fx:id="yearPublishedID" strokeType="OUTSIDE" strokeWidth="0.0" text="Year Published" wrappingWidth="92.0" GridPane.rowIndex="2" />
+                  <Text fx:id="isbnID" strokeType="OUTSIDE" strokeWidth="0.0" text="ISBN" wrappingWidth="35.0" GridPane.rowIndex="3" />
+                  <Text fx:id="dateAddedID" strokeType="OUTSIDE" strokeWidth="0.0" text="Date Added" wrappingWidth="76.0" GridPane.rowIndex="4" />
+                  <TextField fx:id="titleFieldID" prefHeight="27.0" prefWidth="200.0" GridPane.columnIndex="1" />
+                  <TextArea fx:id="SummaryFieldID" prefHeight="69.0" prefWidth="241.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="yearPublishedFieldID" prefHeight="27.0" prefWidth="137.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="isbnFieldID" prefHeight="27.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="dateAddedFieldID" prefHeight="27.0" prefWidth="155.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Button fx:id="saveButtonID" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Button>
+               </children>
+            </GridPane>
          </children>
       </AnchorPane>
    </children>

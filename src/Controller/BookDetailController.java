@@ -4,6 +4,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
@@ -23,23 +24,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
-public class BookDetailController implements Initializable {
+public class BookDetailController implements Initializable 
+{
 	
-	private static Logger logger = LogManager.getLogger(BookDetailController.class);
-	
-	private String title;
-	
-	private String summary;
-	
-	private String isbn;
-	
-	private LocalDateTime dateAdded;
-	
-	private int yearPublished;
+	private static Logger logger;
 	
 	private Image image;
 	
-	private Book book;		// the book to report on
+	private Book book;		// the book to display
 	
 	private BookTableGateway bookGateway;
 	
@@ -65,21 +57,6 @@ public class BookDetailController implements Initializable {
 	private ImageView imageBoxID;
 	
 	/**
-	 * Second constructor for manually displaying a book
-	 */
-	
-	public BookDetailController(String Title, String Summary, String ISBN, LocalDateTime DateAdded, int YearPublished, BookTableGateway bookGateway)
-	{
-		this.bookGateway = bookGateway;
-		this.title = Title;
-		this.summary = Summary;
-		this.isbn = ISBN;
-		this.dateAdded = DateAdded;
-		this.yearPublished = YearPublished;
-		this.image = new Image("/View/" + "Book-2.png");
-	}
-	
-	/**
 	 * Accepts a Book to render in the UI
 	 * Also gets an instance of the bookGateway
 	 * @param book
@@ -91,8 +68,6 @@ public class BookDetailController implements Initializable {
 		this.bookGateway = bookGateway;
 		 
 		this.book = book;
-		
-		setBook(this.book);
 	}
 	
 	/**
@@ -100,32 +75,10 @@ public class BookDetailController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) 
-	{		
-		titleFieldID.setEditable(true);
-		titleFieldID.setText(title);
+	{	
+		logger = LogManager.getLogger(BookDetailController.class);
 		
-		SummaryFieldID.setEditable(true);
-		SummaryFieldID.setText(summary);
-
-		yearPublishedFieldID.setEditable(true);
-		
-		if(yearPublished < 1900 || yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
-		{
-			
-			yearPublishedFieldID.setText("Year error found");
-			logger.error(String.format("Year input: Outside of valid year-range"));
-		}
-		else
-		{
-			String displayYear = "" + yearPublished;
-			yearPublishedFieldID.setText(displayYear);	
-		}
-		
-		isbnFieldID.setEditable(true);
-		isbnFieldID.setText(isbn);
-		
-		dateAddedFieldID.setEditable(false);
-		dateAddedFieldID.setText(dateAdded.getMonthValue() + "/" + dateAdded.getDayOfMonth() + "/" + dateAdded.getYear());
+		setBookDetails(this.book);
 		
 		imageBoxID.setImage(image);
 		
@@ -137,7 +90,6 @@ public class BookDetailController implements Initializable {
 	 * Save button used to update a book in the database and local memory by updating the book object and calling the UpdateBook function
 	 * Catches and displays any exception thrown from the model
 	 */
-	
 	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() { 
 		   @Override 
 		   public void handle(MouseEvent e) { 
@@ -164,21 +116,46 @@ public class BookDetailController implements Initializable {
 	 }; 
 	 
 	 /**
-	  *  Binds the GUI's controls to the current book
+	  *  Sets the BookDetailView's controls to the attributes of the given book
+	  *  
+	  *  @param book to render details about
 	  */
-	 private void setBook(Book book)
+	 private void setBookDetails(Book book)
 	 {
+		 LocalDateTime dateAdded = book.getDateAdded();
 		 
-		 this.title = book.getTitle();
+		 int yearPublished = book.getYearPublished();
 		 
-		 this.summary = book.getSummary();
+		 // retrieve the book's details from the model
 		 
-		 this.yearPublished = book.getYearPublished();
+		 String titleText = book.getTitle();		
 		 
-		 this.isbn = book.getIsbn();
+		 String summaryText = book.getSummary();
 		 
-		 this.dateAdded = book.getDateAdded();
+		 String yearPublishedText = String.valueOf(yearPublished);
 		 
+		 String isbnText = book.getIsbn();
+		 
+		 String dateAddedText = dateAdded.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+		 
+		 if(yearPublished < 1900 || yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
+		 {
+			 yearPublishedFieldID.setText("Year error found");
+			 
+			logger.error(String.format("Year input: Outside of valid year-range"));		
+		 }
+		 else
+		 {
+			yearPublishedFieldID.setText(yearPublishedText);	
+		 }
+		 
+		 this.titleFieldID.setText(titleText);
+		 
+		 this.SummaryFieldID.setText(summaryText);
+		 
+		 this.isbnFieldID.setText(isbnText);
+		 
+		 this.dateAddedFieldID.setText(dateAddedText);
 	 }
 
 }
