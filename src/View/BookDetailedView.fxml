@@ -13,15 +13,15 @@
       <AnchorPane layoutY="-1.0" prefHeight="400.0" prefWidth="600.0">
          <children>
             <ImageView fx:id="imageBoxID" fitHeight="285.0" fitWidth="226.0" layoutX="365.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="42.0" />
-            <GridPane hgap="8.0" layoutX="14.0" layoutY="50.0" prefHeight="253.0" prefWidth="329.0">
+            <GridPane hgap="8.0" layoutX="14.0" layoutY="51.0" prefHeight="252.0" prefWidth="357.0">
               <columnConstraints>
-                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="163.0" minWidth="10.0" prefWidth="143.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="186.0" minWidth="10.0" prefWidth="186.0" />
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="163.0" minWidth="10.0" prefWidth="134.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="215.0" minWidth="10.0" prefWidth="215.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="53.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="38.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -33,10 +33,10 @@
                   <Text fx:id="isbnID" strokeType="OUTSIDE" strokeWidth="0.0" text="ISBN" wrappingWidth="35.0" GridPane.rowIndex="3" />
                   <Text fx:id="dateAddedID" strokeType="OUTSIDE" strokeWidth="0.0" text="Date Added" wrappingWidth="76.0" GridPane.rowIndex="4" />
                   <TextField fx:id="titleFieldID" prefHeight="27.0" prefWidth="200.0" GridPane.columnIndex="1" />
-                  <TextArea fx:id="SummaryFieldID" prefHeight="69.0" prefWidth="241.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextArea fx:id="SummaryFieldID" prefHeight="62.0" prefWidth="182.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="yearPublishedFieldID" prefHeight="27.0" prefWidth="137.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="isbnFieldID" prefHeight="27.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <TextField fx:id="dateAddedFieldID" prefHeight="27.0" prefWidth="155.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <TextField fx:id="dateAddedFieldID" editable="false" prefHeight="27.0" prefWidth="155.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <Button fx:id="saveButtonID" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets />

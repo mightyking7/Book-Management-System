@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 
+import Database.BookTableGateway;
+
 
 public class Book 
 {	
@@ -21,15 +23,23 @@ public class Book
 	
 	private boolean dateWasSet;
 	
+	private BookTableGateway gateway;
+	
+	/**
+	 * 
+	 */
 	public Book()
 	{
-		id = 0;
-		title = null;
-		summary = null;
-		yearPublished = 0;
-		isbn = null;
-		dateAdded = null;
-		dateWasSet = false;
+		
+	}
+	
+	/**
+	 * 
+	 * @param gateway
+	 */
+	public Book(BookTableGateway gateway)
+	{
+		this.gateway = gateway;
 	}
 	
 	/**
@@ -38,7 +48,7 @@ public class Book
 	 * @throws SQLException
 	 */
 	
-	public void save(boolean updateDatabase) throws SQLException,Exception
+	public void save() throws SQLException,Exception
 	{
 		
 		if(!titleIsValid())
@@ -61,21 +71,31 @@ public class Book
 			throw new Exception("ISBN length error");
 		}
 		
-		if(!dateAddedIsValid())
+//		if(!dateAddedIsValid())
+//		{
+//			throw new Exception("Date added was not set error");
+//		}
+//		
+		// insert the book if the id is 0
+		if(id == 0)
 		{
-			throw new Exception("Date added was not set error");
+			id = gateway.insertBook(this);
 		}
-		
-		if(!updateDatabase)
+		else
 		{
-			throw new SQLException("Error saving book to database");
+			gateway.updateBook(this);
 		}
 	
 	}
 	
+	/**
+	 * validates the title
+	 * @return
+	 */
 	public boolean titleIsValid()
 	{
-		if(getTitle().length() < 1 || getTitle().length() > 255)
+		// white list valid data, don't check for the entire set of invalid data
+		if(!(title.length() >= 1 && title.length() <= 255))
 		{
 			return false;
 		}
@@ -83,6 +103,10 @@ public class Book
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean summaryIsValid()
 	{
 		if(getSummary().length() > 65536)
@@ -93,9 +117,13 @@ public class Book
 		return true;
 	}
 	
+	/**
+	 * Used to validate the year
+	 * @return
+	 */
 	public boolean yearPublishedIsValid()
 	{
-		if(getYearPublished() > (int)Calendar.getInstance().get(Calendar.YEAR))
+		if(yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR) || yearPublished < 0)
 		{
 			return false;
 		}
@@ -103,6 +131,10 @@ public class Book
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isbnIsValid()
 	{
 		if(getIsbn().length() > 13)
@@ -113,6 +145,9 @@ public class Book
 		return true;
 	}
 	
+	/**
+	 * 
+	 */
 	public boolean dateAddedIsValid()
 	{
 		if(!dateWasSet)
@@ -123,16 +158,35 @@ public class Book
 		return true;
 	}
 	
-	public int getId() {
+	public int getId() 
+	{
 		return id;
 	}
-	public void setId(int id) {
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setId(int id) 
+	{
 		this.id = id;
 	}
-	public String getTitle() {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getTitle() 
+	{
 		return title;
 	}
-	public void setTitle(String title) {
+	
+	/**
+	 * 
+	 * @param title
+	 */
+	public void setTitle(String title) 
+	{
 		this.title = title;
 	}
 	public String getSummary() {
@@ -155,8 +209,10 @@ public class Book
 	}
 	public LocalDateTime getDateAdded() {
 		return dateAdded;
-	}
-	public void setDateAdded(LocalDateTime dateAdded) {
+	} 
+	
+	public void setDateAdded(LocalDateTime dateAdded) 
+	{
 		
 		if(this.dateAdded == null && !dateWasSet)
 		{
@@ -165,6 +221,15 @@ public class Book
 		}
 	}
 	
+	
+	public BookTableGateway getGateway() {
+		return gateway;
+	}
+
+	public void setGateway(BookTableGateway gateway) {
+		this.gateway = gateway;
+	}
+
 	/**
 	 * Used to return the string representation of a Book
 	 */

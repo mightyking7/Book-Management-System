@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogManager;
+
+import org.apache.logging.log4j.core.Logger;
 
 import Model.Book;
 
@@ -24,6 +27,8 @@ public class BookTableGateway
 	private PreparedStatement stmt;	// statement to execute
 
 	private ResultSet rs;			// result returned from MySQL
+	
+	private static Logger logger;
 	
 	/**
 	 * Constructor with specified connection
@@ -88,10 +93,9 @@ public class BookTableGateway
 	 * @throws SQLException
 	 */
 	
-	public boolean UpdateBook(Book book) throws SQLException
+	public boolean updateBook(Book book) throws SQLException
 	{
 		try{
-			
 			
 			String query = "UPDATE Books "
 	                + "SET title = ? "
@@ -116,6 +120,39 @@ public class BookTableGateway
 	}
 	
 	/**
+	 * Used to insert a new book into the database
+	 * If the book already has an id, it is updated.
+	 * Returns the unique id of the new book
+	 * 
+	 * @param book
+	 * @throws SQLException
+	 */
+	public int insertBook(Book book) throws SQLException
+	{
+		ResultSet generatedKeys;	// id of the new book
+		
+		String sql = "insert into Books (title, summary, year_published, isbn) values(?, ?, ?, ?)";
+		
+		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		
+		stmt.setString(1, book.getTitle());
+		
+		stmt.setString(2, book.getSummary());
+		
+		stmt.setInt(3, book.getYearPublished());
+		
+		stmt.setString(4, book.getIsbn());
+		
+		stmt.executeUpdate();
+		
+		generatedKeys = stmt.getGeneratedKeys();
+		
+		generatedKeys.next();
+		
+		return(generatedKeys.getInt(1));
+	}
+	
+	/**
 	 * Used to remove a book in the database
 	 * @return
 	 * @throws SQLException
@@ -123,6 +160,8 @@ public class BookTableGateway
 	
 	public void deleteMethod(Book book)
 	{
+		
+		// TODO perhaps run this as a transaction
 		try{
 			String query = "DELETE FROM Books WHERE id = " + book.getId();
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
