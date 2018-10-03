@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import Database.BookTableGateway;
 import Model.Book;
 import View.ViewManager;
@@ -39,8 +40,17 @@ public class MenuController implements Initializable
 	private MenuItem addBookMenuItem;
 	
 	private static Logger logger = LogManager.getLogger(MenuController.class);
-
 	
+	/**
+	 * Initializes the menu controller 
+	 */
+	@Override
+	public void initialize(URL location, ResourceBundle resources) 
+	{
+		menuBar.setFocusTraversable(true);
+	}
+			
+		
 	/**
 	 * Handles menu clicks
 	 * @param event
@@ -101,7 +111,7 @@ public class MenuController implements Initializable
 				
 			} catch(IOException e)
 			{
-				logger.error(this.getClass().getName() + ":" + e.getStackTrace());
+				logger.error(this.getClass().getName() + ":" + e.getMessage());
 			}
 			catch(NullPointerException e)
 			{
@@ -114,13 +124,6 @@ public class MenuController implements Initializable
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	@Override
-	public void initialize(URL location, ResourceBundle resources) 
-	{
-		menuBar.setFocusTraversable(true);
-	}
+	
 
 }

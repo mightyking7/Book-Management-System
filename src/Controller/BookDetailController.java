@@ -2,15 +2,12 @@ package Controller;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.ResourceBundle;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import Database.BookTableGateway;
 import Model.Book;
 import javafx.event.EventHandler;
@@ -31,7 +28,7 @@ public class BookDetailController implements Initializable
 	
 	private Image image;
 	
-	private Book book;		// the book to display
+	private Book book;
 	
 	private BookTableGateway bookGateway;
 	
@@ -78,6 +75,7 @@ public class BookDetailController implements Initializable
 	{	
 		logger = LogManager.getLogger(BookDetailController.class);
 		
+		// set GUI field values to appropriate model field values
 		setBookDetails(this.book);
 		
 		imageBoxID.setImage(image);
@@ -98,15 +96,25 @@ public class BookDetailController implements Initializable
 			   
 			   try
 			   {
+				   // set the gateway for the model
+				   book.setGateway(bookGateway);
+				   
+				   // set the current book values
 				   book.setTitle(titleFieldID.getText());
 				   book.setSummary(SummaryFieldID.getText());
 				   book.setYearPublished(Integer.parseInt(yearPublishedFieldID.getText()));
 				   book.setIsbn(isbnFieldID.getText());
-				   book.save(bookGateway.UpdateBook(book));
+				   
+				   // save the book
+				   book.save();
+				   
+				   logger.info(String.format("%s saved to the database", book.getTitle()));
 			   }
 			   catch (SQLException exception)
 			   {
 				   logger.error(String.format("%s: %s, Save aborted!", "SQL save error",exception.getMessage()));   
+				   
+				   //TODO add alert dialog
 			   }
 			   catch (Exception exception)
 			   {
@@ -136,7 +144,12 @@ public class BookDetailController implements Initializable
 		 
 		 String isbnText = book.getIsbn();
 		 
-		 String dateAddedText = dateAdded.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+		 if(dateAdded != null)
+		 {
+			 String dateAddedText = dateAdded.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+			 
+			 this.dateAddedFieldID.setText(dateAddedText);
+		 }
 		 
 		 if(yearPublished < 1900 || yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
 		 {
@@ -155,7 +168,6 @@ public class BookDetailController implements Initializable
 		 
 		 this.isbnFieldID.setText(isbnText);
 		 
-		 this.dateAddedFieldID.setText(dateAddedText);
 	 }
 
 }
