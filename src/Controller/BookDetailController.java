@@ -2,6 +2,7 @@ package Controller;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -14,6 +15,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -109,16 +112,41 @@ public class BookDetailController implements Initializable
 				   book.save();
 				   
 				   logger.info(String.format("%s saved to the database", book.getTitle()));
+				   
+				   Alert alert = new Alert(AlertType.INFORMATION);
+			       alert.setTitle("Saving Book");
+			 
+			       alert.setHeaderText(null);
+			       alert.setContentText("Book was saved successfully!");
+			 
+			       alert.showAndWait();
+				   
 			   }
 			   catch (SQLException exception)
 			   {
 				   logger.error(String.format("%s: %s, Save aborted!", "SQL save error",exception.getMessage()));   
 				   
-				   //TODO add alert dialog
+				   Alert alert = new Alert(AlertType.ERROR);
+			       alert.setTitle("Saving Book");
+			 
+			       alert.setHeaderText(null);
+			       String alertmsg = ("SQL save error: " + exception.getMessage() + ", Save aborted!");
+			       alert.setContentText(alertmsg);
+			 
+			       alert.showAndWait();
 			   }
 			   catch (Exception exception)
 			   {
 				   logger.error(String.format("%s: %s, Save aborted!", "Save error",exception.getMessage()));   
+				   
+				   Alert alert = new Alert(AlertType.ERROR);
+			       alert.setTitle("Saving Book");
+			 
+			       alert.setHeaderText(null);
+			       String alertmsg = ("Unexpected save error: " + exception.getMessage() + ", Save aborted!");
+			       alert.setContentText(alertmsg);
+			 
+			       alert.showAndWait();
 			   }
 		   } 
 	 }; 
@@ -144,22 +172,31 @@ public class BookDetailController implements Initializable
 		 
 		 String isbnText = book.getIsbn();
 		 
-		 if(dateAdded != null)
+		 if(dateAdded == null)
 		 {
-			 String dateAddedText = dateAdded.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-			 
-			 this.dateAddedFieldID.setText(dateAddedText);
+			 //if dateAdded is null then user is adding a new book by business rules so no error needs to be displayed
 		 }
-		 
-		 if(yearPublished < 1900 || yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
+		 else if(yearPublished < 1900 || yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
 		 {
-			 yearPublishedFieldID.setText("Year error found");
+			yearPublishedFieldID.setText("Please input a valid year");
 			 
 			logger.error(String.format("Year input: Outside of valid year-range"));		
 		 }
 		 else
 		 {
 			yearPublishedFieldID.setText(yearPublishedText);	
+		 }
+		 
+		 if(dateAdded != null)
+		 {
+			 String dateAddedText = dateAdded.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+			 
+			 this.dateAddedFieldID.setText(dateAddedText);
+		 }
+		 else
+		 {
+			 //Displays the current date if a new book is being inserted
+			 this.dateAddedFieldID.setText(new SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis()));
 		 }
 		 
 		 this.titleFieldID.setText(titleText);

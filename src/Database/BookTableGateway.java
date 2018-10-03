@@ -7,9 +7,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogManager;
-
-import org.apache.logging.log4j.core.Logger;
 
 import Model.Book;
 
@@ -28,7 +25,6 @@ public class BookTableGateway
 
 	private ResultSet rs;			// result returned from MySQL
 	
-	private static Logger logger;
 	
 	/**
 	 * Constructor with specified connection
@@ -89,14 +85,14 @@ public class BookTableGateway
 	
 	/**
 	 * Used to update a book in the database through the model save function
+	 * creates a query request for the DB by getting the ID and updates the requested fields with the book object information
 	 * @return
 	 * @throws SQLException
 	 */
 	
-	public boolean updateBook(Book book) throws SQLException
+	public void updateBook(Book book) throws SQLException
 	{
-		try{
-			
+		
 			String query = "UPDATE Books "
 	                + "SET title = ? "
 	                + ",summary = ? "
@@ -109,14 +105,7 @@ public class BookTableGateway
 			preparedStmt.setInt(3, book.getYearPublished());
 			preparedStmt.setString(4, book.getIsbn());
 			preparedStmt.executeUpdate();
-			
-			return true;
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
-		
+
 	}
 	
 	/**
@@ -153,25 +142,20 @@ public class BookTableGateway
 	}
 	
 	/**
-	 * Used to remove a book in the database
+	 * Used to remove a book in the database, sets up a delete query and executes it on the requested field by getting the book object id passed
 	 * @return
 	 * @throws SQLException
 	 */
 	
-	public void deleteMethod(Book book)
+	public void deleteMethod(Book book) throws SQLException
 	{
 		
 		// TODO perhaps run this as a transaction
-		try{
+		
 			String query = "DELETE FROM Books WHERE id = " + book.getId();
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			preparedStmt.executeUpdate();
-		}
-		catch(Exception e)
-		{
-		
-		}
+
 	}
-	
 	
 }

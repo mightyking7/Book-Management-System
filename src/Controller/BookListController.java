@@ -3,20 +3,16 @@ package Controller;
 import View.ViewManager;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -75,7 +71,7 @@ public class BookListController implements Initializable
 						
 			bookGateway = new BookTableGateway(conn.getConnection());
 			
-			books = FXCollections.observableArrayList(bookGateway.getBooks());
+			books = FXCollections.observableList(bookGateway.getBooks());
 			
 		} catch (SQLException e)
 		{
@@ -137,6 +133,13 @@ public class BookListController implements Initializable
 		});
 	}
 	
+	/**
+	 * Event handler which executes the delete event when clicking the delete button
+	 * checks the selected book and calls the gateway delete method
+	 * calls constructor/gateway getBooks method to update observable list for the user
+	 * 
+	 */
+	
 	EventHandler<MouseEvent> delete = new EventHandler<MouseEvent>() { 
 		   @Override 
 		   public void handle(MouseEvent e) { 
@@ -155,9 +158,18 @@ public class BookListController implements Initializable
 				   }
 				   
 			   } 
-			   catch (Exception exception)
+			   catch (SQLException exception)
 			   {
 				   logger.error(String.format("%s: %s", "Couldn't delete book error", exception.getMessage()));
+				   
+				   Alert alert = new Alert(AlertType.ERROR);
+			       alert.setTitle("Deleting Book");
+			 
+			       alert.setHeaderText(null);
+			       String alertmsg = ("SQL delete error: " + exception.getMessage() + ", delete aborted!");
+			       alert.setContentText(alertmsg);
+			 
+			       alert.showAndWait();
 			   }
 
 			   logger.info(String.format("%s", "delete button pressed"));

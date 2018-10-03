@@ -26,15 +26,21 @@ public class Book
 	private BookTableGateway gateway;
 	
 	/**
-	 * 
+	 * Book NO-ARG constructor
 	 */
 	public Book()
 	{
-		
+		this.id = 0;
+		this.title = null;
+		this.summary = null;
+		this.yearPublished = 0;
+		this.isbn = null;
+		this.dateAdded = null;
+		this.dateWasSet = false;
 	}
 	
 	/**
-	 * 
+	 * Gets the DB gateway
 	 * @param gateway
 	 */
 	public Book(BookTableGateway gateway)
@@ -71,11 +77,6 @@ public class Book
 			throw new Exception("ISBN length error");
 		}
 		
-//		if(!dateAddedIsValid())
-//		{
-//			throw new Exception("Date added was not set error");
-//		}
-//		
 		// insert the book if the id is 0
 		if(id == 0)
 		{
@@ -83,13 +84,19 @@ public class Book
 		}
 		else
 		{
+			if(!dateAddedIsValid())
+			{
+				throw new Exception("Date added was not set error");
+			}
+			
 			gateway.updateBook(this);
 		}
 	
 	}
 	
 	/**
-	 * validates the title
+	 * title validation method
+	 * checks if title length >= 1 or <= 255
 	 * @return
 	 */
 	public boolean titleIsValid()
@@ -104,7 +111,8 @@ public class Book
 	}
 	
 	/**
-	 * 
+	 * Summary validation method
+	 * checks if the summary length is > 65536 
 	 * @return
 	 */
 	public boolean summaryIsValid()
@@ -118,7 +126,8 @@ public class Book
 	}
 	
 	/**
-	 * Used to validate the year
+	 * Checks the year published off the boo
+	 * Makes sure no books are published with a post-current date
 	 * @return
 	 */
 	public boolean yearPublishedIsValid()
@@ -132,7 +141,8 @@ public class Book
 	}
 	
 	/**
-	 * 
+	 * Checks if the ISBN is valid on the book
+	 * Makes sure no ISB length is > 13
 	 * @return
 	 */
 	public boolean isbnIsValid()
@@ -146,7 +156,9 @@ public class Book
 	}
 	
 	/**
-	 * 
+	 * Gets the date Added and makes sure it is set
+	 * if date is set twice then original date will always be preserved
+	 * @return
 	 */
 	public boolean dateAddedIsValid()
 	{
@@ -158,33 +170,28 @@ public class Book
 		return true;
 	}
 	
+	/**
+	 * Getters and setters below
+	 */
+	
 	public int getId() 
 	{
 		return id;
 	}
 	
-	/**
-	 * 
-	 * @param id
-	 */
+	
 	public void setId(int id) 
 	{
 		this.id = id;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
+	
 	public String getTitle() 
 	{
 		return title;
 	}
 	
-	/**
-	 * 
-	 * @param title
-	 */
+	
 	public void setTitle(String title) 
 	{
 		this.title = title;
