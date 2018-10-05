@@ -46,8 +46,8 @@ public class BookTableGateway
 	
 	/**
 	 * Used to retrieve all books in the database
-	 * @return
-	 * @throws SQLException
+	 * @return List of Books from the database
+	 * @throws SQLException if an error occurred while interacting with the database
 	 */
 	public List<Book> getBooks() throws SQLException
 	{
@@ -86,8 +86,7 @@ public class BookTableGateway
 	/**
 	 * Used to update a book in the database through the model save function
 	 * creates a query request for the DB by getting the ID and updates the requested fields with the book object information
-	 * @return
-	 * @throws SQLException
+	 * @throws SQLException if an error occurred while interacting with the database
 	 */
 	
 	public void updateBook(Book book) throws SQLException
@@ -114,13 +113,20 @@ public class BookTableGateway
 	 * Returns the unique id of the new book
 	 * 
 	 * @param book
-	 * @throws SQLException
+	 * @throws SQLException if an error occurred while interacting with the database
 	 */
 	public int insertBook(Book book) throws SQLException
 	{
 		ResultSet generatedKeys;	// id of the new book
 		
 		String sql = "insert into Books (title, summary, year_published, isbn) values(?, ?, ?, ?)";
+		
+		
+		// if the book does not have an id, it should be updated
+		if(!(book.getId() == 0))
+		{
+			updateBook(book);
+		}
 		
 		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 		
@@ -150,12 +156,9 @@ public class BookTableGateway
 	public void deleteMethod(Book book) throws SQLException
 	{
 		
-		// TODO perhaps run this as a transaction
-		
 			String query = "DELETE FROM Books WHERE id = " + book.getId();
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			preparedStmt.executeUpdate();
-
 	}
 	
 }

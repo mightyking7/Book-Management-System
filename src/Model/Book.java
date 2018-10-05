@@ -31,11 +31,17 @@ public class Book
 	public Book()
 	{
 		this.id = 0;
+		
 		this.title = null;
+		
 		this.summary = null;
+		
 		this.yearPublished = 0;
+		
 		this.isbn = null;
+		
 		this.dateAdded = null;
+		
 		this.dateWasSet = false;
 	}
 	
@@ -50,8 +56,8 @@ public class Book
 	
 	/**
 	 * Save function which uses validation methods to validate book requirements in the current book object and if error found throws exception
-	 * @throws Exception
-	 * @throws SQLException
+	 * @throws Exception if book contains invalid data
+	 * @throws SQLException if error occurred with database
 	 */
 	
 	public void save() throws SQLException,Exception
@@ -77,7 +83,7 @@ public class Book
 			throw new Exception("ISBN length error");
 		}
 		
-		// insert the book if the id is 0
+		// insert a new book, update current ones
 		if(id == 0)
 		{
 			id = gateway.insertBook(this);
@@ -101,7 +107,6 @@ public class Book
 	 */
 	public boolean titleIsValid()
 	{
-		// white list valid data, don't check for the entire set of invalid data
 		if(!(title.length() >= 1 && title.length() <= 255))
 		{
 			return false;
@@ -196,25 +201,39 @@ public class Book
 	{
 		this.title = title;
 	}
-	public String getSummary() {
+	
+	public String getSummary() 
+	{
 		return summary;
 	}
-	public void setSummary(String summary) {
+	
+	public void setSummary(String summary) 
+	{
 		this.summary = summary;
 	}
-	public int getYearPublished() {
+	
+	public int getYearPublished() 
+	{
 		return yearPublished;
 	}
-	public void setYearPublished(int yearPublished) {
+	
+	public void setYearPublished(int yearPublished) 
+	{
 		this.yearPublished = yearPublished;
 	}
-	public String getIsbn() {
+	
+	public String getIsbn()
+	{
 		return isbn;
 	}
-	public void setIsbn(String isbn) {
+	
+	public void setIsbn(String isbn)
+	{
 		this.isbn = isbn;
 	}
-	public LocalDateTime getDateAdded() {
+	
+	public LocalDateTime getDateAdded() 
+	{
 		return dateAdded;
 	} 
 	
@@ -228,12 +247,13 @@ public class Book
 		}
 	}
 	
-	
-	public BookTableGateway getGateway() {
+	public BookTableGateway getGateway() 
+	{
 		return gateway;
 	}
 
-	public void setGateway(BookTableGateway gateway) {
+	public void setGateway(BookTableGateway gateway) 
+	{
 		this.gateway = gateway;
 	}
 

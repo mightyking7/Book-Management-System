@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 /**
- * CS 4743 Assignment 1 by Isaac Buitrago and Hercules Hjalmarsson
+ * CS 4743 Assignment 2 by Isaac Buitrago and Hercules Hjalmarsson
  * 
  * Launcher for Book inventory system
  * 
