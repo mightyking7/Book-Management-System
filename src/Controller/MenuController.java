@@ -3,17 +3,12 @@ package Controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import Database.BookTableGateway;
 import Model.Book;
 import View.ViewManager;
 
@@ -22,11 +17,8 @@ import View.ViewManager;
  * 
  * Controller for the system's main menu
  */
-public class MenuController implements Initializable
-{
-	@FXML
-	private BorderPane rootNode;
-	
+public class MenuController extends Controller
+{	
 	@FXML
 	private MenuBar menuBar;
 	
@@ -39,7 +31,14 @@ public class MenuController implements Initializable
 	@FXML
 	private MenuItem addBookMenuItem;
 	
-	private static Logger logger = LogManager.getLogger(MenuController.class);
+	
+	/**
+	 * Constructor
+	 */
+	public MenuController()
+	{
+		super();
+	}
 	
 	/**
 	 * Initializes the menu controller 
@@ -60,8 +59,6 @@ public class MenuController implements Initializable
 		
 		URL viewUrl;				// View URL to load for a menu item
 		
-		ViewManager viewManager;	// ViewManager instance to switch views
-		
 		if(event.getSource() == quitMenuItem)
 		{
 			logger.info("Exiting the system");
@@ -79,7 +76,9 @@ public class MenuController implements Initializable
 			{
 				viewUrl = this.getClass().getResource("/View/BookListView.fxml");
 				
-				viewManager.switchView(viewUrl , new BookListController());
+				ObservableList<Book> books  = FXCollections.observableList(bookTableGateway.getBooks());
+				
+				viewManager.switchView(viewUrl , new BookListController(books));
 			} 
 			catch(IOException e)
 			{
@@ -105,9 +104,7 @@ public class MenuController implements Initializable
 			{
 				viewUrl = this.getClass().getResource("/View/BookDetailedView.fxml");
 				
-				BookTableGateway gateway = new BookTableGateway();
-				
-				viewManager.switchView(viewUrl, new BookDetailController(new Book(), gateway));
+				viewManager.switchView(viewUrl, new BookDetailController(new Book()));
 				
 			} catch(IOException e)
 			{

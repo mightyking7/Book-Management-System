@@ -8,15 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import Database.BookTableGateway;
 import Model.Book;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -24,16 +19,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
-public class BookDetailController implements Initializable 
-{
-	
-	private static Logger logger;
-	
+public class BookDetailController extends Controller
+{	
 	private Image image;
 	
 	private Book book;
-	
-	private BookTableGateway bookGateway;
 	
 	@FXML
 	private TextField titleFieldID;
@@ -61,11 +51,11 @@ public class BookDetailController implements Initializable
 	 * Also gets an instance of the bookGateway
 	 * @param book
 	 */
-	public BookDetailController(Book book, BookTableGateway bookGateway)
+	public BookDetailController(Book book)
 	{
-		this.image = new Image("/View/" + "Book-2.png");
+		super();
 		
-		this.bookGateway = bookGateway;
+		this.image = new Image("/View/" + "Book-2.png");
 		 
 		this.book = book;
 	}
@@ -100,7 +90,7 @@ public class BookDetailController implements Initializable
 			   try
 			   {
 				   // set the gateway for the model
-				   book.setGateway(bookGateway);
+				   book.setGateway(bookTableGateway);
 				   
 				   // set the current book values
 				   book.setTitle(titleFieldID.getText());
@@ -113,40 +103,42 @@ public class BookDetailController implements Initializable
 				   
 				   logger.info(String.format("%s saved to the database", book.getTitle()));
 				   
-				   Alert alert = new Alert(AlertType.INFORMATION);
-			       alert.setTitle("Saving Book");
+			       infoAlert.setTitle("Saving Book");
 			 
-			       alert.setHeaderText(null);
-			       alert.setContentText("Book was saved successfully!");
+			       infoAlert.setHeaderText(null);
+			       
+			       infoAlert.setContentText("Book was saved successfully!");
 			 
-			       alert.showAndWait();
+			       infoAlert.showAndWait();
 				   
 			   }
 			   catch (SQLException exception)
 			   {
 				   logger.error(String.format("%s: %s, Save aborted!", "SQL save error",exception.getMessage()));   
 				   
-				   Alert alert = new Alert(AlertType.ERROR);
-			       alert.setTitle("Saving Book");
+			       errorAlert.setTitle("Saving Book");
 			 
-			       alert.setHeaderText(null);
+			       errorAlert.setHeaderText(null);
+			       
 			       String alertmsg = ("SQL save error: " + exception.getMessage() + ", Save aborted!");
-			       alert.setContentText(alertmsg);
+			       
+			       errorAlert.setContentText(alertmsg);
 			 
-			       alert.showAndWait();
+			       errorAlert.showAndWait();
 			   }
 			   catch (Exception exception)
 			   {
 				   logger.error(String.format("%s: %s, Save aborted!", "Save error",exception.getMessage()));   
 				   
-				   Alert alert = new Alert(AlertType.ERROR);
-			       alert.setTitle("Saving Book");
+			       errorAlert.setTitle("Saving Book");
 			 
-			       alert.setHeaderText(null);
-			       String alertmsg = ("Unexpected save error: " + exception.getMessage() + ", Save aborted!");
-			       alert.setContentText(alertmsg);
+			       errorAlert.setHeaderText(null);
+			       
+			       String errormsg = ("Unexpected save error: " + exception.getMessage() + ", Save aborted!");
+			       
+			       errorAlert.setContentText(errormsg);
 			 
-			       alert.showAndWait();
+			       errorAlert.showAndWait();
 			   }
 		   } 
 	 }; 

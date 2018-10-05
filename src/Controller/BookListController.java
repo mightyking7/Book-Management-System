@@ -8,19 +8,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import Database.BookTableGateway;
-import Database.DBConnection;
 import Model.Book;
 
 /**
@@ -32,54 +23,33 @@ import Model.Book;
  *@author isaacbuitrago
  */
 
-public class BookListController implements Initializable
+public class BookListController extends Controller
 {
 
 	@FXML
-	private Button deleteButtonID;
+	private Button deleteButtonID;		// button to delete a book
 	
 	@FXML
-	private ListView<Book> bookList;			// list of books to render
+	private ListView<Book> bookList;	// list of books from Database
 	
-	@FXML
-	private BorderPane rootNode;
+	private ObservableList<Book> books;	// list of books to render
 	
-	private ObservableList<Book> books;
-	
-	private static Logger logger;
-	
-	private static final int NUM_CLICKS = 2;
-	
-	private DBConnection conn;
-	
-	private BookTableGateway bookGateway;
+	private static final int NUM_CLICKS = 2;	// click count for selecting book
+
 	
 	// Cross cutting concern: concept or issue that affects multiple modules of the software
 	// dependencies are wrapped all over the place, can be difficult to reason, check, and design
 	
 	/**
 	 * Constructor for logger, creating a DB instance and fetch for all DB books
+	 * 
+	 * @param books ObservableList of books to bind to a ListView
 	 */
-	public BookListController()
+	public BookListController(ObservableList<Book> books)
 	{	
-		logger = LogManager.getLogger(BookListController.class);
+		super();
 		
-		try 
-		{
-			// obtain instance to the database
-			conn = DBConnection.getInstance();
-						
-			bookGateway = new BookTableGateway(conn.getConnection());
-			
-			books = FXCollections.observableList(bookGateway.getBooks());
-			
-		} catch (SQLException e)
-		{
-			String error = String.format("Could not establish connection to the database %s", e.getMessage());
-			logger.error(error);
-		}
-		
-		
+		this.books = books;
 	}
 	
 	/**
@@ -102,8 +72,6 @@ public class BookListController implements Initializable
 			{
 				Book selectedBook;
 				
-				ViewManager view;
-				
 				if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == NUM_CLICKS)
 				{
 					try {
@@ -116,12 +84,12 @@ public class BookListController implements Initializable
 						// Retrieve the view manager to show details about the book
 						URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
 						
-						view = ViewManager.getInstance();
+						viewManager = ViewManager.getInstance();
 						
-						view.setCurrentPane(rootNode);
+						viewManager.setCurrentPane(rootNode);
 						
 						// pass in the selected book model into the controller
-						view.switchView(bookDetails, new BookDetailController(selectedBook, bookGateway));
+						viewManager.switchView(bookDetails, new BookDetailController(selectedBook));
 						
 					} catch(Exception e)
 					{
@@ -151,9 +119,9 @@ public class BookListController implements Initializable
 					   Book book = bookList.getSelectionModel().getSelectedItem();
 					   System.out.println("Book to be deleted: " + bookList.getSelectionModel().getSelectedItem());
 					   //Deletes book
-					   bookGateway.deleteMethod(book);
+					   bookTableGateway.deleteMethod(book);
 					   //Update book list after deletion
-					   books = FXCollections.observableArrayList(bookGateway.getBooks());
+					   books = FXCollections.observableArrayList(bookTableGateway.getBooks());
 					   bookList.setItems(books);
 				   }
 				   
@@ -162,14 +130,15 @@ public class BookListController implements Initializable
 			   {
 				   logger.error(String.format("%s: %s", "Couldn't delete book error", exception.getMessage()));
 				   
-				   Alert alert = new Alert(AlertType.ERROR);
-			       alert.setTitle("Deleting Book");
+			       errorAlert.setTitle("Deleting Book");
 			 
-			       alert.setHeaderText(null);
+			       errorAlert.setHeaderText(null);
+			       
 			       String alertmsg = ("SQL delete error: " + exception.getMessage() + ", delete aborted!");
-			       alert.setContentText(alertmsg);
+			       
+			       errorAlert.setContentText(alertmsg);
 			 
-			       alert.showAndWait();
+			       errorAlert.showAndWait();
 			   }
 
 			   logger.info(String.format("%s", "delete button pressed"));
