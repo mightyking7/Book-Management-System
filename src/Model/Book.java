@@ -3,10 +3,15 @@ package Model;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
-
 import Database.BookTableGateway;
 
 
+/**
+ * Book has an id, title, summary, year of publication,
+ * isbn, and a date that is was entered in the system.
+ *
+ *
+ */
 public class Book 
 {	
 	private int id;

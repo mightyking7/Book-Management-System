@@ -23,7 +23,9 @@ public class BookTableGateway
 	
 	private PreparedStatement stmt;	// statement to execute
 
-	private ResultSet rs;			// result returned from MySQL
+	private ResultSet result;		// result returned from MySQL
+	
+	private String sql;				// SQL statement to execute against the database
 	
 	
 	/**
@@ -51,29 +53,29 @@ public class BookTableGateway
 	 */
 	public List<Book> getBooks() throws SQLException
 	{
-		String sql = "select * from Books";
+		sql = "select * from Books";
 		
 		ArrayList<Book> books = new ArrayList<Book>();
 		
 		stmt = conn.prepareStatement(sql);
 		
-		rs = stmt.executeQuery();
+		result = stmt.executeQuery();
 		
-		while(rs.next())
+		while(result.next())
 		{
 			Book book = new Book();
 			
-			book.setId(rs.getInt("id"));
+			book.setId(result.getInt("id"));
 			
-			book.setTitle(rs.getString("title"));
+			book.setTitle(result.getString("title"));
 			
-			book.setSummary(rs.getString("summary"));
+			book.setSummary(result.getString("summary"));
 			
-			book.setYearPublished(rs.getInt("year_published"));
+			book.setYearPublished(result.getInt("year_published"));
 			
-			book.setIsbn(rs.getString("isbn"));
+			book.setIsbn(result.getString("isbn"));
 			
-			LocalDateTime dateAdded = rs.getTimestamp("date_added").toLocalDateTime();
+			LocalDateTime dateAdded = result.getTimestamp("date_added").toLocalDateTime();
 			
 			book.setDateAdded(dateAdded);
 			
@@ -92,13 +94,14 @@ public class BookTableGateway
 	public void updateBook(Book book) throws SQLException
 	{
 		
-			String query = "UPDATE Books "
-	                + "SET title = ? "
-	                + ",summary = ? "
-	                + ",year_published = ? "
-	                + ",isbn = ? "
-	                + "WHERE id = " + book.getId();
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			sql = "UPDATE Books "
+	               + "SET title = ? "
+	               + ",summary = ? "
+	               + ",year_published = ? "
+	               + ",isbn = ? "
+	               + "WHERE id = " + book.getId();
+			
+			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.setString(1, book.getTitle());
 			preparedStmt.setString(2, book.getSummary());
 			preparedStmt.setInt(3, book.getYearPublished());
@@ -109,8 +112,9 @@ public class BookTableGateway
 	
 	/**
 	 * Used to insert a new book into the database
+	 * and set the date added timestamp on the book.
 	 * If the book already has an id, it is updated.
-	 * Returns the unique id of the new book
+	 * Returns the id of the new book
 	 * 
 	 * @param book
 	 * @throws SQLException if an error occurred while interacting with the database
@@ -119,8 +123,9 @@ public class BookTableGateway
 	{
 		ResultSet generatedKeys;	// id of the new book
 		
-		String sql = "insert into Books (title, summary, year_published, isbn) values(?, ?, ?, ?)";
+		sql = "insert into Books (title, summary, year_published, isbn) values(?, ?, ?, ?)";
 		
+		int bookId;
 		
 		// if the book does not have an id, it should be updated
 		if(!(book.getId() == 0))
@@ -144,7 +149,40 @@ public class BookTableGateway
 		
 		generatedKeys.next();
 		
-		return(generatedKeys.getInt(1));
+		bookId = generatedKeys.getInt(1);
+		
+		LocalDateTime dateAdded = getBookDateAddedTime(bookId);
+		
+		// set the date added time stamp in the book model
+		book.setDateAdded(dateAdded);
+		
+		return(bookId);
+	}
+	
+	
+	/**
+	 * Used to get the date added timestamp for a book with the given id.
+	 * 
+	 * @param bookId  of the book to retrieve the date added timestamp
+	 * @return LocalDateTime that the book was added to the database
+	 * @throws SQLException if a database access error occurs or 
+	 * 		   method called on a closed connection.
+	 */
+	public LocalDateTime getBookDateAddedTime(int bookId) throws SQLException
+	{
+		sql = "select date_added from Books where id = ?";
+		
+		stmt = conn.prepareStatement(sql);
+		
+		stmt.setInt(1, bookId);
+		
+		result = stmt.executeQuery();
+		
+		result.next();
+		
+		LocalDateTime dateAdded = result.getTimestamp("date_added").toLocalDateTime();
+		
+		return(dateAdded);
 	}
 	
 	/**
@@ -155,9 +193,8 @@ public class BookTableGateway
 	
 	public void deleteMethod(Book book) throws SQLException
 	{
-		
-			String query = "DELETE FROM Books WHERE id = " + book.getId();
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			sql = "DELETE FROM Books WHERE id = " + book.getId();
+			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.executeUpdate();
 	}
 	
