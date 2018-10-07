@@ -84,6 +84,14 @@ public class BookDetailController extends Controller
 	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() { 
 		   @Override 
 		   public void handle(MouseEvent e) { 
+			   
+			   String bookTitle = titleFieldID.getText();
+			   
+			   String summary = SummaryFieldID.getText();
+			   
+			   int yearPublished = Integer.parseInt(yearPublishedFieldID.getText());
+			   
+			   String isbn = isbnFieldID.getText();
 
 			   logger.info(String.format("%s", "Save button pressed"));
 			   
@@ -92,11 +100,43 @@ public class BookDetailController extends Controller
 				   // set the gateway for the model
 				   book.setGateway(bookTableGateway);
 				   
-				   // set the current book values
-				   book.setTitle(titleFieldID.getText());
-				   book.setSummary(SummaryFieldID.getText());
-				   book.setYearPublished(Integer.parseInt(yearPublishedFieldID.getText()));
-				   book.setIsbn(isbnFieldID.getText());
+				   // validate user input
+				   
+				   if(!(bookTitle.length() >= 1 && bookTitle.length() <= 255))
+				   {
+					   String errorMessage = String.format("Title cannot be longer than %d characters, "
+					   		+ "it is %d characters", 255, bookTitle.length());
+					   
+					   throw new Exception(errorMessage);
+				   }
+				   else if( !(summary.length() <= 65536))
+				   {
+					   String errorMessage = String.format("Summary cannot be longer than %d characters, "
+						   		+ "it is %d characters", 65536, summary.length());
+					   
+						   throw new Exception(errorMessage);
+				   }
+				   else if(yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
+				   {
+					   int currentYear = (int)Calendar.getInstance().get(Calendar.YEAR);
+					   
+					   String errorMessage = String.format("Year published cannot be after %d, ", currentYear);
+					   
+						   throw new Exception(errorMessage);
+				   }
+				   else if(!(isbn.length() <= 13))
+				   {
+					   String errorMessage = String.format("The book Isbn cannot be longer than %d characters, "
+					   		+ "it is currently %d characters", 13, isbn.length());
+					   
+					   throw new Exception(errorMessage);
+				   }
+				   
+				   // copy values to original model
+				   book.setTitle(bookTitle);
+				   book.setSummary(summary);
+				   book.setYearPublished(yearPublished);
+				   book.setIsbn(isbn);
 				   
 				   // save the book
 				   book.save();
