@@ -1,14 +1,25 @@
 package Controller;
 
+
+import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
+
+import Model.AuditTrailEntry;
 import Model.Book;
+import View.ViewManager;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
@@ -44,6 +55,9 @@ public class BookDetailController extends Controller
 	private Button saveButtonID;
 	
 	@FXML
+	private Button ViewAuditTrailButton;
+	
+	@FXML
 	private ImageView imageBoxID;
 	
 	/**
@@ -73,9 +87,60 @@ public class BookDetailController extends Controller
 		
 		imageBoxID.setImage(image);
 		
+		ViewAuditTrailButton.addEventFilter(MouseEvent.MOUSE_CLICKED, viewAuditTrail);
+		
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, save);
 
 	}
+	
+	/**
+	 * Event handler for the viewAuditTrail button when viewing a book
+	 */
+	
+	EventHandler<MouseEvent> viewAuditTrail = new EventHandler<MouseEvent>() { 
+		   @Override 
+		   public void handle(MouseEvent e) { 
+			   
+			   //Test
+			   ArrayList<AuditTrailEntry> TtestEntries = new ArrayList<AuditTrailEntry>();
+			   AuditTrailEntry entry = new AuditTrailEntry();
+			   entry.setID(22);
+			   entry.setMessage("test");
+			   entry.setDateAdded(null);
+			   LocalDate currentDate = LocalDate.now(); 
+			   LocalTime currentTime = LocalTime.now();
+			   LocalDateTime date = LocalDateTime.of(currentDate, currentTime);
+			   entry.setDateAdded(date);
+			   TtestEntries.add(entry);
+			   ObservableList<AuditTrailEntry> testEntries = FXCollections.observableList(TtestEntries);
+			   //end test
+			   
+			   //Gets the viewManager instance and sets this pane to be the current viewManage pane
+			   viewManager = ViewManager.getInstance();
+			   viewManager.setCurrentPane(viewManager.getCurrentPane());
+				
+			   //Gets the new view to be displayed and passes objects through the AuditTrailController controller constructor
+				try 
+				{
+					URL viewUrl = this.getClass().getResource("/View/AuditTrailView.fxml");
+					viewManager.switchView(viewUrl, new AuditTrailController(book,testEntries));
+					
+				} catch(IOException et)
+				{
+					logger.error(this.getClass().getName() + ":" + et.getMessage());
+				}
+				catch(NullPointerException et)
+				{
+					logger.error(this.getClass().getName()+ ":" + et.getMessage());
+				}
+				catch(Exception et)
+				{
+					logger.error(this.getClass().getName() + ":" + et.getMessage());
+				}
+			   
+		   }
+		   
+	};
 	
 	/**
 	 * Save button used to update a book in the database and local memory by updating the book object and calling the UpdateBook function
