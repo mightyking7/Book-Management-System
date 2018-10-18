@@ -77,7 +77,11 @@ public class BookTableGateway
 			
 			LocalDateTime dateAdded = result.getTimestamp("date_added").toLocalDateTime();
 			
+			LocalDateTime lastModified = result.getTimestamp("last_modified").toLocalDateTime();
+			
 			book.setDateAdded(dateAdded);
+			
+			book.setLastModified(lastModified);
 			
 			books.add(book);	
 		}
@@ -93,13 +97,13 @@ public class BookTableGateway
 	
 	public void updateBook(Book book) throws SQLException
 	{
-		
+			
 			sql = "UPDATE Books "
 	               + "SET title = ? "
 	               + ",summary = ? "
 	               + ",year_published = ? "
 	               + ",isbn = ? "
-	               + "WHERE id = " + book.getId();
+	               + "WHERE id = " + book.getId() + "for update";
 			
 			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.setString(1, book.getTitle());
@@ -107,7 +111,24 @@ public class BookTableGateway
 			preparedStmt.setInt(3, book.getYearPublished());
 			preparedStmt.setString(4, book.getIsbn());
 			preparedStmt.executeUpdate();
-
+	}
+	
+	/**
+	 * Used to lock a book record in the database 
+	 * so only one user has access to it.
+	 * 
+	 * @param book record to lock in the database
+	 * @throws SQLException  if an error occurred in communicating with the database
+	 */
+	public void lockBook(Book book) throws SQLException
+	{
+		sql = "select (title, summary, year_published, "
+				+ "publisher_id, isbn, date_added, last_modified)"
+				+ "from Books for update";
+		
+		stmt = conn.prepareStatement(sql);
+		
+		stmt.executeQuery();
 	}
 	
 	/**
@@ -151,14 +172,46 @@ public class BookTableGateway
 		
 		bookId = generatedKeys.getInt(1);
 		
-		LocalDateTime dateAdded = getBookDateAddedTime(bookId);
+		ArrayList<LocalDateTime> timestamps = getBookTimeStamps(bookId);
 		
 		// set the date added time stamp in the book model
-		book.setDateAdded(dateAdded);
+		book.setDateAdded(timestamps.get(0));
+		
+		book.setLastModified(timestamps.get(1));
 		
 		return(bookId);
 	}
 	
+	
+	/**
+	 * Used to get the date added and last modified timestamps for a book with the given id.
+	 * 
+	 * @param  bookId  of the book to retrieve the timestamps for
+	 * @return ArrayList<LocalDateTime> of timestamps, where the first element is the 
+	 *     	   date added timestamp and the second is the last modified timestamp. 
+	 * @throws SQLException if a database access error occurs or method called on a closed connection.
+	 */
+	public ArrayList<LocalDateTime> getBookTimeStamps(int bookId) throws SQLException
+	{
+		
+		ArrayList<LocalDateTime> timestamps = new ArrayList<LocalDateTime>();
+		
+		sql = "select date_added, last_modified from Books where id = ?";
+		
+		stmt = conn.prepareStatement(sql);
+		
+		stmt.setInt(1, bookId);
+		
+		result = stmt.executeQuery();
+		
+		result.next();
+		
+		timestamps.add(result.getTimestamp("date_added").toLocalDateTime());
+		
+		timestamps.add(result.getTimestamp("last_modified").toLocalDateTime());
+		
+		return(timestamps);
+	}
 	
 	/**
 	 * Used to get the date added timestamp for a book with the given id.
@@ -168,7 +221,7 @@ public class BookTableGateway
 	 * @throws SQLException if a database access error occurs or 
 	 * 		   method called on a closed connection.
 	 */
-	public LocalDateTime getBookDateAddedTime(int bookId) throws SQLException
+	public LocalDateTime getBookModifiedTime(int bookId) throws SQLException
 	{
 		sql = "select date_added from Books where id = ?";
 		

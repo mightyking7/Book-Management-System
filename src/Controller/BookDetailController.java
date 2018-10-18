@@ -58,6 +58,12 @@ public class BookDetailController extends Controller
 		this.image = new Image("/View/" + "Book-2.png");
 		 
 		this.book = book;
+		
+		// lock existing books for editing
+		if(book.getId() > 0)
+		{
+			lockBook(book);
+		}
 	}
 	
 	/**
@@ -236,6 +242,25 @@ public class BookDetailController extends Controller
 		 this.SummaryFieldID.setText(summaryText);
 		 
 		 this.isbnFieldID.setText(isbnText);
+		 
+	 }
+	 
+	 /**
+	  * Used to lock a book that is being edited.
+	  * This is used to implement pessimistic locking.
+	  * 
+	  * @param book record to lock
+	  */
+	 private void lockBook(Book book)
+	 {
+		 try 
+		 { 
+			bookTableGateway.lockBook(book);
+			
+		 }catch (SQLException e) 
+		 {
+			handleDatabaseError(e);
+		 }
 		 
 	 }
 

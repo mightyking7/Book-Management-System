@@ -12,10 +12,8 @@ import javafx.scene.layout.*;
  * Aug 29, 2018
  * @author isaacbuitrago
  */
-
 public class ViewManager 
 {
-	
 	private static ViewManager instance;
 	
 	private BorderPane borderPane;
