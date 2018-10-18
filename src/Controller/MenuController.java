@@ -9,6 +9,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import Model.Book;
 import View.ViewManager;
 
@@ -23,6 +25,9 @@ public class MenuController extends Controller
 	private MenuBar menuBar;
 	
 	@FXML
+	private MenuItem homeMenuItem;
+	
+	@FXML
 	private MenuItem quitMenuItem;
 	
 	@FXML
@@ -30,6 +35,9 @@ public class MenuController extends Controller
 	
 	@FXML
 	private MenuItem addBookMenuItem;
+	
+	@FXML
+	private ImageView homeImageView;
 	
 	
 	/**
@@ -47,6 +55,8 @@ public class MenuController extends Controller
 	public void initialize(URL location, ResourceBundle resources) 
 	{
 		menuBar.setFocusTraversable(true);
+		
+		homeImageView.setImage(new Image("/View/books.jpg"));
 	}
 			
 		
@@ -59,7 +69,33 @@ public class MenuController extends Controller
 		
 		URL viewUrl;				// View URL to load for a menu item
 		
-		if(event.getSource() == quitMenuItem)
+		if(event.getSource() ==  homeMenuItem)
+		{
+//			viewManager = ViewManager.getInstance();
+//			
+//			// set the root node to manage
+//			viewManager.setCurrentPane(rootNode);
+//			
+//			try
+//			{
+//				viewUrl = this.getClass().getResource("/View/menu.fxml");
+//				
+//				viewManager.switchView(viewUrl , new MenuController());
+//			} 
+//			catch(IOException e)
+//			{
+//				logger.error(this.getClass().getName() + ":" + e.getMessage());
+//			}
+//			catch(NullPointerException e)
+//			{
+//				logger.error(this.getClass().getName()+ ":" + e.getMessage());
+//			}
+//			catch(Exception e)
+//			{
+//				logger.error(this.getClass().getName() + ":" + e.getMessage());
+//			}
+		}
+		else if(event.getSource() == quitMenuItem)
 		{
 			logger.info("Exiting the system");
 			
