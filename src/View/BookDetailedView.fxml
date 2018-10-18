@@ -25,6 +25,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Text fx:id="titleID" strokeType="OUTSIDE" strokeWidth="0.0" text="Title" wrappingWidth="27.0" />
@@ -37,11 +38,12 @@
                   <TextField fx:id="yearPublishedFieldID" prefHeight="27.0" prefWidth="137.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="isbnFieldID" prefHeight="27.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <TextField fx:id="dateAddedFieldID" editable="false" prefHeight="27.0" prefWidth="155.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Button fx:id="saveButtonID" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+                  <Button fx:id="saveButtonID" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </Button>
+                  <Button fx:id="ViewAuditTrailButton" mnemonicParsing="false" text="View Audit Trail" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                </children>
             </GridPane>
          </children>
