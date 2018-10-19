@@ -90,43 +90,61 @@ public class BookTableGateway
 	}
 	
 	/**
-	 * Used to update a book in the database through the model save function
-	 * creates a query request for the DB by getting the ID and updates the requested fields with the book object information
+	 * Used to update a book in the database through the model save function.
+	 * Creates a query request for the DB by getting the ID and updates the requested fields with the book object information.
+	 * After the transaction is complete, autocommit is turned back on.
 	 * @throws SQLException if an error occurred while interacting with the database
 	 */
-	
 	public void updateBook(Book book) throws SQLException
 	{
-			
 			sql = "UPDATE Books "
 	               + "SET title = ? "
 	               + ",summary = ? "
 	               + ",year_published = ? "
 	               + ",isbn = ? "
-	               + "WHERE id = " + book.getId() + "for update";
+	               + "WHERE id = ?";
 			
 			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.setString(1, book.getTitle());
 			preparedStmt.setString(2, book.getSummary());
 			preparedStmt.setInt(3, book.getYearPublished());
 			preparedStmt.setString(4, book.getIsbn());
-			preparedStmt.executeUpdate();
+			preparedStmt.setInt(5, book.getId());
+			
+			try {
+				
+				preparedStmt.executeUpdate();
+			
+			} catch(SQLException e)
+			{
+				conn.rollback();
+				
+				throw e;
+			} finally {
+				
+				// complete the transaction
+				conn.setAutoCommit(true);
+			}
 	}
 	
 	/**
 	 * Used to lock a book record in the database 
-	 * so only one user has access to it.
+	 * so that only one user has access to it.
+	 * This turns off auto commit, any users of this method
+	 * should remember to turn auto commit on after a transaction.
 	 * 
 	 * @param book record to lock in the database
 	 * @throws SQLException  if an error occurred in communicating with the database
 	 */
 	public void lockBook(Book book) throws SQLException
 	{
-		sql = "select (title, summary, year_published, "
-				+ "publisher_id, isbn, date_added, last_modified)"
-				+ "from Books for update";
+		sql = "select title from Books where id = ? for update";
+		
+		conn.setAutoCommit(false);
 		
 		stmt = conn.prepareStatement(sql);
+		
+		stmt.setInt(1, book.getId());
 		
 		stmt.executeQuery();
 	}
@@ -217,7 +235,7 @@ public class BookTableGateway
 	 * Used to get the date added timestamp for a book with the given id.
 	 * 
 	 * @param bookId  of the book to retrieve the date added timestamp
-	 * @return LocalDateTime that the book was added to the database
+	 * @return LocalDateTime that the book was added to the database, null if the result was empty.
 	 * @throws SQLException if a database access error occurs or 
 	 * 		   method called on a closed connection.
 	 */
@@ -231,9 +249,12 @@ public class BookTableGateway
 		
 		result = stmt.executeQuery();
 		
-		result.next();
+		LocalDateTime dateAdded = null;
 		
-		LocalDateTime dateAdded = result.getTimestamp("date_added").toLocalDateTime();
+		if(result.next())
+		{
+			dateAdded = result.getTimestamp("date_added").toLocalDateTime();
+		}
 		
 		return(dateAdded);
 	}
@@ -249,6 +270,19 @@ public class BookTableGateway
 			sql = "DELETE FROM Books WHERE id = " + book.getId();
 			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.executeUpdate();
+	}
+
+	/**
+	 * Fetches the last modified timestamp of a book in the database
+	 * and determines if it's locked by another transaction.
+	 * 
+	 * @param book to verify if locked 
+	 * @return true if the book is locked by another transaction, false otherwise.
+	 * @throws SQLException 
+	 */
+	public boolean checkBookLocked(Book book) throws SQLException 
+	{	
+		return ( getBookModifiedTime(book.getId()) == null);
 	}
 	
 }

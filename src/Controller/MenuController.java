@@ -71,29 +71,29 @@ public class MenuController extends Controller
 		
 		if(event.getSource() ==  homeMenuItem)
 		{
-			viewManager = ViewManager.getInstance();
-			
-			// set the root node to manage
-			viewManager.setCurrentPane(rootNode);
-			
-			try
-			{
-				viewUrl = this.getClass().getResource("/View/menu.fxml");
-				
-				viewManager.switchView(viewUrl , new MenuController());
-			} 
-			catch(IOException e)
-			{
-				logger.error(this.getClass().getName() + ":" + e.getMessage());
-			}
-			catch(NullPointerException e)
-			{
-				logger.error(this.getClass().getName()+ ":" + e.getMessage());
-			}
-			catch(Exception e)
-			{
-				logger.error(this.getClass().getName() + ":" + e.getMessage());
-			}
+//			viewManager = ViewManager.getInstance();
+//			
+//			// set the root node to manage
+//			viewManager.setCurrentPane(rootNode);
+//			
+//			try
+//			{
+//				viewUrl = this.getClass().getResource("/View/menu.fxml");
+//				
+//				viewManager.switchView(viewUrl , new MenuController());
+//			} 
+//			catch(IOException e)
+//			{
+//				logger.error(this.getClass().getName() + ":" + e.getMessage());
+//			}
+//			catch(NullPointerException e)
+//			{
+//				logger.error(this.getClass().getName()+ ":" + e.getMessage());
+//			}
+//			catch(Exception e)
+//			{
+//				logger.error(this.getClass().getName() + ":" + e.getMessage());
+//			}
 		}
 		else if(event.getSource() == quitMenuItem)
 		{

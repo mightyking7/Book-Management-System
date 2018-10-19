@@ -72,12 +72,6 @@ public class BookDetailController extends Controller
 		this.image = new Image("/View/" + "Book-2.png");
 		 
 		this.book = book;
-		
-		// lock existing books for editing
-		if(book.getId() > 0)
-		{
-			lockBook(book);
-		}
 	}
 	
 	/**
@@ -91,12 +85,32 @@ public class BookDetailController extends Controller
 		// set GUI field values to appropriate model field values
 		setBookDetails(this.book);
 		
+		// set the image of the book
 		imageBoxID.setImage(image);
 		
+		// check if a book is being edited
+		if(checkIfLocked())
+		{
+			String message = String.format("'%s' is currently being edited, please try later.", book.getTitle());
+			
+			errorAlert.setTitle("Book locked");
+			
+			errorAlert.setHeaderText("Checked out Book");
+			
+			errorAlert.setContentText(message);
+			
+			errorAlert.showAndWait();
+		}
+		// lock existing books for update
+		else if(book.getId() > 0)
+		{
+			lockBook(book);
+		}
+		
+		// add the event handler for the audit trail button
 		ViewAuditTrailButton.addEventFilter(MouseEvent.MOUSE_CLICKED, viewAuditTrail);
 		
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, save);
-
 	}
 	
 	/**
@@ -327,6 +341,23 @@ public class BookDetailController extends Controller
 			handleDatabaseError(e);
 		 }
 		 
+	 }
+	 
+	 /**
+	  * Used to verify if a book is locked by another user.
+	  */
+	 private boolean checkIfLocked()
+	 {
+		 try {
+			 
+			return (bookTableGateway.checkBookLocked(book));
+			
+		} catch (SQLException e){
+			
+			handleDatabaseError(e);
+		}
+		 
+		return false;
 	 }
 
 }
