@@ -27,6 +27,8 @@ public class Book
 	
 	private LocalDateTime dateAdded;
 	
+	private LocalDateTime lastModified;
+	
 	private boolean dateWasSet;
 	
 	private BookTableGateway gateway;
@@ -49,6 +51,8 @@ public class Book
 		this.dateAdded = null;
 		
 		this.dateWasSet = false;
+		
+		this.lastModified = null;
 	}
 	
 	/**
@@ -258,6 +262,16 @@ public class Book
 		}
 	}
 	
+	public LocalDateTime getLastModified() 
+	{
+		return lastModified;
+	}
+
+	public void setLastModified(LocalDateTime lastModified) 
+	{
+		this.lastModified = lastModified;
+	}
+
 	public BookTableGateway getGateway() 
 	{
 		return gateway;
