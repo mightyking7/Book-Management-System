@@ -247,8 +247,6 @@ public class BookTableGateway
 		
 		stmt.setInt(1, bookId);
 		
-		result = stmt.executeQuery();
-		
 		LocalDateTime dateAdded = null;
 		
 		if(result.next())

@@ -3,7 +3,6 @@ package Controller;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
-
 import Model.AuditTrailEntry;
 import Model.Book;
 import View.ViewManager;
@@ -88,24 +86,24 @@ public class BookDetailController extends Controller
 		// set the image of the book
 		imageBoxID.setImage(image);
 		
-		// check if a book is being edited
-		if(checkIfLocked())
-		{
-			String message = String.format("'%s' is currently being edited, please try later.", book.getTitle());
-			
-			errorAlert.setTitle("Book locked");
-			
-			errorAlert.setHeaderText("Checked out Book");
-			
-			errorAlert.setContentText(message);
-			
-			errorAlert.showAndWait();
-		}
-		// lock existing books for update
-		else if(book.getId() > 0)
-		{
-			lockBook(book);
-		}
+//		// check if a book is being edited
+//		if(checkIfLocked())
+//		{
+//			String message = String.format("'%s' is currently being edited, please try later.", book.getTitle());
+//			
+//			errorAlert.setTitle("Book locked");
+//			
+//			errorAlert.setHeaderText("Checked out Book");
+//			
+//			errorAlert.setContentText(message);
+//			
+//			errorAlert.showAndWait();
+//		}
+//		// lock existing books for update
+//		else if(book.getId() > 0)
+//		{
+//			lockBook(book);
+//		}
 		
 		// add the event handler for the audit trail button
 		ViewAuditTrailButton.addEventFilter(MouseEvent.MOUSE_CLICKED, viewAuditTrail);
@@ -158,18 +156,18 @@ public class BookDetailController extends Controller
 					logger.error(this.getClass().getName() + ":" + et.getMessage());
 				}
 			   
-		   }
-		   
+		   }	   
 	};
 	
 	/**
 	 * Save button used to update a book in the database and local memory by updating the book object and calling the UpdateBook function
 	 * Catches and displays any exception thrown from the model
 	 */
-	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() { 
+	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() 
+	{ 
 		   @Override 
-		   public void handle(MouseEvent e) { 
-			   
+		   public void handle(MouseEvent e)
+		   {    
 			   String bookTitle = titleFieldID.getText();
 			   
 			   String summary = SummaryFieldID.getText();
