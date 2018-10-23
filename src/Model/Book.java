@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import Database.BookTableGateway;
+import javafx.collections.ObservableList;
 
 
 /**
@@ -178,6 +179,11 @@ public class Book
 		}
 		
 		return true;
+	}
+	
+	public ObservableList<AuditTrailEntry> getAuditTrail(BookTableGateway gateway) throws SQLException
+	{
+		return (ObservableList<AuditTrailEntry>) gateway.fetchAuditTrail(this);
 	}
 	
 	/**

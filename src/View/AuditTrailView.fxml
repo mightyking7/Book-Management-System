@@ -9,7 +9,7 @@
    <children>
       <AnchorPane layoutY="40.0" prefHeight="250.0" prefWidth="600.0">
          <children>
-            <ListView fx:id="AuditTrailModelList" prefHeight="250.0" prefWidth="600.0" />
+            <ListView fx:id="AuditTrailModelList" layoutY="31.0" prefHeight="219.0" prefWidth="600.0" />
          </children>
       </AnchorPane>
       <AnchorPane layoutX="200.0" layoutY="289.0" prefHeight="111.0" prefWidth="200.0">
@@ -17,9 +17,9 @@
             <Button fx:id="BackButton" layoutX="76.0" layoutY="42.0" mnemonicParsing="false" text="Back" />
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="41.0" prefWidth="600.0">
+      <AnchorPane prefHeight="71.0" prefWidth="600.0">
          <children>
-            <TextField fx:id="bookTitle" layoutX="14.0" layoutY="7.0" prefHeight="27.0" prefWidth="571.0" />
+            <TextField fx:id="bookTitle" layoutX="15.0" layoutY="36.0" prefHeight="27.0" prefWidth="571.0" />
          </children>
       </AnchorPane>
    </children>

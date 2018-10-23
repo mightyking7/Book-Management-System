@@ -101,42 +101,50 @@ public class BookDetailController extends Controller
 		   @Override 
 		   public void handle(MouseEvent e) { 
 			   
-			   //Test
-			   ArrayList<AuditTrailEntry> TtestEntries = new ArrayList<AuditTrailEntry>();
-			   AuditTrailEntry entry = new AuditTrailEntry();
-			   entry.setID(22);
-			   entry.setMessage("test");
-			   entry.setDateAdded(null);
-			   LocalDate currentDate = LocalDate.now(); 
-			   LocalTime currentTime = LocalTime.now();
-			   LocalDateTime date = LocalDateTime.of(currentDate, currentTime);
-			   entry.setDateAdded(date);
-			   TtestEntries.add(entry);
-			   ObservableList<AuditTrailEntry> testEntries = FXCollections.observableList(TtestEntries);
-			   //end test
-			   
-			   //Gets the viewManager instance and sets this pane to be the current viewManage pane
-			   viewManager = ViewManager.getInstance();
-			   viewManager.setCurrentPane(viewManager.getCurrentPane());
-				
-			   //Gets the new view to be displayed and passes objects through the AuditTrailController controller constructor
-				try 
-				{
-					URL viewUrl = this.getClass().getResource("/View/AuditTrailView.fxml");
-					viewManager.switchView(viewUrl, new AuditTrailController(book,testEntries));
+			   if(book.getId() != 0)
+			   {
+				 //Test
+				   ArrayList<AuditTrailEntry> TtestEntries = new ArrayList<AuditTrailEntry>();
+				   AuditTrailEntry entry = new AuditTrailEntry();
+				   entry.setID(22);
+				   entry.setMessage("test");
+				   entry.setDateAdded(null);
+				   LocalDate currentDate = LocalDate.now(); 
+				   LocalTime currentTime = LocalTime.now();
+				   LocalDateTime date = LocalDateTime.of(currentDate, currentTime);
+				   entry.setDateAdded(date);
+				   TtestEntries.add(entry);
+				   ObservableList<AuditTrailEntry> testEntries = FXCollections.observableList(TtestEntries);
+				   //end test
+				   
+				   //Gets the viewManager instance and sets this pane to be the current viewManage pane
+				   viewManager = ViewManager.getInstance();
+				   viewManager.setCurrentPane(viewManager.getCurrentPane());
 					
-				} catch(IOException et)
-				{
-					logger.error(this.getClass().getName() + ":" + et.getMessage());
-				}
-				catch(NullPointerException et)
-				{
-					logger.error(this.getClass().getName()+ ":" + et.getMessage());
-				}
-				catch(Exception et)
-				{
-					logger.error(this.getClass().getName() + ":" + et.getMessage());
-				}
+				   //Gets the new view to be displayed and passes objects through the AuditTrailController controller constructor
+					try 
+					{
+						URL viewUrl = this.getClass().getResource("/View/AuditTrailView.fxml");
+						viewManager.switchView(viewUrl, new AuditTrailController(book,testEntries));
+						
+					} catch(IOException et)
+					{
+						logger.error(this.getClass().getName() + ":" + et.getMessage());
+					}
+					catch(NullPointerException et)
+					{
+						logger.error(this.getClass().getName()+ ":" + et.getMessage());
+					}
+					catch(Exception et)
+					{
+						logger.error(this.getClass().getName() + ":" + et.getMessage());
+					}
+			   }
+			   else
+			   {
+				   logger.error("Cannot view Audit Trail of un-added books");
+			   }
+			   
 			   
 		   }
 		   
