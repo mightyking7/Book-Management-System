@@ -4,11 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import Model.AuditTrailEntry;
 import Model.Book;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * Sep 17, 2018
@@ -281,6 +286,33 @@ public class BookTableGateway
 	public boolean checkBookLocked(Book book) throws SQLException 
 	{	
 		return ( getBookModifiedTime(book.getId()) == null);
+	}
+	
+	public List<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
+	{
+		sql = "select book_id from book_audit_trail "
+				+ "WHERE id = " + book.getId();
+		
+		ArrayList<AuditTrailEntry> AtrailEntries = new ArrayList<AuditTrailEntry>();
+		
+		stmt = conn.prepareStatement(sql);
+		
+		result = stmt.executeQuery();
+		
+		while(result.next())
+		{
+			AuditTrailEntry ATE = new AuditTrailEntry();
+			
+			LocalDateTime dateAdded = result.getTimestamp("date_added").toLocalDateTime();
+			
+			ATE.setDateAdded(dateAdded);
+			
+			ATE.setMessage(result.getString("entry_msg"));
+			
+			AtrailEntries.add(ATE);	
+		}
+		   
+		return AtrailEntries;
 	}
 	
 }
