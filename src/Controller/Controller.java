@@ -81,6 +81,15 @@ public abstract class Controller implements Initializable
 	}
 	
 	/**
+	 * Determines if an editable view has changed
+	 * @return
+	 */
+	public boolean hasChanged()
+	{
+		return false;
+	}
+	
+	/**
 	 * Handles error when connecting or interacting with the database.
 	 * 
 	 * @param e exception returned from a Gateway

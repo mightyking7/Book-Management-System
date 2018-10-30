@@ -133,10 +133,9 @@ public class BookTableGateway
 	}
 	
 	/**
-	 * Used to lock a book record in the database 
-	 * so that only one user has access to it.
-	 * This turns off auto commit, any users of this method
-	 * should remember to turn auto commit on after a transaction.
+	 * Used to lock existing book records in the database.
+	 * Creates a transaction, sets auto commit to false.
+	 * Auto commit should be turned on at end of transaction.
 	 * 
 	 * @param book record to lock in the database
 	 * @throws SQLException  if an error occurred in communicating with the database
@@ -267,27 +266,19 @@ public class BookTableGateway
 	 * @return
 	 * @throws SQLException
 	 */
-	
 	public void deleteMethod(Book book) throws SQLException
 	{
 			sql = "DELETE FROM Books WHERE id = " + book.getId();
 			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.executeUpdate();
 	}
-
-	/**
-	 * Fetches the last modified timestamp of a book in the database
-	 * and determines if it's locked by another transaction.
-	 * 
-	 * @param book to verify if locked 
-	 * @return true if the book is locked by another transaction, false otherwise.
-	 * @throws SQLException 
-	 */
-	public boolean checkBookLocked(Book book) throws SQLException 
-	{	
-		return ( getBookModifiedTime(book.getId()) == null);
-	}
 	
+	/**
+	 * 
+	 * @param book
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
 	{
 		sql = "select book_id from book_audit_trail "

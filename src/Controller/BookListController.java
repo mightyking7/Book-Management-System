@@ -58,15 +58,16 @@ public class BookListController extends Controller
 	@Override
 	public void initialize(URL location, ResourceBundle resources)
 	{
-		
 		bookList.setItems(books);
 		
 		deleteButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, delete);
 		
 		// The book detail view should open when a list item is double clicked
-		
-		bookList.setOnMouseClicked(new EventHandler<MouseEvent>(){
-			
+		bookList.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{	
+			/**
+			 * 
+			 */
 			@Override
 			public void handle(MouseEvent event) 
 			{
@@ -74,8 +75,8 @@ public class BookListController extends Controller
 				
 				if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == NUM_CLICKS)
 				{
-					try {
-						
+					try 
+					{
 						selectedBook = bookList.getSelectionModel().getSelectedItem();
 						
 						// log the event
@@ -95,7 +96,6 @@ public class BookListController extends Controller
 					{
 						logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
 					}
-				
 				}
 			}
 		});

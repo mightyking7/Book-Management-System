@@ -5,6 +5,8 @@ import java.net.URL;
 import Controller.Controller;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 
 /**
@@ -17,6 +19,14 @@ public class ViewManager
 	private static ViewManager instance;
 	
 	private BorderPane borderPane;
+	
+	private Controller controller;	// current controller 
+	
+	private boolean viewEdited;		// flag on if view was edited
+	
+	private boolean viewSaved;  	// flag on is save action invoked
+	
+	private Alert prompt;			// prompt to save, exit, or cancel
 	
 	/**
 	 * Constructor
@@ -70,6 +80,12 @@ public class ViewManager
 	{
 		 FXMLLoader loader = new FXMLLoader(parent);
 		 
+		 // set current controller
+		 this.controller = controller;
+		 
+		 // check if the controller has an editable view
+		 checkIfSaved();
+		 
 		 loader.setController(controller);
 		 
 		 Parent parentNode = loader.load();
@@ -82,6 +98,38 @@ public class ViewManager
 		
 		borderPane.setCenter(parentNode);
 	}
+	
+	public void checkIfSaved()
+	{
+		if(controller.hasChanged())
+		{
+			prompt = new Alert(AlertType.INFORMATION);
+			
+			prompt.setHeaderText("Unsaved Changes");
+			
+			prompt.setContentText("Would you like to save your changes?");
+			
+			prompt.showAndWait();
+		}
+	}
 
+	public boolean isViewEdited() 
+	{
+		return viewEdited;
+	}
+
+	public void setViewEdited(boolean viewEdited) {
+		this.viewEdited = viewEdited;
+	}
+
+	public boolean isViewSaved() {
+		return viewSaved;
+	}
+
+	public void setViewSaved(boolean viewSaved) {
+		this.viewSaved = viewSaved;
+	}
+	
+	
 
 }
