@@ -26,24 +26,26 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Text fx:id="titleID" strokeType="OUTSIDE" strokeWidth="0.0" text="Title" wrappingWidth="27.0" />
                   <Text fx:id="summaryID" strokeType="OUTSIDE" strokeWidth="0.0" text="Summary" wrappingWidth="58.0" GridPane.rowIndex="1" />
                   <Text fx:id="yearPublishedID" strokeType="OUTSIDE" strokeWidth="0.0" text="Year Published" wrappingWidth="92.0" GridPane.rowIndex="2" />
                   <Text fx:id="isbnID" strokeType="OUTSIDE" strokeWidth="0.0" text="ISBN" wrappingWidth="35.0" GridPane.rowIndex="3" />
-                  <Text fx:id="dateAddedID" strokeType="OUTSIDE" strokeWidth="0.0" text="Date Added" wrappingWidth="76.0" GridPane.rowIndex="4" />
+                  <Text fx:id="dateAddedID" strokeType="OUTSIDE" strokeWidth="0.0" text="Date Added" wrappingWidth="76.0" GridPane.rowIndex="5" />
                   <TextField fx:id="titleFieldID" prefHeight="27.0" prefWidth="200.0" GridPane.columnIndex="1" />
                   <TextArea fx:id="SummaryFieldID" prefHeight="62.0" prefWidth="182.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="yearPublishedFieldID" prefHeight="27.0" prefWidth="137.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="isbnFieldID" prefHeight="27.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <TextField fx:id="dateAddedFieldID" editable="false" prefHeight="27.0" prefWidth="155.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Button fx:id="saveButtonID" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+                  <TextField fx:id="dateAddedFieldID" editable="false" prefHeight="27.0" prefWidth="155.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Button fx:id="saveButtonID" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="ViewAuditTrailButton" mnemonicParsing="false" text="View Audit Trail" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                  <Button fx:id="ViewAuditTrailButton" mnemonicParsing="false" text="View Audit Trail" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+                  <ComboBox maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
             </GridPane>
          </children>
