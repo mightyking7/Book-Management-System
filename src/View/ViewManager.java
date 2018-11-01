@@ -2,12 +2,15 @@ package View;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
+
 import Controller.Controller;
 import Controller.EditableView;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.*;
 
 /**
@@ -23,8 +26,6 @@ public class ViewManager
 	private BorderPane borderPane;
 	
 	private Controller lastController;		// last controller used 
-	
-	private Controller currentController;	// current controller to use
 	
 	private Alert prompt;					// prompt to save, exit, or cancel
 	
@@ -73,7 +74,7 @@ public class ViewManager
 	 * Used to change the view of the current Pane 
 	 * @param parent Relative URL of the view to load
 	 * @param controller Controller to set for the new view
-	 * @throws IOException If parent url is not valid, null, or could not be loaded
+	 * @throws IOException If parent URL is not valid, null, or could not be loaded
 	 * @throws NullPointerException If the managed Layout Pane is null
 	 *
 	 */
@@ -94,7 +95,12 @@ public class ViewManager
 		 // if the past view controller was editable, check for unsaved changes  
 		if(lastController != null && lastController instanceof EditableView)
 		{
-			checkIfSaved(lastController);
+			if( ((EditableView) lastController).hasChanged())
+			{
+				promptSaveAlert();
+			}
+			
+			((EditableView) lastController).unlockRecord();
 		}
 		
 		borderPane.setCenter(parentNode);
@@ -107,17 +113,27 @@ public class ViewManager
 	 * Determines if a View has unsaved changes
 	 * and prompts the user to take an action.
 	 */
-	private void checkIfSaved(Controller controller)
+	private void promptSaveAlert()
 	{
-		if( ((EditableView) controller).hasChanged())
+		String contentText = "Would you like to save your changes?";
+		
+		prompt = new Alert(AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+		
+		prompt.setHeaderText("Unsaved Changes");
+		
+		Optional<ButtonType> result = prompt.showAndWait();
+		
+		if(result.isPresent() && result.get() == ButtonType.YES)
 		{
-			prompt = new Alert(AlertType.CONFIRMATION);
 			
-			prompt.setHeaderText("Unsaved Changes");
+		}
+		else if(result.isPresent() && result.get() == ButtonType.NO)
+		{
 			
-			prompt.setContentText("Would you like to save your changes?");
+		}
+		else if(result.isPresent() && result.get() == ButtonType.CANCEL)
+		{
 			
-			prompt.showAndWait();
 		}
 	}	
 

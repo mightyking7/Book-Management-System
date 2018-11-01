@@ -162,10 +162,10 @@ public class BookTableGateway
 	 * @throws SQLException 
 	 */
 	public void unlockBook(Book book) throws SQLException
-	{
-		conn.setAutoCommit(true);
-		
+	{	
 		conn.rollback();
+		
+		conn.setAutoCommit(true);
 	}
 	
 	
