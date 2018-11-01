@@ -2,6 +2,7 @@ package Controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import Model.AuditTrailEntry;
@@ -24,7 +25,6 @@ import javafx.scene.control.TextField;
 
 public class AuditTrailController extends Controller {
 
-	private ObservableList<AuditTrailEntry> models;
 	private Book book;
 	
 	@FXML
@@ -38,9 +38,8 @@ public class AuditTrailController extends Controller {
 	
 	// Constructor which takes a book object and a list of AuditTrailEntry models to display in the AuditTrailEntry View
 	
-	public AuditTrailController(Book book, ObservableList<AuditTrailEntry> models)
+	public AuditTrailController(Book book)
 	{
-		this.models = models;
 		this.book = book;
 	}
 	
@@ -52,7 +51,22 @@ public class AuditTrailController extends Controller {
 		String auditTrailTitle = "Audit Trail for " + this.book.getTitle();
 		this.bookTitle.setText(auditTrailTitle);
 		
-		this.AuditTrailModelList.setItems(models);
+		try {
+		
+			this.AuditTrailModelList.setItems(book.getAuditTrail(book.getGateway()));
+		}
+		catch(SQLException et)
+		{
+			logger.error(this.getClass().getName() + ":" + et.getMessage());
+		}
+		catch(NullPointerException et)
+		{
+			logger.error(this.getClass().getName()+ ":" + et.getMessage());
+		}
+		catch(Exception et)
+		{
+			logger.error(this.getClass().getName() + ":" + et.getMessage());
+		}
 		
 		BackButton.addEventFilter(MouseEvent.MOUSE_CLICKED, back);
 	}

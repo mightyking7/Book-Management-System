@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import Database.BookTableGateway;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
@@ -110,6 +111,8 @@ public class Book
 	
 	}
 	
+	
+	
 	/**
 	 * title validation method
 	 * checks if title length >= 1 or <= 255
@@ -187,7 +190,12 @@ public class Book
 	
 	public ObservableList<AuditTrailEntry> getAuditTrail(BookTableGateway gateway) throws SQLException
 	{
-		return (ObservableList<AuditTrailEntry>) gateway.fetchAuditTrail(this);
+		return FXCollections.observableList(gateway.fetchAuditTrail(this));
+	}
+	
+	public void updateAuditTrailEntry(String msg) throws SQLException
+	{
+		gateway.createNewAuditTrailEntry(this,msg);
 	}
 	
 	/**
