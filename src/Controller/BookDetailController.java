@@ -13,15 +13,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
+
+import Database.PublisherTableGateway;
 import Model.AuditTrailEntry;
 import Model.Book;
+import Model.Publisher;
 import View.ViewManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.util.StringConverter;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -38,6 +44,8 @@ public class BookDetailController extends Controller implements EditableView
 	private Image image;
 	
 	private Book book;
+	
+	private PublisherTableGateway publisherTableGateway;
 	
 	@FXML
 	private TextField titleFieldID;
@@ -63,6 +71,21 @@ public class BookDetailController extends Controller implements EditableView
 	@FXML
 	private ImageView imageBoxID;
 	
+	@FXML
+	private ComboBox<Publisher> comboBoxID;
+	
+	@FXML
+	void ComboBoxSelected(ActionEvent event) {
+
+	    try {
+	    	publisherTableGateway.updatePublisherIDInBooksTable(this.book, comboBoxID.getSelectionModel().getSelectedItem().getId());
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
 	/**
 	 * Accepts a Book to render in the UI
 	 * Also gets an instance of the bookGateway
@@ -75,6 +98,7 @@ public class BookDetailController extends Controller implements EditableView
 		this.image = new Image("/View/" + "Book-2.png");
 		 
 		this.book = book;
+		
 	}
 	
 	/**
@@ -84,6 +108,9 @@ public class BookDetailController extends Controller implements EditableView
 	public void initialize(URL location, ResourceBundle resources) 
 	{	
 		logger = LogManager.getLogger(BookDetailController.class);
+		
+		// Loads the Publishers in to the comboBox
+		getPublisherList();
 		
 		// set GUI field values to appropriate model field values
 		setBookDetails(this.book);
@@ -160,6 +187,7 @@ public class BookDetailController extends Controller implements EditableView
 			   
 			   try
 			   {
+				   
 				   // set the gateway for the model
 				   book.setGateway(bookTableGateway);
 				   
@@ -196,10 +224,7 @@ public class BookDetailController extends Controller implements EditableView
 				   }
 				   
 				   // copy values to original model
-				   book.setTitle(bookTitle);
-				   book.setSummary(summary);
-				   book.setYearPublished(yearPublished);
-				   book.setIsbn(isbn);
+				   book.updateBookModel(bookTitle,summary,yearPublished,isbn);
 				   
 				   // save the book
 				   book.save();
@@ -302,6 +327,18 @@ public class BookDetailController extends Controller implements EditableView
 		 
 	 }
 	 
+	 private void getPublisherList()
+	 {
+		 try {
+				this.publisherTableGateway = new PublisherTableGateway();
+				comboBoxID.setItems(publisherTableGateway.fetchPublishers());
+				comboBoxID.getSelectionModel().select(publisherTableGateway.getBookAndPublisherConnection(this.book));
+			} catch (SQLException e) {
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+	 }
 	 
 	 /**
 	  * Compare the book's attributes to the data in the Dialog
