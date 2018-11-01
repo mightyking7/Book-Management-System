@@ -63,43 +63,51 @@ public class BookListController extends Controller
 		deleteButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, delete);
 		
 		// The book detail view should open when a list item is double clicked
-		bookList.setOnMouseClicked(new EventHandler<MouseEvent>()
-		{	
-			/**
-			 * 
-			 */
-			@Override
-			public void handle(MouseEvent event) 
+		bookList.setOnMouseClicked(bookSelected);
+	}
+	
+	
+	/**
+	 * Event handler that delegates to display details
+	 * on the selected book.
+	 */
+	EventHandler<MouseEvent> bookSelected = new EventHandler<MouseEvent>()
+	{
+		/**
+		 * handles selection of books
+		 */
+		@Override
+		public void handle(MouseEvent event) 
+		{
+			Book selectedBook;
+			
+			if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == NUM_CLICKS)
 			{
-				Book selectedBook;
-				
-				if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == NUM_CLICKS)
+				try 
 				{
-					try 
-					{
-						selectedBook = bookList.getSelectionModel().getSelectedItem();
-						
-						// log the event
-						logger.info(String.format("%s selected", selectedBook));
-						
-						// Retrieve the view manager to show details about the book
-						URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
-						
-						viewManager = ViewManager.getInstance();
-						
-						viewManager.setCurrentPane(rootNode);
-						
-						// pass in the selected book model into the controller
-						viewManager.switchView(bookDetails, new BookDetailController(selectedBook));
-						
-					} catch(Exception e)
-					{
-						logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
-					}
+					selectedBook = bookList.getSelectionModel().getSelectedItem();
+					
+					// log the event
+					logger.info(String.format("%s selected", selectedBook));
+					
+					// Retrieve the view manager to show details about the book
+					URL bookDetails = this.getClass().getResource("/View/BookDetailedView.fxml");
+					
+					viewManager = ViewManager.getInstance();
+					
+					viewManager.setCurrentPane(rootNode);
+					
+					// pass in the selected book model into the controller
+					viewManager.switchView(bookDetails, new BookDetailController(selectedBook));
+					
+				} catch(Exception e)
+				{
+					logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
 				}
 			}
-		});
-	}
+		}
+		
+	};
 	
 	/**
 	 * Event handler which executes the delete event when clicking the delete button

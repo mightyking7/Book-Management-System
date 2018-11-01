@@ -27,8 +27,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-
-public class BookDetailController extends Controller
+/**
+ * Responsible for rendering book details, saving book detail changes,
+ * and delegating responsibility to display the audit trail details for a book.
+ * 
+ * @author isaacbuitrago
+ */
+public class BookDetailController extends Controller implements EditableView
 {	
 	private Image image;
 	
@@ -84,12 +89,12 @@ public class BookDetailController extends Controller
 		setBookDetails(this.book);
 		
 		// set the image of the book
-		imageBoxID.setImage(image);
+		imageBoxID.setImage(this.image);
 		
 		// lock existing books for update
 		if(book.getId() > 0)
 		{
-			lockBook(book);
+			lockRecord();
 		}
 	
 		// add the event handler for the audit trail button
@@ -150,7 +155,6 @@ public class BookDetailController extends Controller
 				   logger.error("Cannot view Audit Trail of un-added books");
 			   }
 			   
-			   viewManager.setViewSaved(true);
 		   }
 	};
 	
@@ -318,7 +322,9 @@ public class BookDetailController extends Controller
 	 }
 	 
 	 
-	 
+	 /**
+	  * Compare the book's attributes to the data in the Dialog
+	  */
 	 @Override
 	public boolean hasChanged() 
 	 {
@@ -340,16 +346,16 @@ public class BookDetailController extends Controller
 	}
 
 	/**
-	  * Used to lock a book that is being edited.
-	  * This is used to implement pessimistic locking.
-	  * 
-	  * @param book record to lock
+	  * Locks a book object's Database record
+	  * by initiating a transaction with the current
+	  * book selected for update.
 	  */
-	 private void lockBook(Book book)
+	 @Override
+	 public void lockRecord()
 	 {
 		 try 
 		 { 
-			bookTableGateway.lockBook(book);
+			bookTableGateway.lockBook(this.book);
 			
 		 }catch (SQLException e) 
 		 {
@@ -357,5 +363,23 @@ public class BookDetailController extends Controller
 		 }
 		 
 	 }
+
+	 /**
+	  * Unlocks a book object's Database 
+	  * record by terminating the current transaction
+	  */
+	@Override
+	public void unlockRecord() 
+	{
+		try 
+		{
+			bookTableGateway.unlockBook(book);
+			
+		} catch (SQLException e) 
+		{
+			handleDatabaseError(e);
+		}
+		
+	}
 
 }

@@ -116,6 +116,9 @@ public class BookTableGateway
 			preparedStmt.setString(4, book.getIsbn());
 			preparedStmt.setInt(5, book.getId());
 			
+			// update the last modified time
+			book.setLastModified( getBookModifiedTime( book.getId() ) );
+			
 			try {
 				
 				preparedStmt.executeUpdate();
@@ -152,6 +155,19 @@ public class BookTableGateway
 		
 		stmt.executeQuery();
 	}
+	
+	/**
+	 * Turns auto commit back on to end the transaction.
+	 * @param book
+	 * @throws SQLException 
+	 */
+	public void unlockBook(Book book) throws SQLException
+	{
+		conn.setAutoCommit(true);
+		
+		conn.rollback();
+	}
+	
 	
 	/**
 	 * Used to insert a new book into the database
