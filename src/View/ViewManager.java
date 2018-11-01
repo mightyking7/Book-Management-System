@@ -3,6 +3,7 @@ package View;
 import java.io.IOException;
 import java.net.URL;
 import Controller.Controller;
+import Controller.EditableView;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -10,8 +11,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 
 /**
- * Singleton responsible for loading a new view into the application border pane
- * Aug 29, 2018
+ * Singleton responsible for transitioning between views
+ * and handling the events associated with these transitions.
+ * 
  * @author isaacbuitrago
  */
 public class ViewManager 
@@ -20,13 +22,12 @@ public class ViewManager
 	
 	private BorderPane borderPane;
 	
-	private Controller controller;	// current controller 
+	private Controller lastController;		// last controller used 
 	
-	private boolean viewEdited;		// flag on if view was edited
+	private Controller currentController;	// current controller to use
 	
-	private boolean viewSaved;  	// flag on is save action invoked
+	private Alert prompt;					// prompt to save, exit, or cancel
 	
-	private Alert prompt;			// prompt to save, exit, or cancel
 	
 	/**
 	 * Constructor
@@ -76,34 +77,41 @@ public class ViewManager
 	 * @throws NullPointerException If the managed Layout Pane is null
 	 *
 	 */
-	public void switchView(URL parent, Controller controller ) throws IOException, NullPointerException
+	public void switchView(URL parent, Controller controller) throws IOException, NullPointerException
 	{
 		 FXMLLoader loader = new FXMLLoader(parent);
-		 
-		 // set current controller
-		 this.controller = controller;
-		 
-		 // check if the controller has an editable view
-		 checkIfSaved();
 		 
 		 loader.setController(controller);
 		 
 		 Parent parentNode = loader.load();
 				
 		// make sure borderPane has a reference
-		if(borderPane == null)
-		{
+		 if(borderPane == null)
+		 {
 			throw new NullPointerException("BorderPane must have a reference");
+		 }
+		
+		 // if the past view controller was editable, check for unsaved changes  
+		if(lastController != null && lastController instanceof EditableView)
+		{
+			checkIfSaved(lastController);
 		}
 		
 		borderPane.setCenter(parentNode);
+		
+		lastController = controller;
 	}
 	
-	public void checkIfSaved()
+	
+	/**
+	 * Determines if a View has unsaved changes
+	 * and prompts the user to take an action.
+	 */
+	private void checkIfSaved(Controller controller)
 	{
-		if(controller.hasChanged())
+		if( ((EditableView) controller).hasChanged())
 		{
-			prompt = new Alert(AlertType.INFORMATION);
+			prompt = new Alert(AlertType.CONFIRMATION);
 			
 			prompt.setHeaderText("Unsaved Changes");
 			
@@ -111,25 +119,6 @@ public class ViewManager
 			
 			prompt.showAndWait();
 		}
-	}
-
-	public boolean isViewEdited() 
-	{
-		return viewEdited;
-	}
-
-	public void setViewEdited(boolean viewEdited) {
-		this.viewEdited = viewEdited;
-	}
-
-	public boolean isViewSaved() {
-		return viewSaved;
-	}
-
-	public void setViewSaved(boolean viewSaved) {
-		this.viewSaved = viewSaved;
-	}
-	
-	
+	}	
 
 }

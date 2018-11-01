@@ -112,7 +112,7 @@ public class MenuController extends Controller
 			{
 				viewUrl = this.getClass().getResource("/View/BookListView.fxml");
 				
-				ObservableList<Book> books  = FXCollections.observableList(bookTableGateway.getBooks());
+				ObservableList<Book> books = FXCollections.observableList(bookTableGateway.getBooks());
 				
 				viewManager.switchView(viewUrl , new BookListController(books));
 			} 

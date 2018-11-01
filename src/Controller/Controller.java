@@ -15,8 +15,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 
 /**
- * Abstract Controller that contains resources, behavior,
- * and attributes needed by all controllers.
+ * Abstract Controller responsible for encapsulating the resources, behavior,
+ * and attributes needed by all controllers in the system.
  * 
  * @author isaacbuitrago
  */
@@ -78,15 +78,6 @@ public abstract class Controller implements Initializable
 				handleDatabaseError(e2);
 			}
 		}
-	}
-	
-	/**
-	 * Determines if an editable view has changed
-	 * @return
-	 */
-	public boolean hasChanged()
-	{
-		return false;
 	}
 	
 	/**
