@@ -14,7 +14,6 @@ public class AuditTrailEntry {
 
 	private int ID;
 	private LocalDateTime dateAdded;
-	//private Date DateAdded;
 	private String message;
 	
 	public AuditTrailEntry()

@@ -120,23 +120,7 @@ public class BookDetailController extends Controller
 	EventHandler<MouseEvent> viewAuditTrail = new EventHandler<MouseEvent>() { 
 		   @Override 
 		   public void handle(MouseEvent e) { 
-			   
-			   if(book.getId() != 0)
-			   {
-				 //Test
-				   ArrayList<AuditTrailEntry> TtestEntries = new ArrayList<AuditTrailEntry>();
-				   AuditTrailEntry entry = new AuditTrailEntry();
-				   entry.setID(22);
-				   entry.setMessage("test");
-				   entry.setDateAdded(null);
-				   LocalDate currentDate = LocalDate.now(); 
-				   LocalTime currentTime = LocalTime.now();
-				   LocalDateTime date = LocalDateTime.of(currentDate, currentTime);
-				   entry.setDateAdded(date);
-				   TtestEntries.add(entry);
-				   ObservableList<AuditTrailEntry> testEntries = FXCollections.observableList(TtestEntries);
-				   //end test
-				   
+
 				   //Gets the viewManager instance and sets this pane to be the current viewManage pane
 				   viewManager = ViewManager.getInstance();
 				   viewManager.setCurrentPane(viewManager.getCurrentPane());
@@ -144,8 +128,9 @@ public class BookDetailController extends Controller
 				   //Gets the new view to be displayed and passes objects through the AuditTrailController controller constructor
 					try 
 					{
+						book.setGateway(bookTableGateway);
 						URL viewUrl = this.getClass().getResource("/View/AuditTrailView.fxml");
-						viewManager.switchView(viewUrl, new AuditTrailController(book,testEntries));
+						viewManager.switchView(viewUrl, new AuditTrailController(book));
 						
 					} catch(IOException et)
 					{
@@ -159,13 +144,7 @@ public class BookDetailController extends Controller
 					{
 						logger.error(this.getClass().getName() + ":" + et.getMessage());
 					}
-			   }
-			   else
-			   {
-				   logger.error("Cannot view Audit Trail of un-added books");
-			   }
-			   
-			   
+		
 		   }
 		   
 	};
@@ -226,13 +205,10 @@ public class BookDetailController extends Controller
 				   }
 				   
 				   // copy values to original model
-				   book.setTitle(bookTitle);
-				   book.setSummary(summary);
-				   book.setYearPublished(yearPublished);
-				   book.setIsbn(isbn);
-				   
+				   book.updateBookModel(bookTitle, summary, yearPublished, isbn);
 				   // save the book
 				   book.save();
+				   
 				   
 				   logger.info(String.format("%s saved to the database", book.getTitle()));
 				   
