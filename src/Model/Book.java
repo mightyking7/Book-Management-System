@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import Database.BookTableGateway;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 
@@ -106,9 +107,12 @@ public class Book
 			}
 			
 			gateway.updateBook(this);
+			
 		}
 	
 	}
+	
+	
 	
 	/**
 	 * title validation method
@@ -187,7 +191,12 @@ public class Book
 	
 	public ObservableList<AuditTrailEntry> getAuditTrail(BookTableGateway gateway) throws SQLException
 	{
-		return (ObservableList<AuditTrailEntry>) gateway.fetchAuditTrail(this);
+		return FXCollections.observableList(gateway.fetchAuditTrail(this));
+	}
+	
+	public void updateAuditTrailEntry(String msg) throws SQLException
+	{
+		gateway.createNewAuditTrailEntry(this,msg);
 	}
 	
 	/**
@@ -280,6 +289,60 @@ public class Book
 	public void setGateway(BookTableGateway gateway) 
 	{
 		this.gateway = gateway;
+	}
+	
+	public void updateBookModel(String bookTitle, String summary, int yearPublished, String isbn) throws SQLException
+	{
+			String compare1 = this.getTitle();
+			String compare2 = bookTitle;
+			compare1.replaceAll("\\s+","");
+			compare2.replaceAll("\\s+","");
+			
+			if(compare1.compareTo(compare2) == 1)
+			{
+				this.updateAuditTrailEntry("Book Title changed from " + this.getTitle() + " to " + bookTitle);
+				this.setTitle(bookTitle);
+			}
+			else
+			{
+				this.setTitle(bookTitle);
+			}
+			
+			compare1 = this.getSummary();
+			compare2 = summary;
+			compare1.replaceAll("\\s+","");
+			compare2.replaceAll("\\s+","");
+			
+			if(compare1.compareTo(compare2) == 1)
+			{
+				this.updateAuditTrailEntry("Summary changed from " + this.getSummary() + " to " + summary);
+				this.setSummary(summary);
+			}
+			else
+			{
+				this.setSummary(summary);
+			}
+		  
+			if(this.getYearPublished() != yearPublished)
+			{
+				this.updateAuditTrailEntry("Year Published changed from " + this.getYearPublished() + " to " + yearPublished);
+				this.setYearPublished(yearPublished);
+			}	
+			else
+			{
+				this.setYearPublished(yearPublished);
+			}
+			
+			if(this.getIsbn().compareTo(isbn) == 1)
+			{
+				this.updateAuditTrailEntry("isbn changed from " + this.getIsbn() + " to " + isbn);
+				this.setIsbn(isbn);
+			}	
+			else
+			{
+				this.setIsbn(isbn);
+			}
+		 
 	}
 
 	/**

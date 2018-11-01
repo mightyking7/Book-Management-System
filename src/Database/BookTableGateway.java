@@ -107,14 +107,13 @@ public class BookTableGateway
 	               + ",summary = ? "
 	               + ",year_published = ? "
 	               + ",isbn = ? "
-	               + "WHERE id = ?";
+	               + "WHERE id =" + book.getId();
 			
 			PreparedStatement preparedStmt = conn.prepareStatement(sql);
 			preparedStmt.setString(1, book.getTitle());
 			preparedStmt.setString(2, book.getSummary());
 			preparedStmt.setInt(3, book.getYearPublished());
 			preparedStmt.setString(4, book.getIsbn());
-			preparedStmt.setInt(5, book.getId());
 			
 			// update the last modified time
 			book.setLastModified( getBookModifiedTime( book.getId() ) );
@@ -133,6 +132,7 @@ public class BookTableGateway
 				// complete the transaction
 				conn.setAutoCommit(true);
 			}
+			
 	}
 	
 	/**
@@ -167,7 +167,6 @@ public class BookTableGateway
 		
 		conn.setAutoCommit(true);
 	}
-	
 	
 	/**
 	 * Used to insert a new book into the database
@@ -261,11 +260,11 @@ public class BookTableGateway
 	 */
 	public LocalDateTime getBookModifiedTime(int bookId) throws SQLException
 	{
-		sql = "select date_added from Books where id = ?";
+		sql = "SELECT date_added FROM Books WHERE id =" + bookId;
 		
 		stmt = conn.prepareStatement(sql);
 		
-		stmt.setInt(1, bookId);
+		result = stmt.executeQuery();
 		
 		LocalDateTime dateAdded = null;
 		
@@ -289,16 +288,9 @@ public class BookTableGateway
 			preparedStmt.executeUpdate();
 	}
 	
-	/**
-	 * 
-	 * @param book
-	 * @return
-	 * @throws SQLException
-	 */
-	public List<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
+	public ArrayList<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
 	{
-		sql = "select book_id from book_audit_trail "
-				+ "WHERE id = " + book.getId();
+		sql = "SELECT * FROM book_audit_trail WHERE book_id = " + book.getId(); 
 		
 		ArrayList<AuditTrailEntry> AtrailEntries = new ArrayList<AuditTrailEntry>();
 		
@@ -308,18 +300,40 @@ public class BookTableGateway
 		
 		while(result.next())
 		{
+
 			AuditTrailEntry ATE = new AuditTrailEntry();
-			
-			LocalDateTime dateAdded = result.getTimestamp("date_added").toLocalDateTime();
+
+			LocalDateTime dateAdded = result.getTimestamp(3).toLocalDateTime();
 			
 			ATE.setDateAdded(dateAdded);
 			
-			ATE.setMessage(result.getString("entry_msg"));
+			ATE.setMessage(result.getString(4));
 			
 			AtrailEntries.add(ATE);	
 		}
-		   
+	
 		return AtrailEntries;
+	}
+	
+	public void createNewAuditTrailEntry(Book book,String msg) throws SQLException
+	{
+		ResultSet generatedKeys;	// id of the new ATE
+		
+		sql = "insert into book_audit_trail (book_id, entry_msg) values(?, ?)";
+		
+		// if the book does not have an id, it should be updated
+		
+		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		
+		stmt.setInt(1, book.getId());
+		
+		stmt.setString(2, msg);
+		
+		stmt.executeUpdate();
+		
+		generatedKeys = stmt.getGeneratedKeys();
+		
+		generatedKeys.next();
 	}
 	
 }
