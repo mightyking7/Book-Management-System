@@ -24,4 +24,11 @@ public interface EditableView
 	 * Unlocks book so other waiting client's can edit the book.
 	 */
 	public void unlockRecord();
+	
+	/**
+	 * Saves changes made to the EditableView
+	 */
+	public void save();
+	
+	
 }

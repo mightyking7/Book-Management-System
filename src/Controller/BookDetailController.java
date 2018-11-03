@@ -98,7 +98,6 @@ public class BookDetailController extends Controller implements EditableView
 		this.image = new Image("/View/" + "Book-2.png");
 		 
 		this.book = book;
-		
 	}
 	
 	/**
@@ -127,8 +126,111 @@ public class BookDetailController extends Controller implements EditableView
 		// add the event handler for the audit trail button
 		ViewAuditTrailButton.addEventFilter(MouseEvent.MOUSE_CLICKED, viewAuditTrail);
 		
-		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, save);
+		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> save());
 	}
+	
+	/**
+	 * Save button used to update a book in the database and local memory by updating the book object and calling the UpdateBook function
+	 * Catches and displays any exception thrown from the model
+	 */
+	@Override
+	public void save()
+	{
+		   String bookTitle = titleFieldID.getText();
+		   
+		   String summary = SummaryFieldID.getText();
+		   
+		   int yearPublished = Integer.parseInt(yearPublishedFieldID.getText());
+		   
+		   String isbn = isbnFieldID.getText();
+
+		   logger.info(String.format("%s", "Save button pressed"));
+		   
+		   try
+		   {
+			   
+			   // set the gateway for the model
+			   book.setGateway(bookTableGateway);
+			   
+			   // validate user input
+			   
+			   if(!(bookTitle.length() >= 1 && bookTitle.length() <= 255))
+			   {
+				   String errorMessage = String.format("Title cannot be longer than %d characters, "
+				   		+ "it is %d characters", 255, bookTitle.length());
+				   
+				   throw new Exception(errorMessage);
+			   }
+			   else if( !(summary.length() <= 65536))
+			   {
+				   String errorMessage = String.format("Summary cannot be longer than %d characters, "
+					   		+ "it is %d characters", 65536, summary.length());
+				   
+					   throw new Exception(errorMessage);
+			   }
+			   else if(yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR) || yearPublished < 1900)
+			   {
+				   int currentYear = (int)Calendar.getInstance().get(Calendar.YEAR);
+				   
+				   String errorMessage = String.format("Year published must be between 1900 and %d, ", currentYear);
+				   
+					   throw new Exception(errorMessage);
+			   }
+			   else if(!(isbn.length() <= 13))
+			   {
+				   String errorMessage = String.format("The book Isbn cannot be longer than %d characters, "
+				   		+ "it is currently %d characters", 13, isbn.length());
+				   
+				   throw new Exception(errorMessage);
+			   }
+			   
+			   // copy values to original model
+			   book.updateBookModel(bookTitle,summary,yearPublished,isbn);
+			   
+			   // save the book
+			   book.save();
+			   
+			   logger.info(String.format("%s saved to the database", book.getTitle()));
+			   
+		       infoAlert.setTitle("Saving Book");
+		 
+		       infoAlert.setHeaderText(null);
+		       
+		       infoAlert.setContentText("Book was saved successfully!");
+		 
+		       infoAlert.showAndWait();
+			   
+		   }
+		   catch (SQLException exception)
+		   {
+			   logger.error(String.format("%s: %s, Save aborted!", "SQL save error",exception.getMessage()));   
+			   
+		       errorAlert.setTitle("Saving Book");
+		 
+		       errorAlert.setHeaderText(null);
+		       
+		       String alertmsg = ("SQL save error: " + exception.getMessage() + ", Save aborted!");
+		       
+		       errorAlert.setContentText(alertmsg);
+		 
+		       errorAlert.showAndWait();
+		   }
+		   catch (Exception exception)
+		   {
+			   logger.error(String.format("%s: %s, Save aborted!", "Save error",exception.getMessage()));   
+			   
+		       errorAlert.setTitle("Saving Book");
+		 
+		       errorAlert.setHeaderText(null);
+		       
+		       String errormsg = ("Unexpected save error: " + exception.getMessage() + ", Save aborted!");
+		       
+		       errorAlert.setContentText(errormsg);
+		 
+		       errorAlert.showAndWait();
+		   }
+		   
+	} 
 	
 	/**
 	 * Event handler for the viewAuditTrail button when viewing a book
@@ -166,110 +268,6 @@ public class BookDetailController extends Controller implements EditableView
 		   
 	};
 	
-	/**
-	 * Save button used to update a book in the database and local memory by updating the book object and calling the UpdateBook function
-	 * Catches and displays any exception thrown from the model
-	 */
-	EventHandler<MouseEvent> save = new EventHandler<MouseEvent>() 
-	{ 
-		   @Override 
-		   public void handle(MouseEvent e)
-		   {    
-			   String bookTitle = titleFieldID.getText();
-			   
-			   String summary = SummaryFieldID.getText();
-			   
-			   int yearPublished = Integer.parseInt(yearPublishedFieldID.getText());
-			   
-			   String isbn = isbnFieldID.getText();
-
-			   logger.info(String.format("%s", "Save button pressed"));
-			   
-			   try
-			   {
-				   
-				   // set the gateway for the model
-				   book.setGateway(bookTableGateway);
-				   
-				   // validate user input
-				   
-				   if(!(bookTitle.length() >= 1 && bookTitle.length() <= 255))
-				   {
-					   String errorMessage = String.format("Title cannot be longer than %d characters, "
-					   		+ "it is %d characters", 255, bookTitle.length());
-					   
-					   throw new Exception(errorMessage);
-				   }
-				   else if( !(summary.length() <= 65536))
-				   {
-					   String errorMessage = String.format("Summary cannot be longer than %d characters, "
-						   		+ "it is %d characters", 65536, summary.length());
-					   
-						   throw new Exception(errorMessage);
-				   }
-				   else if(yearPublished > (int)Calendar.getInstance().get(Calendar.YEAR))
-				   {
-					   int currentYear = (int)Calendar.getInstance().get(Calendar.YEAR);
-					   
-					   String errorMessage = String.format("Year published cannot be after %d, ", currentYear);
-					   
-						   throw new Exception(errorMessage);
-				   }
-				   else if(!(isbn.length() <= 13))
-				   {
-					   String errorMessage = String.format("The book Isbn cannot be longer than %d characters, "
-					   		+ "it is currently %d characters", 13, isbn.length());
-					   
-					   throw new Exception(errorMessage);
-				   }
-				   
-				   // copy values to original model
-				   book.updateBookModel(bookTitle,summary,yearPublished,isbn);
-				   
-				   // save the book
-				   book.save();
-				   
-				   logger.info(String.format("%s saved to the database", book.getTitle()));
-				   
-			       infoAlert.setTitle("Saving Book");
-			 
-			       infoAlert.setHeaderText(null);
-			       
-			       infoAlert.setContentText("Book was saved successfully!");
-			 
-			       infoAlert.showAndWait();
-				   
-			   }
-			   catch (SQLException exception)
-			   {
-				   logger.error(String.format("%s: %s, Save aborted!", "SQL save error",exception.getMessage()));   
-				   
-			       errorAlert.setTitle("Saving Book");
-			 
-			       errorAlert.setHeaderText(null);
-			       
-			       String alertmsg = ("SQL save error: " + exception.getMessage() + ", Save aborted!");
-			       
-			       errorAlert.setContentText(alertmsg);
-			 
-			       errorAlert.showAndWait();
-			   }
-			   catch (Exception exception)
-			   {
-				   logger.error(String.format("%s: %s, Save aborted!", "Save error",exception.getMessage()));   
-				   
-			       errorAlert.setTitle("Saving Book");
-			 
-			       errorAlert.setHeaderText(null);
-			       
-			       String errormsg = ("Unexpected save error: " + exception.getMessage() + ", Save aborted!");
-			       
-			       errorAlert.setContentText(errormsg);
-			 
-			       errorAlert.showAndWait();
-			   }
-		   } 
-	 }; 
 	 
 	 /**
 	  *  Sets the BookDetailView's controls to the attributes of the given book
