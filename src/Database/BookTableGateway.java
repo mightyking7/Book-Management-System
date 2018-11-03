@@ -97,11 +97,10 @@ public class BookTableGateway
 	/**
 	 * Used to update a book in the database through the model save function.
 	 * Creates a query request for the DB by getting the ID and updates the requested fields with the book object information.
-	 * After the transaction is complete, autocommit is turned back on.
 	 * @throws SQLException if an error occurred while interacting with the database
 	 */
 	public void updateBook(Book book) throws SQLException
-	{
+	{	
 			sql = "UPDATE Books "
 	               + "SET title = ? "
 	               + ",summary = ? "
@@ -116,10 +115,10 @@ public class BookTableGateway
 			preparedStmt.setString(4, book.getIsbn());
 			
 			// update the last modified time
-			book.setLastModified( getBookModifiedTime( book.getId() ) );
+			book.setLastModified(getBookModifiedTime(book.getId()));
 			
-			try {
-				
+			try 
+			{	
 				preparedStmt.executeUpdate();
 			
 			} catch(SQLException e)
@@ -127,18 +126,12 @@ public class BookTableGateway
 				conn.rollback();
 				
 				throw e;
-			} finally {
-				
-				// complete the transaction
-				conn.setAutoCommit(true);
 			}
-			
 	}
 	
 	/**
-	 * Used to lock existing book records in the database.
-	 * Creates a transaction, sets auto commit to false.
-	 * Auto commit should be turned on at end of transaction.
+	 * Used to lock existing book records in the database by
+	 * creating a transaction and selecting the book record for update.
 	 * 
 	 * @param book record to lock in the database
 	 * @throws SQLException  if an error occurred in communicating with the database
@@ -158,15 +151,19 @@ public class BookTableGateway
 	
 	/**
 	 * Turns auto commit back on to end the transaction.
+	 * 
+	 * It is assumed that auto commit is false when this executes
+	 * 
 	 * @param book
 	 * @throws SQLException 
 	 */
 	public void unlockBook(Book book) throws SQLException
 	{	
-		conn.rollback();
+		conn.commit();
 		
 		conn.setAutoCommit(true);
 	}
+	
 	
 	/**
 	 * Used to insert a new book into the database

@@ -3,7 +3,6 @@ package View;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
-
 import Controller.Controller;
 import Controller.EditableView;
 import javafx.fxml.FXMLLoader;
@@ -35,7 +34,6 @@ public class ViewManager
 	 */
 	private ViewManager()
 	{
-		
 	}
 	
 	/**
@@ -80,41 +78,59 @@ public class ViewManager
 	 */
 	public void switchView(URL parent, Controller controller) throws IOException, NullPointerException
 	{
-		 FXMLLoader loader = new FXMLLoader(parent);
-		 
-		 loader.setController(controller);
-		 
-		 Parent parentNode = loader.load();
-				
-		// make sure borderPane has a reference
-		 if(borderPane == null)
-		 {
-			throw new NullPointerException("BorderPane must have a reference");
-		 }
-		
-		 // if the past view controller was editable, check for unsaved changes  
-		if(lastController != null && lastController instanceof EditableView)
-		{
-			if( ((EditableView) lastController).hasChanged())
+			boolean continueSwitch = true;
+			 
+			 // if the past view controller was editable, check for unsaved changes  
+			if(lastController != null && lastController instanceof EditableView)
 			{
-				promptSaveAlert();
+				if( ((EditableView) lastController).hasChanged())
+				{
+					// need to know if user clicked cancel
+					continueSwitch = promptSaveAlert();
+				}
+					
+				// user canceled the save operation, cancel view switch 
+				if( !continueSwitch )
+				{
+					return;
+				}
+					
+				((EditableView) lastController).unlockRecord();
 			}
+		 
+			 FXMLLoader loader = new FXMLLoader(parent);
+			 
+			 loader.setController(controller);
+			 
+			 Parent parentNode = loader.load();
+					
+			// make sure borderPane has a reference
+			 if(borderPane == null)
+			 {
+				throw new NullPointerException("BorderPane must have a reference");
+			 }
+			 
+			borderPane.setCenter(parentNode);
 			
-			((EditableView) lastController).unlockRecord();
-		}
-		
-		borderPane.setCenter(parentNode);
-		
-		lastController = controller;
+			lastController = controller;
 	}
 	
 	
 	/**
-	 * Determines if a View has unsaved changes
-	 * and prompts the user to take an action.
+	 * Prompts the user to take an action related to
+	 * changes in an EditableView.
+	 * 
+	 * Options:
+	 * 	Yes will save the EditableView's changes,
+	 * 	No will not cause any action
+	 * 	Cancel will close the prompt
+	 * @return true to continue with switching of the view, false otherwise
 	 */
-	private void promptSaveAlert()
+	private boolean promptSaveAlert()
 	{
+		
+		boolean leaveView = true;
+		
 		String contentText = "Would you like to save your changes?";
 		
 		prompt = new Alert(AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -123,18 +139,27 @@ public class ViewManager
 		
 		Optional<ButtonType> result = prompt.showAndWait();
 		
+		// save changes in the dialog
 		if(result.isPresent() && result.get() == ButtonType.YES)
 		{
-			
+			new Runnable() 
+					{
+						public void run() 
+						{
+							((EditableView) lastController).save();
+						}
+					}.run();	
 		}
-		else if(result.isPresent() && result.get() == ButtonType.NO)
-		{
-			
-		}
+		
+		// cancel changes to the dialog
 		else if(result.isPresent() && result.get() == ButtonType.CANCEL)
 		{
+			prompt.close();
 			
+			leaveView = false;
 		}
+		
+		return leaveView;
 	}	
 
 }
