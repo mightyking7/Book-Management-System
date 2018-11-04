@@ -314,6 +314,11 @@ public class Book
 	 */
 	public void updateBookModel(String bookTitle, String summary, int yearPublished, String isbn, Publisher publisher) throws SQLException
 	{
+		
+		/*
+		 * Change and audit Book attributes only when the attribute
+		 * has been added to the Book model or has changed.
+		 */
 			String compare1 = this.getTitle();
 			String compare2 = bookTitle;
 //			compare1.replaceAll("\\s+","");
