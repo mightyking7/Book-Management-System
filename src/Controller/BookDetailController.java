@@ -147,6 +147,8 @@ public class BookDetailController extends Controller implements EditableView
 		   
 		   String summary = SummaryFieldID.getText();
 		   
+		   Publisher publisher = comboBoxID.getSelectionModel().getSelectedItem();
+		   
 		   int yearPublished = (yearPublishedFieldID.getText().isEmpty() ? 0 : Integer.parseInt(yearPublishedFieldID.getText()));
 		   
 		   String isbn = isbnFieldID.getText();
@@ -192,7 +194,7 @@ public class BookDetailController extends Controller implements EditableView
 			   }
 			   
 			   // copy values to original model for existing books only
-			   book.updateBookModel(bookTitle,summary,yearPublished,isbn);
+			   book.updateBookModel(bookTitle,summary,yearPublished,isbn, publisher);
 			   
 			   // save the book
 			   book.save();
@@ -334,22 +336,23 @@ public class BookDetailController extends Controller implements EditableView
 	 
 	 private void getPublisherList()
 	 {
-		 try {
-				this.publisherTableGateway = new PublisherTableGateway();
+		 try 
+		 {
+			this.publisherTableGateway = new PublisherTableGateway();
 				
-				ObservableList<Publisher> publishers = FXCollections.observableArrayList(publisherTableGateway.fetchPublishers());
+			ObservableList<Publisher> publishers = FXCollections.observableArrayList(publisherTableGateway.fetchPublishers());
 				
-				comboBoxID.setItems(publishers);
+			comboBoxID.setItems(publishers);
 				
-				comboBoxID.getSelectionModel().select(publisherTableGateway.getBooksPublisher(book.getId()) - 1 );
+			comboBoxID.getSelectionModel().select(publisherTableGateway.getBooksPublisher(book.getId()) - 1 );
 				
-			} catch (SQLException e) 
-		 	{
+		 } catch (SQLException e) 
+		 {
 				logger.error(e.getMessage());
-			} catch (Exception e) 
-		 	{
+		 } catch (Exception e) 
+		 {
 				logger.error(e.getMessage());
-			}
+		 }
 	 }
 	 
 	 /**
@@ -359,8 +362,7 @@ public class BookDetailController extends Controller implements EditableView
 	public boolean hasChanged() 
 	 {
 		boolean edited = false;
-		
-		// account for new books
+
 		if(! (Objects.equals(book.getTitle(), titleFieldID.getText())) )
 			edited = true;
 		
@@ -375,7 +377,7 @@ public class BookDetailController extends Controller implements EditableView
 			edited = true;		
 		
 		return edited;
-	}
+	 }
 
 	/**
 	  * Locks a book object's Database record
@@ -393,7 +395,6 @@ public class BookDetailController extends Controller implements EditableView
 		 {
 			handleDatabaseError(e);
 		 }
-		 
 	 }
 
 	 /**

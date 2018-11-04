@@ -363,6 +363,10 @@ public class Book
 			{
 				this.updateAuditTrailEntry("Publisher changed from " + p1.getName() + " to " + publisher.getName());
 			}
+			else if(p1 == null)
+			{
+				this.updateAuditTrailEntry("Publisher " + publisher.getName() + " Added");
+			}
 			
 			this.setPublisher(publisher);
 	}
