@@ -186,7 +186,7 @@ public class BookTableGateway
 	{
 		ResultSet generatedKeys;	// id of the new book
 		
-		sql = "insert into Books (title, summary, year_published, isbn) values(?, ?, ?, ?)";
+		sql = "insert into Books (title, summary, year_published, publisher_id, isbn) values(?, ?, ?, ?, ?)";
 		
 		int bookId;
 		
@@ -203,8 +203,10 @@ public class BookTableGateway
 		stmt.setString(2, book.getSummary());
 		
 		stmt.setInt(3, book.getYearPublished());
+
+		stmt.setInt(4, book.getPublisher().getId());
 		
-		stmt.setString(4, book.getIsbn());
+		stmt.setString(5, book.getIsbn());
 		
 		stmt.executeUpdate();
 		
