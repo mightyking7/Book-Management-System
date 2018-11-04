@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 /**
- * CS 4743 Assignment 2 by Isaac Buitrago and Hercules Hjalmarsson
+ * CS 4743 Assignment 3 by Isaac Buitrago and Hercules Hjalmarsson
  * 
  * Launcher for Book inventory system
  * 
@@ -37,7 +37,7 @@ public class Launcher extends Application
 		
 		Scene scene = new Scene(root);
 		
-		stage.setTitle("Assignment 2");
+		stage.setTitle("Assignment 3");
 		
 		stage.setScene(scene);
 		
