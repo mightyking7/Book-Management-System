@@ -71,7 +71,11 @@ public class Book
 	
 	/**
 	 * Save function which uses validation methods to validate book requirements 
-	 * in the current book object, if an error is found throws exception
+	 * in the current book object, if an error is found throws exception.
+	 * 
+	 * Precondition: The updateBookModel method has been used to set Book attributes or
+	 * all Book attributes have been set separately 
+	 * 
 	 * @throws Exception if book contains invalid data
 	 * @throws SQLException if error occurred with database
 	 */
