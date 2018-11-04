@@ -26,6 +26,8 @@ public class Book
 	
 	private String isbn;
 	
+	private Publisher publisher;
+	
 	private LocalDateTime dateAdded;
 	
 	private LocalDateTime lastModified;
@@ -48,6 +50,8 @@ public class Book
 		this.yearPublished = 0;
 		
 		this.isbn = null;
+		
+		this.publisher = null;
 		
 		this.dateAdded = null;
 		
@@ -291,6 +295,16 @@ public class Book
 		this.gateway = gateway;
 	}
 	
+	public Publisher getPublisher() 
+	{
+		return publisher;
+	}
+
+	public void setPublisher(Publisher publisher) 
+	{
+		this.publisher = publisher;
+	}
+
 	/**
 	 * @param bookTitle
 	 * @param summary
@@ -298,7 +312,7 @@ public class Book
 	 * @param isbn
 	 * @throws SQLException
 	 */
-	public void updateBookModel(String bookTitle, String summary, int yearPublished, String isbn) throws SQLException
+	public void updateBookModel(String bookTitle, String summary, int yearPublished, String isbn, Publisher publisher) throws SQLException
 	{
 			String compare1 = this.getTitle();
 			String compare2 = bookTitle;
@@ -341,6 +355,16 @@ public class Book
 			}	
 			
 			this.setIsbn(isbn);
+			
+			Publisher p1 = this.getPublisher();
+			Publisher p2 = publisher;
+			
+			if(p1 != null && p1.getId() != p2.getId())
+			{
+				this.updateAuditTrailEntry("Publisher changed from " + p1.getName() + " to " + publisher.getName());
+			}
+			
+			this.setPublisher(publisher);
 	}
 
 	/**
