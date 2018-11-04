@@ -66,11 +66,11 @@ public class Book
 	}
 	
 	/**
-	 * Save function which uses validation methods to validate book requirements in the current book object and if error found throws exception
+	 * Save function which uses validation methods to validate book requirements 
+	 * in the current book object, if an error is found throws exception
 	 * @throws Exception if book contains invalid data
 	 * @throws SQLException if error occurred with database
 	 */
-	
 	public void save() throws SQLException,Exception
 	{
 		
@@ -291,58 +291,56 @@ public class Book
 		this.gateway = gateway;
 	}
 	
+	/**
+	 * @param bookTitle
+	 * @param summary
+	 * @param yearPublished
+	 * @param isbn
+	 * @throws SQLException
+	 */
 	public void updateBookModel(String bookTitle, String summary, int yearPublished, String isbn) throws SQLException
 	{
 			String compare1 = this.getTitle();
 			String compare2 = bookTitle;
-			compare1.replaceAll("\\s+","");
-			compare2.replaceAll("\\s+","");
+//			compare1.replaceAll("\\s+","");
+//			compare2.replaceAll("\\s+","");
 			
-			if(compare1.compareTo(compare2) == 1)
+			if(compare1 != null && compare1.compareTo(compare2) != 0)
 			{
 				this.updateAuditTrailEntry("Book Title changed from " + this.getTitle() + " to " + bookTitle);
-				this.setTitle(bookTitle);
 			}
-			else
-			{
-				this.setTitle(bookTitle);
-			}
+			
+			this.setTitle(bookTitle);
 			
 			compare1 = this.getSummary();
 			compare2 = summary;
-			compare1.replaceAll("\\s+","");
-			compare2.replaceAll("\\s+","");
 			
-			if(compare1.compareTo(compare2) == 1)
+//			compare1.replaceAll("\\s+","");
+//			compare2.replaceAll("\\s+","");
+			
+			if(compare1 != null && compare1.compareTo(compare2) != 0)
 			{
 				this.updateAuditTrailEntry("Summary changed from " + this.getSummary() + " to " + summary);
-				this.setSummary(summary);
-			}
-			else
-			{
-				this.setSummary(summary);
-			}
-		  
-			if(this.getYearPublished() != yearPublished)
-			{
-				this.updateAuditTrailEntry("Year Published changed from " + this.getYearPublished() + " to " + yearPublished);
-				this.setYearPublished(yearPublished);
-			}	
-			else
-			{
-				this.setYearPublished(yearPublished);
 			}
 			
-			if(this.getIsbn().compareTo(isbn) == 1)
+			this.setSummary(summary);
+		  
+			if( this.getYearPublished() != yearPublished)
+			{
+				this.updateAuditTrailEntry("Year Published changed from " + this.getYearPublished() + " to " + yearPublished);
+			}	
+			
+			this.setYearPublished(yearPublished);
+			
+			compare1 = this.getIsbn();
+			compare2 = isbn;
+			
+			if(compare1 != null && compare1.compareTo(isbn) != 0 )
 			{
 				this.updateAuditTrailEntry("isbn changed from " + this.getIsbn() + " to " + isbn);
-				this.setIsbn(isbn);
 			}	
-			else
-			{
-				this.setIsbn(isbn);
-			}
-		 
+			
+			this.setIsbn(isbn);
 	}
 
 	/**
@@ -351,7 +349,7 @@ public class Book
 	@Override
 	public String toString()
 	{
-		return String.format("Book Title: %s, Year Published: %d", this.getTitle(), this.getYearPublished());
+		return String.format("%s", this.getTitle());
 	}
 
 }

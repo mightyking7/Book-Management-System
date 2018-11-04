@@ -97,6 +97,7 @@ public class BookTableGateway
 	/**
 	 * Used to update a book in the database through the model save function.
 	 * Creates a query request for the DB by getting the ID and updates the requested fields with the book object information.
+	 * It is assumed that an update is executed in a transaction.
 	 * @throws SQLException if an error occurred while interacting with the database
 	 */
 	public void updateBook(Book book) throws SQLException
@@ -114,16 +115,20 @@ public class BookTableGateway
 			preparedStmt.setInt(3, book.getYearPublished());
 			preparedStmt.setString(4, book.getIsbn());
 			
-			// update the last modified time
-			book.setLastModified(getBookModifiedTime(book.getId()));
-			
 			try 
 			{	
 				preparedStmt.executeUpdate();
+				
+				// update the last modified time
+				book.setLastModified(getBookModifiedTime(book.getId()));
 			
 			} catch(SQLException e)
 			{
-				conn.rollback();
+				// executing an update in a transaction
+				if(! conn.getAutoCommit())
+				{
+					conn.rollback();
+				}
 				
 				throw e;
 			}
@@ -159,9 +164,12 @@ public class BookTableGateway
 	 */
 	public void unlockBook(Book book) throws SQLException
 	{	
-		conn.commit();
-		
-		conn.setAutoCommit(true);
+		if(! conn.getAutoCommit())
+		{
+			conn.commit();
+			
+			conn.setAutoCommit(true);
+		}
 	}
 	
 	
@@ -200,15 +208,16 @@ public class BookTableGateway
 		
 		stmt.executeUpdate();
 		
+		// get the primary key generated for the new book
 		generatedKeys = stmt.getGeneratedKeys();
 		
 		generatedKeys.next();
 		
 		bookId = generatedKeys.getInt(1);
 		
+		// set the timestamps for the book
 		ArrayList<LocalDateTime> timestamps = getBookTimeStamps(bookId);
 		
-		// set the date added time stamp in the book model
 		book.setDateAdded(timestamps.get(0));
 		
 		book.setLastModified(timestamps.get(1));
@@ -257,9 +266,11 @@ public class BookTableGateway
 	 */
 	public LocalDateTime getBookModifiedTime(int bookId) throws SQLException
 	{
-		sql = "SELECT date_added FROM Books WHERE id =" + bookId;
+		sql = "SELECT last_modified FROM Books WHERE id = ? ";
 		
 		stmt = conn.prepareStatement(sql);
+		
+		stmt.setInt(1, bookId);
 		
 		result = stmt.executeQuery();
 		
@@ -267,7 +278,7 @@ public class BookTableGateway
 		
 		if(result.next())
 		{
-			dateAdded = result.getTimestamp("date_added").toLocalDateTime();
+			dateAdded = result.getTimestamp("last_modified").toLocalDateTime();
 		}
 		
 		return(dateAdded);

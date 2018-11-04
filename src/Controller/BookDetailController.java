@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 
@@ -136,11 +137,17 @@ public class BookDetailController extends Controller implements EditableView
 	@Override
 	public void save()
 	{
+		   // no action for empty books
+		   if(! hasChanged())
+		   {
+			   return;
+		   }
+		   
 		   String bookTitle = titleFieldID.getText();
 		   
 		   String summary = SummaryFieldID.getText();
 		   
-		   int yearPublished = Integer.parseInt(yearPublishedFieldID.getText());
+		   int yearPublished = (yearPublishedFieldID.getText().isEmpty() ? 0 : Integer.parseInt(yearPublishedFieldID.getText()));
 		   
 		   String isbn = isbnFieldID.getText();
 
@@ -154,14 +161,14 @@ public class BookDetailController extends Controller implements EditableView
 			   
 			   // validate user input
 			   
-			   if(!(bookTitle.length() >= 1 && bookTitle.length() <= 255))
+			   if( bookTitle != null && !(bookTitle.length() >= 1 && bookTitle.length() <= 255))
 			   {
 				   String errorMessage = String.format("Title cannot be longer than %d characters, "
 				   		+ "it is %d characters", 255, bookTitle.length());
 				   
 				   throw new Exception(errorMessage);
 			   }
-			   else if( !(summary.length() <= 65536))
+			   else if( summary != null && !(summary.length() <= 65536))
 			   {
 				   String errorMessage = String.format("Summary cannot be longer than %d characters, "
 					   		+ "it is %d characters", 65536, summary.length());
@@ -176,7 +183,7 @@ public class BookDetailController extends Controller implements EditableView
 				   
 					   throw new Exception(errorMessage);
 			   }
-			   else if(!(isbn.length() <= 13))
+			   else if(isbn != null && !(isbn.length() <= 13))
 			   {
 				   String errorMessage = String.format("The book Isbn cannot be longer than %d characters, "
 				   		+ "it is currently %d characters", 13, isbn.length());
@@ -184,7 +191,7 @@ public class BookDetailController extends Controller implements EditableView
 				   throw new Exception(errorMessage);
 			   }
 			   
-			   // copy values to original model
+			   // copy values to original model for existing books only
 			   book.updateBookModel(bookTitle,summary,yearPublished,isbn);
 			   
 			   // save the book
@@ -346,16 +353,18 @@ public class BookDetailController extends Controller implements EditableView
 	 {
 		boolean edited = false;
 		
-		if(! (book.getTitle().equals(titleFieldID.getText())))
+		// account for new books
+		if(! (Objects.equals(book.getTitle(), titleFieldID.getText())) )
 			edited = true;
 		
-		if(! (book.getSummary().equals(SummaryFieldID.getText())))
+		if(! (Objects.equals(book.getSummary(), SummaryFieldID.getText())))
 			edited = true;
 		
-		if(book.getYearPublished() != Integer.parseInt(yearPublishedFieldID.getText()))
+		if(book.getYearPublished() != ( yearPublishedFieldID.getText().isEmpty() ? 0 :
+										Integer.parseInt(yearPublishedFieldID.getText())) )
 			edited = true;
 		
-		if(! (book.getIsbn().equals(isbnFieldID.getText())))
+		if(! (Objects.equals(book.getIsbn(), isbnFieldID.getText())) )
 			edited = true;		
 		
 		return edited;
