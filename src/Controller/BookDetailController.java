@@ -246,9 +246,17 @@ public class BookDetailController extends Controller implements EditableView
 				   //Gets the new view to be displayed and passes objects through the AuditTrailController controller constructor
 					try 
 					{
-						book.setGateway(bookTableGateway);
-						URL viewUrl = this.getClass().getResource("/View/AuditTrailView.fxml");
-						viewManager.switchView(viewUrl, new AuditTrailController(book));
+						//locks the view audit button if the book is not created yet
+						if(book.getId() == 0)
+						{
+							logger.info(this.getClass().getName() + ": Audit trail disabled when adding new books");
+						}
+						else
+						{
+							book.setGateway(bookTableGateway);
+							URL viewUrl = this.getClass().getResource("/View/AuditTrailView.fxml");
+							viewManager.switchView(viewUrl, new AuditTrailController(book));
+						}
 						
 					} catch(IOException et)
 					{

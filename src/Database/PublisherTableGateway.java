@@ -7,6 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.Publisher;
 
+/**
+ * Publisher Table Gateway which handles any connection to the DB between the Book Detail Controller and the Publisher DB
+ * @author HercHja
+ *
+ */
+
 public class PublisherTableGateway {
 
 	private Connection conn;		// connection to data store
@@ -30,10 +36,12 @@ public class PublisherTableGateway {
 	}
 	
 	/**
-	 * 
+	 * Fetch publishers method which gets all publishers and displays them in the Book Detail Controller ComboBox
+	 * Uses a SQL statement and the Publisher Model to store and pass an ObservableList of Publishers
 	 * @return
 	 * @throws SQLException
 	 */
+	
 	public ArrayList<Publisher> fetchPublishers() throws SQLException
 	{
 		sql = "SELECT * FROM Publishers"; 

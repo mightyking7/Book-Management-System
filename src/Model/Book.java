@@ -106,6 +106,7 @@ public class Book
 		if(id == 0)
 		{
 			id = gateway.insertBook(this);
+			this.updateAuditTrailEntry("Book Added");
 		}
 		else
 		{
@@ -196,10 +197,23 @@ public class Book
 		return true;
 	}
 	
+	/**
+	 * Method which fetches the Audit Trail for the given book and passes it to the Audit Trail View's ObservableList
+	 * @param gateway
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public ObservableList<AuditTrailEntry> getAuditTrail(BookTableGateway gateway) throws SQLException
 	{
 		return FXCollections.observableList(gateway.fetchAuditTrail(this));
 	}
+	
+	/**
+	 * Method which calls the create new Audit Trail method through the Book Table Gateway if book object has been updated by the user
+	 * @param msg
+	 * @throws SQLException
+	 */
 	
 	public void updateAuditTrailEntry(String msg) throws SQLException
 	{
@@ -309,6 +323,9 @@ public class Book
 	}
 
 	/**
+	 * Checks and sets any value from the Book Detail Controller save method to the book model
+	 * Checks the values for inconsistencies and if so updates the value and calls the updateAuditTrailEntry method
+	 * Parses each string to remove empty space which can cause false update positives when passed by the DB
 	 * @param bookTitle
 	 * @param summary
 	 * @param yearPublished
@@ -322,55 +339,42 @@ public class Book
 		 * Change and audit Book attributes only when the attribute
 		 * has been added to the Book model or has changed.
 		 */
-			String compare1 = this.getTitle();
-			String compare2 = bookTitle;
 			
-			if(compare1 != null && compare1.compareTo(compare2) != 0)
+			if(this.getId() != 0)
 			{
-				this.updateAuditTrailEntry("Book Title changed from " + this.getTitle() + " to " + bookTitle);
-			}
+				if(this.getTitle().compareToIgnoreCase(bookTitle) != 0)
+				{
+					this.updateAuditTrailEntry("Book Title changed from " + this.getTitle() + " to " + bookTitle);
+				}
 			
+				if(this.getSummary().compareToIgnoreCase(summary) != 0)
+				{
+					this.updateAuditTrailEntry("Summary changed from " + this.getSummary() + " to " + summary);
+				}
+			  
+				if( this.getYearPublished() != yearPublished)
+				{
+					this.updateAuditTrailEntry("Year Published changed from " + this.getYearPublished() + " to " + yearPublished);
+				}	
+				
+				if(this.getIsbn().compareToIgnoreCase(isbn) != 0)
+				{
+					this.updateAuditTrailEntry("isbn changed from " + this.getIsbn() + " to " + isbn);
+				}
+				
+				Publisher p1 = this.getPublisher();
+				Publisher p2 = publisher;
+				
+				if( p1.getId() != p2.getId())
+				{
+					this.updateAuditTrailEntry("Publisher changed from " + p1.getName() + " to " + publisher.getName());
+				}
+			}
+		
 			this.setTitle(bookTitle);
-			
-			compare1 = this.getSummary();
-			compare2 = summary;
-			
-			if(compare1 != null && compare1.compareTo(compare2) != 0)
-			{
-				this.updateAuditTrailEntry("Summary changed from " + this.getSummary() + " to " + summary);
-			}
-			
 			this.setSummary(summary);
-		  
-			if( this.getYearPublished() != yearPublished)
-			{
-				this.updateAuditTrailEntry("Year Published changed from " + this.getYearPublished() + " to " + yearPublished);
-			}	
-			
 			this.setYearPublished(yearPublished);
-			
-			compare1 = this.getIsbn();
-			compare2 = isbn;
-			
-			if(compare1 != null && compare1.compareTo(isbn) != 0 )
-			{
-				this.updateAuditTrailEntry("isbn changed from " + this.getIsbn() + " to " + isbn);
-			}	
-			
 			this.setIsbn(isbn);
-			
-			Publisher p1 = this.getPublisher();
-			Publisher p2 = publisher;
-			
-			if(p1 != null && p1.getId() != p2.getId())
-			{
-				this.updateAuditTrailEntry("Publisher changed from " + p1.getName() + " to " + publisher.getName());
-			}
-			else if(p1 == null)
-			{
-				this.updateAuditTrailEntry("Publisher " + publisher.getName() + " Added");
-			}
-			
 			this.setPublisher(publisher);
 	}
 
