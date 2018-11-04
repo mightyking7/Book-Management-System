@@ -52,7 +52,7 @@ public class AuditTrailEntry {
 	{
 		DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
-		return String.format("Timestamp: %s, Message: %s", this.getDateAdded().format(formater), this.getMessage());
+		return String.format("%s, %s", this.getDateAdded().format(formater), this.getMessage());
 	}
 	
 }

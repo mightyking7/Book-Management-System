@@ -119,6 +119,13 @@ public class BookDetailController extends Controller implements EditableView
 		// add the event handler for the audit trail button
 		ViewAuditTrailButton.addEventFilter(MouseEvent.MOUSE_CLICKED, viewAuditTrail);
 		
+		// disable the viewAuditTrailButton for new Books
+		
+		if(book.getId() == 0)
+		{
+			ViewAuditTrailButton.setDisable(true);
+		}
+		
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> save());
 	}
 	
@@ -188,6 +195,11 @@ public class BookDetailController extends Controller implements EditableView
 			   
 			   // save the book
 			   book.save();
+			   
+			   if(ViewAuditTrailButton.isDisable())
+			   {
+				   ViewAuditTrailButton.setDisable(false);
+			   }
 			   
 			   logger.info(String.format("%s saved to the database", book.getTitle()));
 			   
