@@ -338,13 +338,23 @@ public class BookDetailController extends Controller implements EditableView
 	 {
 		 try 
 		 {
+			int selectedPubIndex = PublisherTableGateway.DEFAULT_PUBLISHER_ID;
+			 
 			this.publisherTableGateway = new PublisherTableGateway();
 				
 			ObservableList<Publisher> publishers = FXCollections.observableArrayList(publisherTableGateway.fetchPublishers());
 				
 			comboBoxID.setItems(publishers);
-				
-			comboBoxID.getSelectionModel().select(publisherTableGateway.getBooksPublisher(book.getId()) - 1 );
+			
+			// If not a new book, get the publisher for the book
+			
+			if( book.getPublisherId() > 0)
+			{
+				selectedPubIndex = book.getPublisherId();
+			}
+			
+			// ObservableList of Publishers is zero indexed
+			comboBoxID.getSelectionModel().select(selectedPubIndex - 1 );
 				
 		 } catch (SQLException e) 
 		 {
