@@ -115,7 +115,6 @@ public class Book
 			}
 			
 			gateway.updateBook(this);
-			
 		}
 	
 	}
@@ -325,8 +324,6 @@ public class Book
 		 */
 			String compare1 = this.getTitle();
 			String compare2 = bookTitle;
-//			compare1.replaceAll("\\s+","");
-//			compare2.replaceAll("\\s+","");
 			
 			if(compare1 != null && compare1.compareTo(compare2) != 0)
 			{
@@ -337,9 +334,6 @@ public class Book
 			
 			compare1 = this.getSummary();
 			compare2 = summary;
-			
-//			compare1.replaceAll("\\s+","");
-//			compare2.replaceAll("\\s+","");
 			
 			if(compare1 != null && compare1.compareTo(compare2) != 0)
 			{
