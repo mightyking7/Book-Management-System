@@ -12,6 +12,10 @@ import java.time.format.DateTimeFormatter;
 
 public class AuditTrailEntry {
 
+	/**
+	 * Stores the book ID, date of creation and message to be displayed by the Audit Trail view
+	 * Getters and setters are public
+	 */
 	private int ID;
 	private LocalDateTime dateAdded;
 	private String message;

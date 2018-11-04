@@ -288,6 +288,14 @@ public class BookTableGateway
 			preparedStmt.executeUpdate();
 	}
 	
+	/**
+	 * Gets the Audit Trail to be displayed in the Audit Trail View
+	 * Uses the AuditTrailEntry model to store Audit Trail parameters from the Audit Trail DB
+	 * @param book
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public ArrayList<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
 	{
 		sql = "SELECT * FROM book_audit_trail WHERE book_id = " + book.getId(); 
@@ -314,6 +322,14 @@ public class BookTableGateway
 	
 		return AtrailEntries;
 	}
+	
+	/**
+	 * Method which creates a new Audit Trail which is stored in the Audit Trail DB
+	 * Gets the correct book ID and the message to be stored by parameters passed
+	 * @param book
+	 * @param msg
+	 * @throws SQLException
+	 */
 	
 	public void createNewAuditTrailEntry(Book book,String msg) throws SQLException
 	{

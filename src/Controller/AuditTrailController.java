@@ -85,12 +85,10 @@ public class AuditTrailController extends Controller {
 				
 				try {
 					viewManager.switchView(viewUrl,new BookDetailController(book));
-				} catch (NullPointerException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (NullPointerException et) {
+					logger.error(this.getClass().getName() + ":" + et.getMessage());
+				} catch (IOException et) {
+					logger.error(this.getClass().getName() + ":" + et.getMessage());
 				}
 		   
 		   }
