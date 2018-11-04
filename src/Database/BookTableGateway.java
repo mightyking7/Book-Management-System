@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import Model.AuditTrailEntry;
 import Model.Book;
+import Model.Publisher;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -32,14 +32,19 @@ public class BookTableGateway
 	
 	private String sql;				// SQL statement to execute against the database
 	
+	private PublisherTableGateway publisherTableGateway;
+	
 	
 	/**
 	 * Constructor with specified connection
 	 * @param conn
+	 * @throws SQLException 
 	 */
-	public BookTableGateway(Connection conn)
+	public BookTableGateway(Connection conn) throws SQLException
 	{
 		this.conn = conn;
+		
+		this.publisherTableGateway = new PublisherTableGateway();
 	}
 	
 	/**
@@ -49,6 +54,9 @@ public class BookTableGateway
 	public BookTableGateway() throws SQLException
 	{
 		this.conn = DBConnection.getInstance().getConnection();
+		
+		this.publisherTableGateway = new PublisherTableGateway();
+		
 	}
 	
 	/**
@@ -70,6 +78,8 @@ public class BookTableGateway
 		{
 			Book book = new Book();
 			
+			Publisher publisher;
+			
 			book.setId(result.getInt("id"));
 			
 			book.setTitle(result.getString("title"));
@@ -87,6 +97,10 @@ public class BookTableGateway
 			book.setDateAdded(dateAdded);
 			
 			book.setLastModified(lastModified);
+			
+			publisher = publisherTableGateway.getBookPublisher(book.getId());
+			
+			book.setPublisher(publisher);
 			
 			books.add(book);	
 		}
@@ -106,14 +120,21 @@ public class BookTableGateway
 	               + "SET title = ? "
 	               + ",summary = ? "
 	               + ",year_published = ? "
+	               + ",publisher_id = ?"
 	               + ",isbn = ? "
 	               + "WHERE id =" + book.getId();
 			
 			PreparedStatement preparedStmt = conn.prepareStatement(sql);
+			
 			preparedStmt.setString(1, book.getTitle());
+			
 			preparedStmt.setString(2, book.getSummary());
+			
 			preparedStmt.setInt(3, book.getYearPublished());
-			preparedStmt.setString(4, book.getIsbn());
+			
+			preparedStmt.setInt(4, book.getPublisher().getId());
+			
+			preparedStmt.setString(5, book.getIsbn());
 			
 			try 
 			{	

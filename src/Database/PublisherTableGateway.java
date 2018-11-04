@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import Model.Book;
 import Model.Publisher;
 
 public class PublisherTableGateway {
@@ -60,28 +59,35 @@ public class PublisherTableGateway {
 		return PublisherEntries;
 	}
 	
-	public void updatePublisherIDInBooksTable(Book book, int index) throws SQLException
+	/**
+	 * Used to retrieve the Publisher of a Book
+	 * 
+	 * @param bookId to use for an inner join on the Publisher table
+	 * @return Publisher for the Book
+	 * @throws SQLException 
+	 */
+	public Publisher getBookPublisher(int bookId) throws SQLException
 	{
-			sql = "UPDATE Books "
-	               + "SET publisher_id = ? "
-	               + "WHERE id =" + book.getId();
-			
-			PreparedStatement preparedStmt = conn.prepareStatement(sql);
-			preparedStmt.setInt(1, index);
-			
-			try {
-				
-				preparedStmt.executeUpdate();
-			
-			} catch(SQLException e)
-			{
-				conn.rollback();
-				
-				throw e;
-			} finally {
 		
-				conn.setAutoCommit(true);
-			}
+		Publisher publisher = new Publisher();
+		
+		String sql = "select p.id, p.publisher from Publishers as p "
+					+ "inner join Books as b on b.publisher_id = p.id where b.id = ?";
+		
+		stmt = conn.prepareStatement(sql);
+		
+		stmt.setInt(1, bookId);
+		
+		result = stmt.executeQuery();
+		
+		if(result.next())
+		{
+			publisher.setId(result.getInt("id"));
+			
+			publisher.setName(result.getString("publisher"));
+		}
+		
+		return publisher;		
 	}
 	
 }

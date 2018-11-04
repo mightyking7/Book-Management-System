@@ -5,18 +5,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
-
 import Database.PublisherTableGateway;
-import Model.AuditTrailEntry;
 import Model.Book;
 import Model.Publisher;
 import View.ViewManager;
@@ -25,7 +20,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import javafx.util.StringConverter;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -47,6 +41,8 @@ public class BookDetailController extends Controller implements EditableView
 	private Book book;
 	
 	private PublisherTableGateway publisherTableGateway;
+	
+	private Publisher selectedPublisher;
 	
 	@FXML
 	private TextField titleFieldID;
@@ -78,13 +74,9 @@ public class BookDetailController extends Controller implements EditableView
 	@FXML
 	void ComboBoxSelected(ActionEvent event) 
 	{
-	    try {
-	    	publisherTableGateway.updatePublisherIDInBooksTable(this.book, comboBoxID.getSelectionModel().getSelectedItem().getId());
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+		selectedPublisher = comboBoxID.getSelectionModel().getSelectedItem();
+		
+		logger.info(String.format("Publisher %s selected for %s", selectedPublisher, book.getTitle()));
 	}
 	
 	/**
@@ -109,7 +101,7 @@ public class BookDetailController extends Controller implements EditableView
 	{	
 		logger = LogManager.getLogger(BookDetailController.class);
 		
-		// Loads the Publishers in to the comboBox
+		// Loads the Publishers in to the comboBox and sets the selectedPublisher
 		getPublisherList();
 		
 		// set GUI field values to appropriate model field values
@@ -131,7 +123,8 @@ public class BookDetailController extends Controller implements EditableView
 	}
 	
 	/**
-	 * Save button used to update a book in the database and local memory by updating the book object and calling the UpdateBook function
+	 * Save button used to update a book in the database and local 
+	 * memory by updating the book object and calling the UpdateBook function
 	 * Catches and displays any exception thrown from the model
 	 */
 	@Override
@@ -147,8 +140,6 @@ public class BookDetailController extends Controller implements EditableView
 		   
 		   String summary = SummaryFieldID.getText();
 		   
-		   Publisher publisher = comboBoxID.getSelectionModel().getSelectedItem();
-		   
 		   int yearPublished = (yearPublishedFieldID.getText().isEmpty() ? 0 : Integer.parseInt(yearPublishedFieldID.getText()));
 		   
 		   String isbn = isbnFieldID.getText();
@@ -157,7 +148,6 @@ public class BookDetailController extends Controller implements EditableView
 		   
 		   try
 		   {
-			   
 			   // set the gateway for the model
 			   book.setGateway(bookTableGateway);
 			   
@@ -194,7 +184,7 @@ public class BookDetailController extends Controller implements EditableView
 			   }
 			   
 			   // copy values to original model for existing books only
-			   book.updateBookModel(bookTitle,summary,yearPublished,isbn, publisher);
+			   book.updateBookModel(bookTitle,summary,yearPublished,isbn, selectedPublisher);
 			   
 			   // save the book
 			   book.save();
@@ -348,13 +338,16 @@ public class BookDetailController extends Controller implements EditableView
 			
 			// If not a new book, get the publisher for the book
 			
-			if( book.getPublisherId() > 0)
+			if( book.getPublisher() != null)
 			{
-				selectedPubIndex = book.getPublisherId();
+				selectedPubIndex = book.getPublisher().getId();
 			}
 			
 			// ObservableList of Publishers is zero indexed
 			comboBoxID.getSelectionModel().select(selectedPubIndex - 1 );
+			
+			// set the selected Publisher
+			selectedPublisher = comboBoxID.getSelectionModel().getSelectedItem();
 				
 		 } catch (SQLException e) 
 		 {
@@ -384,7 +377,11 @@ public class BookDetailController extends Controller implements EditableView
 			edited = true;
 		
 		if(! (Objects.equals(book.getIsbn(), isbnFieldID.getText())) )
-			edited = true;		
+			edited = true;	
+		
+		if(! Objects.equals(selectedPublisher.getId() , book.getPublisher() == null ? 1 :
+														book.getPublisher().getId()))
+			edited = true;
 		
 		return edited;
 	 }
