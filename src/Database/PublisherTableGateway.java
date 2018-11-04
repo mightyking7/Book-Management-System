@@ -33,7 +33,12 @@ public class PublisherTableGateway {
 		this.conn = DBConnection.getInstance().getConnection();
 	}
 	
-	public ObservableList<Publisher> fetchPublishers() throws SQLException
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<Publisher> fetchPublishers() throws SQLException
 	{
 		sql = "SELECT * FROM Publishers"; 
 		
@@ -55,30 +60,36 @@ public class PublisherTableGateway {
 			PublisherEntries.add(publisher);	
 		}
 	
-		return FXCollections.observableList(PublisherEntries);
+		return PublisherEntries;
 	}
 	
-	public int getBookAndPublisherConnection(Book book) throws SQLException
+	/**
+	 * Retrieves the Publisher id for a given book
+	 * @param bookId database id of the Book to retrieve the Publisher for
+	 * @return Id of the publisher
+	 * @throws SQLException
+	 */
+	public int getBooksPublisher(int bookId) throws SQLException
 	{
-		sql = "SELECT * FROM Books WHERE id=" + book.getId() + " AND publisher_id IN (SELECT id FROM Publishers GROUP BY id HAVING COUNT(*) > 1)";
+		
+		int publisherId = 0;
+		
+		sql = "select p.id, p.publisher from `Publishers` as p inner join Books as b on b.publisher_id = p.id WHERE b.id = ?";
 		
 		stmt = conn.prepareStatement(sql);
+		
+		stmt.setInt(1, bookId);
 		
 		result = stmt.executeQuery();
 		
 		Publisher publisher = new Publisher();
 		
-		while(result.next())
+		if(result.next())
 		{
-	
-			publisher.setId(result.getInt("id"));
-			
-			publisher.setName(result.getString("publisher"));
-	
+			publisherId = result.getInt("id");
 		}
 		
-		return publisher.getId();
-		
+		return publisherId;
 	}
 	
 	public void updatePublisherIDInBooksTable(Book book, int index) throws SQLException

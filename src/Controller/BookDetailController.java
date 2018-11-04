@@ -76,8 +76,8 @@ public class BookDetailController extends Controller implements EditableView
 	private ComboBox<Publisher> comboBoxID;
 	
 	@FXML
-	void ComboBoxSelected(ActionEvent event) {
-
+	void ComboBoxSelected(ActionEvent event) 
+	{
 	    try {
 	    	publisherTableGateway.updatePublisherIDInBooksTable(this.book, comboBoxID.getSelectionModel().getSelectedItem().getId());
 		} catch (SQLException e) {
@@ -336,11 +336,18 @@ public class BookDetailController extends Controller implements EditableView
 	 {
 		 try {
 				this.publisherTableGateway = new PublisherTableGateway();
-				comboBoxID.setItems(publisherTableGateway.fetchPublishers());
-				comboBoxID.getSelectionModel().select(publisherTableGateway.getBookAndPublisherConnection(this.book));
-			} catch (SQLException e) {
+				
+				ObservableList<Publisher> publishers = FXCollections.observableArrayList(publisherTableGateway.fetchPublishers());
+				
+				comboBoxID.setItems(publishers);
+				
+				comboBoxID.getSelectionModel().select(publisherTableGateway.getBooksPublisher(book.getId()) - 1 );
+				
+			} catch (SQLException e) 
+		 	{
 				logger.error(e.getMessage());
-			} catch (Exception e) {
+			} catch (Exception e) 
+		 	{
 				logger.error(e.getMessage());
 			}
 	 }
