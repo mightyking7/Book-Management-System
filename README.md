@@ -1,4 +1,3 @@
-# CS-4743
 Book Management System
 
 Simple inventory management system for books with the following capabilities:
