@@ -1,8 +1,19 @@
 package Model;
 
+/**
+ * Publisher object which is used with the BookDetailController ComboBox
+ * @author HercHja
+ *
+ */
+
 
 public class Publisher {
 
+	/**
+	 * Stores the publisher name and id from the Publisher DB table
+	 * Getters and setters are public
+	 */
+	
 	private String name;
 	private int id;
 	

@@ -300,7 +300,9 @@ public class BookTableGateway
 	
 	public ArrayList<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
 	{
-		sql = "SELECT * FROM book_audit_trail WHERE book_id = " + book.getId(); 
+		sql = "SELECT * FROM book_audit_trail"
+				+ " WHERE book_id = " + book.getId()
+				+ " ORDER BY date_added ASC"; 
 		
 		ArrayList<AuditTrailEntry> AtrailEntries = new ArrayList<AuditTrailEntry>();
 		
