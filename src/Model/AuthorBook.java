@@ -46,5 +46,12 @@ public class AuthorBook {
 		this.newRecord = newRecord;
 	}
 	
-	
+	/**
+	 * Used to return the string representation of a Book
+	 */
+	@Override
+	public String toString()
+	{
+		return String.format("%s %s %35d", this.getAuthor().getFirstName(), this.getAuthor().getLastName(), this.getRoyalty());
+	}
 }

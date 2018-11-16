@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
@@ -8,11 +9,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="530.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane layoutY="-1.0" prefHeight="400.0" prefWidth="600.0">
+      <AnchorPane layoutY="-1.0" prefHeight="530.0" prefWidth="600.0">
          <children>
-            <ImageView fx:id="imageBoxID" fitHeight="285.0" fitWidth="226.0" layoutX="365.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="42.0" />
+            <ImageView fx:id="imageBoxID" fitHeight="285.0" fitWidth="226.0" layoutX="371.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="227.0" AnchorPane.leftAnchor="371.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="18.0" />
             <GridPane hgap="8.0" layoutX="14.0" layoutY="51.0" prefHeight="252.0" prefWidth="357.0">
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="163.0" minWidth="10.0" prefWidth="134.0" />
@@ -48,6 +49,24 @@
                   <ComboBox fx:id="comboBoxID" maxWidth="1.7976931348623157E308" onAction="#ComboBoxSelected" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
             </GridPane>
+            <Pane layoutX="16.0" layoutY="316.0" prefHeight="200.0" prefWidth="569.0">
+               <children>
+                  <ListView fx:id="AuthorListid" layoutX="14.0" layoutY="36.0" prefHeight="164.0" prefWidth="414.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" height="36.0" layoutX="14.0" stroke="BLACK" strokeType="INSIDE" width="414.0" />
+                  <Button fx:id="AddAuthorid" layoutX="448.0" layoutY="36.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="103.0" text="Add Author" />
+                  <Button fx:id="DeleteAuthorid" layoutX="448.0" layoutY="87.0" mnemonicParsing="false" text="Delete Author" />
+                  <Label layoutX="221.0" layoutY="4.0" text="Royalties" textFill="WHITE">
+                     <font>
+                        <Font name="Kannada MN" size="23.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="22.0" layoutY="4.0" text="Author" textFill="WHITE">
+                     <font>
+                        <Font name="Kannada MN" size="23.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
          </children>
       </AnchorPane>
    </children>

@@ -5,13 +5,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import Database.PublisherTableGateway;
+import Model.Author;
+import Model.AuthorBook;
 import Model.Book;
 import Model.Publisher;
 import View.ViewManager;
@@ -19,12 +25,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -43,6 +64,15 @@ public class BookDetailController extends Controller implements EditableView
 	private PublisherTableGateway publisherTableGateway;
 	
 	private Publisher selectedPublisher;
+	
+	@FXML
+	private ListView<AuthorBook> AuthorListid;
+	
+	@FXML
+	private Button AddAuthorid;
+	
+	@FXML
+	private Button DeleteAuthorid;
 	
 	@FXML
 	private TextField titleFieldID;
@@ -99,6 +129,7 @@ public class BookDetailController extends Controller implements EditableView
 	@Override
 	public void initialize(URL location, ResourceBundle resources) 
 	{	
+		
 		logger = LogManager.getLogger(BookDetailController.class);
 		
 		// Loads the Publishers in to the comboBox and sets the selectedPublisher
@@ -127,6 +158,70 @@ public class BookDetailController extends Controller implements EditableView
 		}
 		
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> save());
+		
+		initializeAuthorList(this.book);
+		
+		AuthorListid.addEventFilter(MouseEvent.MOUSE_CLICKED, selectAuthor);
+		
+		
+	}
+	
+	EventHandler<MouseEvent> selectAuthor = new EventHandler<MouseEvent>()
+	{
+		/**
+		 * handles selection of Authors
+		 */
+		@Override
+		public void handle(MouseEvent event) 
+		{
+			AuthorBook selectedAuthor;
+			
+			if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2)
+			{
+				try 
+				{
+					selectedAuthor = AuthorListid.getSelectionModel().getSelectedItem();
+					
+					// log the event
+					logger.info(String.format("%s selected", selectedAuthor));
+					
+					UpdateAuthor();
+					
+				} catch(Exception e)
+				{
+					logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
+				}
+			}
+		}
+		
+	};
+	
+	public void UpdateAuthor() {
+		Dialog<Object> dialog = new Dialog<>();
+        dialog.setTitle("Dialog Test");
+        dialog.setHeaderText("Please specify…");
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        TextField firstname = new TextField("First");
+        TextField lastname = new TextField("Last Name");
+        TextField royalty = new TextField("royalty");
+        
+        dialogPane.setContent(new VBox(8, firstname,lastname,royalty));
+       
+        dialog.setResultConverter(button -> button == ButtonType.OK);
+
+    	dialog.showAndWait().ifPresent(newConfig -> {
+    		System.out.println("OK pressed");
+    	});
+    }
+	
+	public void initializeAuthorList(Book book)
+	{
+		try {
+			this.AuthorListid.setItems(book.getAuthors(book.getId(), bookTableGateway));
+		} catch (Exception e) {
+			logger.error(String.format("%s (In loadAuthorList method)", e.getMessage()));
+		}
 	}
 	
 	/**

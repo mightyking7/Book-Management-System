@@ -220,6 +220,11 @@ public class Book
 		gateway.createNewAuditTrailEntry(this,msg);
 	}
 	
+	public ObservableList<AuthorBook> getAuthors(int bookId, BookTableGateway gateway) throws SQLException
+	{
+		return FXCollections.observableList(gateway.getAuthorsForBook(bookId));
+	}
+	
 	/**
 	 * Getters and setters below
 	 */

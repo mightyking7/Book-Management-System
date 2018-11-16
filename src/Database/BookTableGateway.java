@@ -10,6 +10,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import Model.AuditTrailEntry;
+import Model.Author;
+import Model.AuthorBook;
 import Model.Book;
 import Model.Publisher;
 import javafx.collections.FXCollections;
@@ -367,6 +369,37 @@ public class BookTableGateway
 		generatedKeys = stmt.getGeneratedKeys();
 		
 		generatedKeys.next();
+	}
+	
+	public List<AuthorBook> getAuthorsForBook(int bookId) throws SQLException
+	{
+		String sql = "select a.*,b.*,t.* from author_book as a "
+				+ "inner join Books as b on b.id = a.author_id "
+				+ " inner join author as t on t.id = a.author_id where t.id = " + String.valueOf(bookId);
+	
+	List<AuthorBook> AuthorBooks = new ArrayList<AuthorBook>();
+		
+	stmt = conn.prepareStatement(sql);
+	
+	result = stmt.executeQuery();
+	
+	while(result.next())
+	{
+		AuthorBook authorBook = new AuthorBook();
+		Author author = new Author();
+		author.setId(result.getInt("id"));
+		author.setFirstName(result.getString("first_name"));
+		author.setLastName(result.getString("last_name"));
+		author.setDateOfBirth(result.getTimestamp("date_added").toLocalDateTime().toLocalDate());
+		author.setGender(result.getString("gender"));
+		author.setWebSite(result.getString("web_site"));
+		int royalty = (100000 * result.getInt("royalty"));
+		authorBook.setRoyalty(royalty);
+		authorBook.setAuthor(author);
+		AuthorBooks.add(authorBook);
+	}
+	
+		return AuthorBooks;
 	}
 	
 }
