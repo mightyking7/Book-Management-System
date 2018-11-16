@@ -185,7 +185,7 @@ public class BookDetailController extends Controller implements EditableView
 					// log the event
 					logger.info(String.format("%s selected", selectedAuthor));
 					
-					UpdateAuthor();
+					UpdateAuthor(selectedAuthor);
 					
 				} catch(Exception e)
 				{
@@ -196,22 +196,34 @@ public class BookDetailController extends Controller implements EditableView
 		
 	};
 	
-	public void UpdateAuthor() {
-		Dialog<Object> dialog = new Dialog<>();
-        dialog.setTitle("Dialog Test");
-        dialog.setHeaderText("Please specify…");
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        TextField firstname = new TextField("First");
-        TextField lastname = new TextField("Last Name");
-        TextField royalty = new TextField("royalty");
-        
-        dialogPane.setContent(new VBox(8, firstname,lastname,royalty));
+	public void UpdateAuthor(AuthorBook authorBook) {
+		Dialog<Object> updateAuthor = new Dialog<>();
+		updateAuthor.setTitle("Update Author");
+		updateAuthor.setHeaderText("Please Update required Author fields:");
+        DialogPane dialogPane = updateAuthor.getDialogPane();
+        dialogPane.getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
+        TextField firstName = new TextField(authorBook.getAuthor().getFirstName());
+        TextField lastName = new TextField(authorBook.getAuthor().getLastName());
+        TextField royalty = new TextField(String.valueOf(authorBook.getRoyalty()));
+        updateAuthor.getDialogPane().setMinSize(400, 200);
+        dialogPane.setContent(new VBox(8, firstName,lastName,royalty));
        
-        dialog.setResultConverter(button -> button == ButtonType.OK);
+        updateAuthor.setResultConverter(button -> button == ButtonType.APPLY);
 
-    	dialog.showAndWait().ifPresent(newConfig -> {
-    		System.out.println("OK pressed");
+        updateAuthor.showAndWait().ifPresent(bool -> {
+    		
+    		if(bool.toString() == "true")
+    		{
+            	authorBook.getAuthor().setFirstName(firstName.getText());
+        		authorBook.getAuthor().setLastName(lastName.getText());
+        		authorBook.setRoyalty(Integer.parseInt(royalty.getText()));
+        		this.AuthorListid.refresh();
+    		}
+            else
+            {
+            	
+            }
+    		
     	});
     }
 	
