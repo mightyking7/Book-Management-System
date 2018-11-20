@@ -379,7 +379,7 @@ public class BookTableGateway
 				+ "a.last_name, a.dob, a.gender, a.web_site "
 				+ "from author_book as ab "
 				+ "inner join Books as b on b.id = ab.book_id "
-				+ " inner join author as a on a.id = ab.author_id where b.id = ?";
+				+ "inner join author as a on a.id = ab.author_id where b.id = ?";
 	
 		List<AuthorBook> AuthorBooks = new ArrayList<AuthorBook>();
 			
@@ -392,16 +392,27 @@ public class BookTableGateway
 		while(result.next())
 		{
 			AuthorBook authorBook = new AuthorBook();
+			
 			Author author = new Author();
+			
 			author.setId(result.getInt("author_id"));
+			
 			author.setFirstName(result.getString("first_name"));
+			
 			author.setLastName(result.getString("last_name"));
+			
 			author.setDateOfBirth(result.getTimestamp("dob").toLocalDateTime().toLocalDate());
+			
 			author.setGender(result.getString("gender"));
+			
 			author.setWebSite(result.getString("web_site"));
+			
 			int royalty = (DOUBLE_PRECISION * result.getInt("royalty"));
+			
 			authorBook.setRoyalty(royalty);
+			
 			authorBook.setAuthor(author);
+			
 			AuthorBooks.add(authorBook);
 		}
 		
