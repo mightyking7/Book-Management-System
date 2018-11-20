@@ -1,17 +1,19 @@
 package Model;
 
+import javafx.beans.property.SimpleIntegerProperty;
+
 public class AuthorBook {
 
 	private Author author;
 	private Book book;
-	private int royalty;
+	private SimpleIntegerProperty royalty;
 	private boolean newRecord = true;
 	
 	public AuthorBook()
 	{
 		author = null;
 		book = null;
-		royalty = 0;
+		royalty = new SimpleIntegerProperty(0);
 	}
 
 	public Author getAuthor() {
@@ -31,11 +33,12 @@ public class AuthorBook {
 	}
 
 	public int getRoyalty() {
-		return royalty;
+		return royalty.get();
 	}
 
 	public void setRoyalty(int royalty) {
-		this.royalty = royalty;
+		
+		this.royalty = new SimpleIntegerProperty(royalty);
 	}
 
 	public boolean isNewRecord() {

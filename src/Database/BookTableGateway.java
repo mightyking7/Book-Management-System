@@ -34,6 +34,8 @@ public class BookTableGateway
 	
 	private String sql;				// SQL statement to execute against the database
 	
+	private final int DOUBLE_PRECISION = 100000;
+	
 	private PublisherTableGateway publisherTableGateway;
 	
 	
@@ -373,32 +375,36 @@ public class BookTableGateway
 	
 	public List<AuthorBook> getAuthorsForBook(int bookId) throws SQLException
 	{
-		String sql = "select a.*,b.*,t.* from author_book as a "
-				+ "inner join Books as b on b.id = a.author_id "
-				+ " inner join author as t on t.id = a.author_id where t.id = " + String.valueOf(bookId);
+		String sql = "select ab.author_id, ab.royalty, a.first_name, "
+				+ "a.last_name, a.dob, a.gender, a.web_site "
+				+ "from author_book as ab "
+				+ "inner join Books as b on b.id = ab.book_id "
+				+ " inner join author as a on a.id = ab.author_id where b.id = ?";
 	
-	List<AuthorBook> AuthorBooks = new ArrayList<AuthorBook>();
+		List<AuthorBook> AuthorBooks = new ArrayList<AuthorBook>();
+			
+		stmt = conn.prepareStatement(sql);
 		
-	stmt = conn.prepareStatement(sql);
-	
-	result = stmt.executeQuery();
-	
-	while(result.next())
-	{
-		AuthorBook authorBook = new AuthorBook();
-		Author author = new Author();
-		author.setId(result.getInt("id"));
-		author.setFirstName(result.getString("first_name"));
-		author.setLastName(result.getString("last_name"));
-		author.setDateOfBirth(result.getTimestamp("date_added").toLocalDateTime().toLocalDate());
-		author.setGender(result.getString("gender"));
-		author.setWebSite(result.getString("web_site"));
-		int royalty = (100000 * result.getInt("royalty"));
-		authorBook.setRoyalty(royalty);
-		authorBook.setAuthor(author);
-		AuthorBooks.add(authorBook);
-	}
-	
+		stmt.setInt(1, bookId);
+		
+		result = stmt.executeQuery();
+		
+		while(result.next())
+		{
+			AuthorBook authorBook = new AuthorBook();
+			Author author = new Author();
+			author.setId(result.getInt("author_id"));
+			author.setFirstName(result.getString("first_name"));
+			author.setLastName(result.getString("last_name"));
+			author.setDateOfBirth(result.getTimestamp("dob").toLocalDateTime().toLocalDate());
+			author.setGender(result.getString("gender"));
+			author.setWebSite(result.getString("web_site"));
+			int royalty = (DOUBLE_PRECISION * result.getInt("royalty"));
+			authorBook.setRoyalty(royalty);
+			authorBook.setAuthor(author);
+			AuthorBooks.add(authorBook);
+		}
+		
 		return AuthorBooks;
 	}
 	
