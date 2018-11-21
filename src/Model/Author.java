@@ -8,9 +8,9 @@ public class Author
 
 	private int id;
 	
-	private SimpleStringProperty firstName;
+	private String firstName;
 	
-	private SimpleStringProperty lastName;
+	private String lastName;
 	
 	private LocalDate dateOfBirth;
 	
@@ -40,22 +40,22 @@ public class Author
 	
 	public String getFirstName() 
 	{
-		return firstName.get();
+		return firstName;
 	}
 	
 	public void setFirstName(String firstName) 
 	{
-		this.firstName.set(firstName);
+		this.firstName = firstName;
 	}
 	
 	public String getLastName() 
 	{
-		return lastName.get();
+		return lastName;
 	}
 	
 	public void setLastName(String lastName) 
 	{
-		this.lastName.set(lastName);
+		this.lastName = lastName;
 	}
 	
 	public LocalDate getDateOfBirth() 

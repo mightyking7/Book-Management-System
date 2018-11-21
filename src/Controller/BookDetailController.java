@@ -2,6 +2,7 @@ package Controller;
 
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -21,6 +22,7 @@ import Model.AuthorBook;
 import Model.Book;
 import Model.Publisher;
 import View.ViewManager;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,17 +35,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -60,6 +66,8 @@ import javafx.scene.image.ImageView;
  */
 public class BookDetailController extends Controller implements EditableView
 {	
+	private final int DOUBLE_PRECISION = 100000;
+	
 	private Image image;
 	
 	private Book book;
@@ -68,8 +76,12 @@ public class BookDetailController extends Controller implements EditableView
 	
 	private Publisher selectedPublisher;
 	
+	private AuthorBook selectedAuthor;
+	
+	ListView<AuthorBook> authorSelectList = new ListView<AuthorBook>(); 
+	
 	@FXML
-	private TableView authorBookTable;
+	private TableView<AuthorBook> authorBookTable;
 	
 	@FXML
 	private TableColumn<Author, String> authorColumn;
@@ -119,6 +131,16 @@ public class BookDetailController extends Controller implements EditableView
 		selectedPublisher = comboBoxID.getSelectionModel().getSelectedItem();
 		
 		logger.info(String.format("Publisher %s selected for %s", selectedPublisher, book.getTitle()));
+	}
+	
+	@FXML
+    void addAuthor(ActionEvent event) {
+		AddAuthor(this.book);
+	}
+	
+	@FXML
+    void deleteAuthor(ActionEvent event) {
+		
 	}
 	
 	/**
@@ -173,8 +195,6 @@ public class BookDetailController extends Controller implements EditableView
 		
 		initializeAuthorBookTable(this.book);
 		
-		//AuthorListid.addEventFilter(MouseEvent.MOUSE_CLICKED, selectAuthor);
-		
 		
 	}
 	
@@ -186,29 +206,18 @@ public class BookDetailController extends Controller implements EditableView
 		@Override
 		public void handle(MouseEvent event) 
 		{
-			AuthorBook selectedAuthor;
-			
-			if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2)
+	
+			if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1)
 			{
-//				try 
-//				{
-//					selectedAuthor = AuthorListid.getSelectionModel().getSelectedItem();
-//					
-//					// log the event
-//					logger.info(String.format("%s selected", selectedAuthor));
-//					
-//					UpdateAuthor(selectedAuthor);
-//					
-//				} catch(Exception e)
-//				{
-//					logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
-//				}
+				selectedAuthor = authorSelectList.getSelectionModel().getSelectedItem();
+				logger.info(String.format("%s selected", selectedAuthor));
+
 			}
 		}
 		
 	};
 	
-	public void UpdateAuthor(AuthorBook authorBook) 
+	public void AddAuthor(Book book) 
 	{
 		Dialog<Object> updateAuthor = new Dialog<>();
 		
@@ -220,29 +229,49 @@ public class BookDetailController extends Controller implements EditableView
         
         dialogPane.getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
         
-        TextField firstName = new TextField(authorBook.getAuthor().getFirstName());
-        TextField lastName = new TextField(authorBook.getAuthor().getLastName());
-        TextField royalty = new TextField(String.valueOf(authorBook.getRoyalty()));
+        ObservableList<AuthorBook> Authbooks = null;
+		try {
+			Authbooks = book.getAllAuthors(bookTableGateway);
+		} catch (SQLException e) {
+			logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
+		}
+
+		authorSelectList.setItems(Authbooks);
+        
+		authorSelectList.setMaxHeight(Control.USE_PREF_SIZE);
+		authorSelectList.setPrefWidth(150.0);
+		authorSelectList.addEventFilter(MouseEvent.MOUSE_CLICKED, selectAuthor);
+        dialogPane.setContent(new VBox(8, authorSelectList));
         
         updateAuthor.getDialogPane().setMinSize(400, 200);
-        
-        dialogPane.setContent(new VBox(8, firstName,lastName,royalty));
        
         updateAuthor.setResultConverter(button -> button == ButtonType.APPLY);
-
+        
         updateAuthor.showAndWait().ifPresent(bool -> {
-    		
+        	
     		if(bool.toString() == "true")
     		{
-            	authorBook.getAuthor().setFirstName(firstName.getText());
-        		authorBook.getAuthor().setLastName(lastName.getText());
-        		authorBook.setRoyalty(Integer.parseInt(royalty.getText()));
-        		
-        		//this.AuthorListid.refresh();
+    			Boolean shouldAdd = true;
+    			
+    			for (int i = 0; i < tableData.size(); i++)
+    			{
+    				if(tableData.get(i).getAuthor().getId() == selectedAuthor.getAuthor().getId())
+    				{
+    					shouldAdd = false;
+    				}
+    			}
+    			
+    			if(shouldAdd)
+    			{
+    			tableData.add(selectedAuthor);
+    			authorBookTable.setItems(tableData);
+    			}
+    			selectedAuthor = null;
+        	
     		}
             else
             {
-            	
+            	selectedAuthor = null;
             }
     		
     	});
@@ -252,19 +281,26 @@ public class BookDetailController extends Controller implements EditableView
 	{	
 		try 
 		{
+			ObservableList<AuthorBook> list = book.getAuthors(book.getId(), bookTableGateway);
+			
 			// set data properties to columns
 			authorColumn.setCellValueFactory( new PropertyValueFactory<Author, String>("author"));
-			
-			royaltyColumn.setCellValueFactory( new PropertyValueFactory<AuthorBook, Integer>("royalty"));
+			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, Integer>("royalty"));
 			
 			// set the the table data
-			tableData = FXCollections.observableArrayList(book.getAuthors(book.getId(), bookTableGateway));
+			tableData = FXCollections.observableArrayList(list);
+			
+			authorBookTable.setEditable(false);
+			authorColumn.setEditable(false);
+			royaltyColumn.setEditable(false);
 			
 			authorBookTable.setItems(tableData);
 			
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			logger.error(String.format("%s (In loadAuthorList method)", e.getMessage()));
 		}
+		
+		
 	}
 	
 	/**

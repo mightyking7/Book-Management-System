@@ -1,19 +1,19 @@
 package Model;
 
-import javafx.beans.property.SimpleIntegerProperty;
+import java.math.BigDecimal;
 
 public class AuthorBook {
 
 	private Author author;
 	private Book book;
-	private SimpleIntegerProperty royalty;
+	private int royalty;
 	private boolean newRecord = true;
 	
 	public AuthorBook()
 	{
 		author = null;
 		book = null;
-		royalty = new SimpleIntegerProperty(0);
+		royalty = 0;
 	}
 
 	public Author getAuthor() {
@@ -31,14 +31,15 @@ public class AuthorBook {
 	public void setBook(Book book) {
 		this.book = book;
 	}
-
-	public int getRoyalty() {
-		return royalty.get();
+	
+	public BigDecimal getRoyalty() {
+		
+		return BigDecimal.valueOf(royalty).movePointLeft(5);
 	}
 
 	public void setRoyalty(int royalty) {
 		
-		this.royalty = new SimpleIntegerProperty(royalty);
+		this.royalty = royalty;
 	}
 
 	public boolean isNewRecord() {
@@ -55,6 +56,6 @@ public class AuthorBook {
 	@Override
 	public String toString()
 	{
-		return String.format("%s %s %35d", this.getAuthor().getFirstName(), this.getAuthor().getLastName(), this.getRoyalty());
+		return String.format("%s %s", this.getAuthor().getFirstName(), this.getAuthor().getLastName());
 	}
 }

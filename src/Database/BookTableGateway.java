@@ -373,43 +373,106 @@ public class BookTableGateway
 		generatedKeys.next();
 	}
 	
+	public void addAuthor(AuthorBook authorBook) throws SQLException
+	{
+		ResultSet generatedKeys;
+		
+		sql = "insert into author_book (author_id, book_id, royalty) values(?, ?, ?)";
+		
+		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		
+		stmt.setInt(1, authorBook.getAuthor().getId());
+		
+		stmt.setInt(2, authorBook.getBook().getId());
+		
+		stmt.setBigDecimal(3, authorBook.getRoyalty());
+		
+		stmt.executeUpdate();
+		
+		generatedKeys = stmt.getGeneratedKeys();
+		
+		generatedKeys.next();
+	}
+	
+	public void deleteAuthor(AuthorBook authorBook) throws SQLException
+	{
+		sql = "DELETE FROM author_book WHERE author_id = " + authorBook.getAuthor().getId() + " AND " + "book_id = " + authorBook.getBook().getId();
+		PreparedStatement preparedStmt = conn.prepareStatement(sql);
+		preparedStmt.executeUpdate();
+	}
+	
 	public List<AuthorBook> getAuthorsForBook(int bookId) throws SQLException
 	{
-		String sql = "select ab.author_id, ab.royalty, a.first_name, "
-				+ "a.last_name, a.dob, a.gender, a.web_site "
-				+ "from author_book as ab "
-				+ "inner join Books as b on b.id = ab.book_id "
-				+ "inner join author as a on a.id = ab.author_id where b.id = ?";
+
+		String sql = " SELECT author.*, author_book.royalty "
+				+ "FROM Books INNER JOIN author INNER JOIN author_book "
+				+ "ON Books.id = author_book.book_id AND author_book.author_id = author.id "
+				+ "WHERE author_book.book_id = " + String.valueOf(bookId); 
 	
 		List<AuthorBook> AuthorBooks = new ArrayList<AuthorBook>();
 			
 		stmt = conn.prepareStatement(sql);
-		
-		stmt.setInt(1, bookId);
-		
+
 		result = stmt.executeQuery();
 		
 		while(result.next())
 		{
+		
 			AuthorBook authorBook = new AuthorBook();
-			
 			Author author = new Author();
 			
-			author.setId(result.getInt("author_id"));
-			
+			author.setId(result.getInt("id"));
+	
 			author.setFirstName(result.getString("first_name"));
-			
+		
 			author.setLastName(result.getString("last_name"));
-			
+		
 			author.setDateOfBirth(result.getTimestamp("dob").toLocalDateTime().toLocalDate());
-			
+	
 			author.setGender(result.getString("gender"));
-			
+		
 			author.setWebSite(result.getString("web_site"));
-			
-			int royalty = (DOUBLE_PRECISION * result.getInt("royalty"));
-			
+
+			int royalty = (int) (DOUBLE_PRECISION * result.getDouble("royalty"));
+
 			authorBook.setRoyalty(royalty);
+			
+			authorBook.setAuthor(author);
+			
+			AuthorBooks.add(authorBook);
+		}
+		
+		return AuthorBooks;
+	}
+	
+	public List<AuthorBook> getAllAuthors() throws SQLException
+	{
+
+		String sql = " SELECT author.* FROM author";
+	
+		List<AuthorBook> AuthorBooks = new ArrayList<AuthorBook>();
+			
+		stmt = conn.prepareStatement(sql);
+
+		result = stmt.executeQuery();
+		
+		while(result.next())
+		{
+		
+			AuthorBook authorBook = new AuthorBook();
+			Author author = new Author();
+			
+			author.setId(result.getInt("id"));
+	
+			author.setFirstName(result.getString("first_name"));
+		
+			author.setLastName(result.getString("last_name"));
+		
+			author.setDateOfBirth(result.getTimestamp("dob").toLocalDateTime().toLocalDate());
+	
+			author.setGender(result.getString("gender"));
+		
+			author.setWebSite(result.getString("web_site"));
 			
 			authorBook.setAuthor(author);
 			

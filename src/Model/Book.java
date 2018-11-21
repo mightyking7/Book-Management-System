@@ -225,6 +225,21 @@ public class Book
 		return FXCollections.observableList(gateway.getAuthorsForBook(bookId));
 	}
 	
+	public ObservableList<AuthorBook> getAllAuthors(BookTableGateway gateway) throws SQLException
+	{
+		return FXCollections.observableList(gateway.getAllAuthors());
+	}
+	
+	public void addAuthor(AuthorBook authorBook, BookTableGateway gateway) throws SQLException
+	{
+		gateway.addAuthor(authorBook);
+	}
+	
+	public void deleteAuthor(AuthorBook authorBook, BookTableGateway gateway) throws SQLException
+	{
+		gateway.deleteAuthor(authorBook);
+	}
+	
 	/**
 	 * Getters and setters below
 	 */

@@ -57,8 +57,8 @@
                       <TableColumn fx:id="royaltyColumn" minWidth="8.0" prefWidth="217.0" text="Royalty" />
                     </columns>
                   </TableView>
-                  <Button fx:id="AddAuthorid" layoutX="448.0" layoutY="36.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="103.0" text="Add Author" />
-                  <Button fx:id="DeleteAuthorid" layoutX="448.0" layoutY="87.0" mnemonicParsing="false" text="Delete Author" />
+                  <Button fx:id="AddAuthorid" layoutX="448.0" layoutY="36.0" mnemonicParsing="false" onAction="#addAuthor" prefHeight="27.0" prefWidth="103.0" text="Add Author" />
+                  <Button fx:id="DeleteAuthorid" layoutX="448.0" layoutY="87.0" mnemonicParsing="false" onAction="#deleteAuthor" text="Delete Author" />
                </children>
             </Pane>
          </children>
