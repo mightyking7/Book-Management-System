@@ -40,8 +40,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.converter.DefaultStringConverter;
-import javafx.util.converter.IntegerStringConverter;
+import javafx.util.StringConverter;
+import javafx.util.converter.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -61,6 +61,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -96,7 +97,7 @@ public class BookDetailController extends Controller implements EditableView
 	private TableColumn<Author, String> authorColumn;
 	
 	@FXML
-	private TableColumn<AuthorBook, Integer> royaltyColumn;
+	private TableColumn<AuthorBook, BigDecimal> royaltyColumn;
 	
 	private ObservableList<AuthorBook> tableData;
 	
@@ -297,20 +298,22 @@ public class BookDetailController extends Controller implements EditableView
 			
 			// set data properties to columns
 			authorColumn.setCellValueFactory( new PropertyValueFactory<Author, String>("author"));
-			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, Integer>("royalty"));
 			
-			// set royalty column to editable
-			royaltyColumn.setCellFactory(TextFieldTableCell.<AuthorBook, Integer>forTableColumn( new IntegerStringConverter()));
+			// set royalty cell factory and value
+			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, BigDecimal>("royalty"));
+			
+			royaltyColumn.setCellFactory(TextFieldTableCell.<AuthorBook, BigDecimal>forTableColumn( new BigDecimalStringConverter()));
 			
 			royaltyColumn.setOnEditCommit(
-					new EventHandler<TableColumn.CellEditEvent<AuthorBook, Integer>>() 
+					(CellEditEvent<AuthorBook, BigDecimal> t) -> 
 					{
-		                @Override public void handle(TableColumn.CellEditEvent<AuthorBook, Integer> t) 
-		                {
-		                    ((AuthorBook) t.getTableView().getItems().get(
-		                            t.getTablePosition().getRow())).setRoyalty(t.getNewValue());
-		                }	
+		                ((AuthorBook) t.getTableView().getItems().get(
+		                        t.getTablePosition().getRow())
+		                 ).setRoyalty(t.getNewValue());
 					});
+			
+			Tooltip.install(authorBookTable, new Tooltip("Hit Enter to submit changes"));
+		 
 			
 			// set the the table data
 			tableData = FXCollections.observableArrayList(list);

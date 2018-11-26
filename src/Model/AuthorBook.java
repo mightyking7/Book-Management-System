@@ -7,14 +7,16 @@ public class AuthorBook {
 
 	private Author author;
 	private Book book;
-	private SimpleIntegerProperty royalty;
+	private int royalty;
 	private boolean newRecord = true;
+	
+	public final static int ROYALTY_PRECISION = 100000;  // precision for royalty
 	
 	public AuthorBook()
 	{
 		author = null;
 		book = null;
-		royalty = new SimpleIntegerProperty(0);
+		royalty = 0;
 	}
 
 	public Author getAuthor() {
@@ -33,14 +35,19 @@ public class AuthorBook {
 		this.book = book;
 	}
 	
-	public int getRoyalty() {
+	public BigDecimal getRoyalty() {
 		
-		return royalty.get();
+		return BigDecimal.valueOf(royalty).movePointLeft(5);
 	}
 
 	public void setRoyalty(int royalty) {
 		
-		this.royalty.set(royalty);
+		this.royalty = royalty;
+	}
+	
+	public void setRoyalty(BigDecimal newValue) 
+	{
+		this.royalty = (int) (newValue.doubleValue() * ROYALTY_PRECISION);
 	}
 
 	public boolean isNewRecord() {
@@ -59,4 +66,5 @@ public class AuthorBook {
 	{
 		return String.format("%s %s", this.getAuthor().getFirstName(), this.getAuthor().getLastName());
 	}
+
 }

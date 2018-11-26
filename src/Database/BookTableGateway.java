@@ -34,9 +34,8 @@ public class BookTableGateway
 	
 	private String sql;				// SQL statement to execute against the database
 	
-	private final int DOUBLE_PRECISION = 100000;
-	
 	private PublisherTableGateway publisherTableGateway;
+
 	
 	
 	/**
@@ -385,7 +384,7 @@ public class BookTableGateway
 		
 		stmt.setInt(2, authorBook.getBook().getId());
 		
-		stmt.setInt(3, authorBook.getRoyalty());
+		stmt.setBigDecimal(3, authorBook.getRoyalty());
 		
 		stmt.executeUpdate();
 		
@@ -417,7 +416,7 @@ public class BookTableGateway
 		
 		while(result.next())
 		{
-		
+
 			AuthorBook authorBook = new AuthorBook();
 			Author author = new Author();
 			
@@ -433,7 +432,7 @@ public class BookTableGateway
 		
 			author.setWebSite(result.getString("web_site"));
 
-			int royalty = (int) (DOUBLE_PRECISION * result.getDouble("royalty"));
+			int royalty = (int) (AuthorBook.ROYALTY_PRECISION * result.getDouble("royalty"));
 
 			authorBook.setRoyalty(royalty);
 			
