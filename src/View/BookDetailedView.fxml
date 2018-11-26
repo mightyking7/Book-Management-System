@@ -51,7 +51,7 @@
             </GridPane>
             <Pane layoutX="16.0" layoutY="316.0" prefHeight="200.0" prefWidth="569.0">
                <children>
-                  <TableView fx:id="authorBookTable" prefHeight="200.0" prefWidth="441.0">
+                  <TableView fx:id="authorBookTable" editable="true" prefHeight="200.0" prefWidth="441.0">
                     <columns>
                       <TableColumn fx:id="authorColumn" prefWidth="223.0" text="Author" />
                       <TableColumn fx:id="royaltyColumn" minWidth="8.0" prefWidth="217.0" text="Royalty" />

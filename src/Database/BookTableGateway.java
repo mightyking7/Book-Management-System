@@ -385,7 +385,7 @@ public class BookTableGateway
 		
 		stmt.setInt(2, authorBook.getBook().getId());
 		
-		stmt.setBigDecimal(3, authorBook.getRoyalty());
+		stmt.setInt(3, authorBook.getRoyalty());
 		
 		stmt.executeUpdate();
 		

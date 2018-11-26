@@ -22,6 +22,10 @@ import Model.AuthorBook;
 import Model.Book;
 import Model.Publisher;
 import View.ViewManager;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.Property;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableNumberValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,6 +40,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -50,11 +56,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -140,6 +149,8 @@ public class BookDetailController extends Controller implements EditableView
 	
 	@FXML
     void deleteAuthor(ActionEvent event) {
+		
+		// TODO add author
 		
 	}
 	
@@ -281,18 +292,28 @@ public class BookDetailController extends Controller implements EditableView
 	{	
 		try 
 		{
+			
 			ObservableList<AuthorBook> list = book.getAuthors(book.getId(), bookTableGateway);
 			
 			// set data properties to columns
 			authorColumn.setCellValueFactory( new PropertyValueFactory<Author, String>("author"));
 			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, Integer>("royalty"));
 			
+			// set royalty column to editable
+			royaltyColumn.setCellFactory(TextFieldTableCell.<AuthorBook, Integer>forTableColumn( new IntegerStringConverter()));
+			
+			royaltyColumn.setOnEditCommit(
+					new EventHandler<TableColumn.CellEditEvent<AuthorBook, Integer>>() 
+					{
+		                @Override public void handle(TableColumn.CellEditEvent<AuthorBook, Integer> t) 
+		                {
+		                    ((AuthorBook) t.getTableView().getItems().get(
+		                            t.getTablePosition().getRow())).setRoyalty(t.getNewValue());
+		                }	
+					});
+			
 			// set the the table data
 			tableData = FXCollections.observableArrayList(list);
-			
-			authorBookTable.setEditable(false);
-			authorColumn.setEditable(false);
-			royaltyColumn.setEditable(false);
 			
 			authorBookTable.setItems(tableData);
 			
