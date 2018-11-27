@@ -375,23 +375,15 @@ public class BookTableGateway
 	
 	public void addAuthor(AuthorBook authorBook) throws SQLException
 	{
-		ResultSet generatedKeys;
+		sql = "INSERT INTO author_book(author_id, book_id, royalty) VALUES((select id from author where id = ? ), (select id from Books where id = ? ), ? )";
 		
-		sql = "insert into author_book (author_id, book_id, royalty) values(?, ?, ?)";
-		
-		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-		
+		stmt = conn.prepareStatement(sql);
 		stmt.setInt(1, authorBook.getAuthor().getId());
-		
 		stmt.setInt(2, authorBook.getBook().getId());
-		
 		stmt.setBigDecimal(3, authorBook.getRoyalty());
-		
 		stmt.executeUpdate();
-		
-		generatedKeys = stmt.getGeneratedKeys();
-		
-		generatedKeys.next();
+		conn.commit();
+
 	}
 	
 	public void deleteAuthor(AuthorBook authorBook) throws SQLException
@@ -399,6 +391,7 @@ public class BookTableGateway
 		sql = "DELETE FROM author_book WHERE author_id = " + authorBook.getAuthor().getId() + " AND " + "book_id = " + authorBook.getBook().getId();
 		PreparedStatement preparedStmt = conn.prepareStatement(sql);
 		preparedStmt.executeUpdate();
+		conn.commit();
 	}
 	
 	public List<AuthorBook> getAuthorsForBook(int bookId) throws SQLException
@@ -480,6 +473,22 @@ public class BookTableGateway
 		}
 		
 		return AuthorBooks;
+	}
+	
+	public void updateRoyalty(AuthorBook authorBook) throws SQLException
+	{
+		sql = "UPDATE author_book "
+	               + "SET royalty = ? "
+	               + "WHERE author_id = " + authorBook.getAuthor().getId() + " AND " + "book_id = " + authorBook.getBook().getId();
+		
+			PreparedStatement preparedStmt = conn.prepareStatement(sql);
+		
+			preparedStmt.setBigDecimal(1, authorBook.getRoyalty());
+			
+			preparedStmt.executeUpdate();
+			
+			conn.commit();
+			
 	}
 	
 }

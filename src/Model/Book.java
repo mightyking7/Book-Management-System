@@ -1,5 +1,6 @@
 package Model;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -230,19 +231,19 @@ public class Book
 		return FXCollections.observableList(gateway.getAllAuthors());
 	}
 	
-	public void addAuthor(AuthorBook authorBook, BookTableGateway gateway) throws SQLException
+	public void addAuthor(AuthorBook authorBook) throws SQLException
 	{
 		gateway.addAuthor(authorBook);
 	}
 	
-	public void deleteAuthor(AuthorBook authorBook, BookTableGateway gateway) throws SQLException
+	public void deleteAuthor(AuthorBook authorBook) throws SQLException
 	{
 		gateway.deleteAuthor(authorBook);
 	}
 	
-	public void updateAuditViewWithMessage(String msg)
+	public void updateRoyalty(AuthorBook authorBook) throws SQLException
 	{
-		
+		gateway.updateRoyalty(authorBook);
 	}
 	
 	/**

@@ -274,8 +274,10 @@ public class BookDetailController extends Controller implements EditableView
     			
     			if(shouldAdd)
     			{
-    				try {	
+    				try {
+    					selectedAuthor.setBook(book);
     					book.setGateway(bookTableGateway);
+    					book.addAuthor(selectedAuthor);
     					book.updateAuditTrailEntry("Author " + selectedAuthor + " added");
 					} catch (SQLException e) {
 						
@@ -334,7 +336,9 @@ public class BookDetailController extends Controller implements EditableView
     					if(tableData.size() > 1)
     					{
     						try {
+    							selectedAuthor.setBook(book);
     							book.setGateway(bookTableGateway);
+    							book.deleteAuthor(selectedAuthor);
 								book.updateAuditTrailEntry("Author "  + selectedAuthor + " removed");
 							} catch (SQLException e) {
 								
@@ -388,8 +392,13 @@ public class BookDetailController extends Controller implements EditableView
 		                        t.getTablePosition().getRow()).getRoyalty();
 		                
 		                try {
+		                	t.getTableView().getItems().get(
+			                        t.getTablePosition().getRow()).setBook(book);
 		                	book.setGateway(bookTableGateway);
 							book.updateAuditTrailEntry("Royalty changed from " + oldVal.toString() + " to "  + newVal.toString());
+							book.updateRoyalty((AuthorBook) t.getTableView().getItems().get(
+		                        t.getTablePosition().getRow()));
+							selectedAuthor = null;
 						} catch (SQLException e) {
 							
 							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
