@@ -145,13 +145,12 @@ public class BookDetailController extends Controller implements EditableView
 	
 	@FXML
     void addAuthor(ActionEvent event) {
-		AddAuthor(this.book);
+		AddAuthor();
 	}
 	
 	@FXML
     void deleteAuthor(ActionEvent event) {
-		
-		// TODO add author
+		DeleteAuthor();
 		
 	}
 	
@@ -205,7 +204,7 @@ public class BookDetailController extends Controller implements EditableView
 		
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> save());
 		
-		initializeAuthorBookTable(this.book);
+		initializeAuthorBookTable();
 		
 		
 	}
@@ -229,7 +228,7 @@ public class BookDetailController extends Controller implements EditableView
 		
 	};
 	
-	public void AddAuthor(Book book) 
+	public void AddAuthor() 
 	{
 		Dialog<Object> updateAuthor = new Dialog<>();
 		
@@ -275,6 +274,17 @@ public class BookDetailController extends Controller implements EditableView
     			
     			if(shouldAdd)
     			{
+    				try {	
+    					book.setGateway(bookTableGateway);
+    					book.updateAuditTrailEntry("Author " + selectedAuthor + " added");
+					} catch (SQLException e) {
+						
+						logger.error(String.format("%s (In add author method)", e.getMessage()));
+					} catch (Exception e) {
+						
+						logger.error(String.format("%s (In add author method)", e.getMessage()));
+					}
+    				
     			tableData.add(selectedAuthor);
     			authorBookTable.setItems(tableData);
     			}
@@ -289,7 +299,67 @@ public class BookDetailController extends Controller implements EditableView
     	});
     }
 	
-	public void initializeAuthorBookTable(Book book)
+	public void DeleteAuthor() 
+	{
+		Dialog<Object> updateAuthor = new Dialog<>();
+		
+		updateAuthor.setTitle("Update Author");
+		
+		updateAuthor.setHeaderText("Please Update required Author fields:");
+		
+        DialogPane dialogPane = updateAuthor.getDialogPane();
+        
+        dialogPane.getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
+
+		authorSelectList.setItems(tableData);
+        
+		authorSelectList.setMaxHeight(Control.USE_PREF_SIZE);
+		authorSelectList.setPrefWidth(150.0);
+		authorSelectList.addEventFilter(MouseEvent.MOUSE_CLICKED, selectAuthor);
+        dialogPane.setContent(new VBox(8, authorSelectList));
+        
+        updateAuthor.getDialogPane().setMinSize(400, 200);
+       
+        updateAuthor.setResultConverter(button -> button == ButtonType.APPLY);
+        
+        updateAuthor.showAndWait().ifPresent(bool -> {
+        	
+    		if(bool.toString() == "true")
+    		{
+    		
+    			for (int i = 0; i < tableData.size(); i++)
+    			{
+    				if(tableData.get(i).getAuthor().getId() == selectedAuthor.getAuthor().getId())
+    				{
+    					if(tableData.size() > 1)
+    					{
+    						try {
+    							book.setGateway(bookTableGateway);
+								book.updateAuditTrailEntry("Author "  + selectedAuthor + " removed");
+							} catch (SQLException e) {
+								
+								logger.error(String.format("%s (In delete author method)", e.getMessage()));
+							} catch (Exception e) {
+								
+								logger.error(String.format("%s (In delete author method)", e.getMessage()));
+							}
+    						tableData.remove(selectedAuthor);
+    						authorBookTable.setItems(tableData);
+    					}
+    				}
+    			}
+    		
+    			selectedAuthor = null;
+    		}
+            else
+            {
+            	selectedAuthor = null;
+            }
+    		
+    	});
+    }
+	
+	public void initializeAuthorBookTable()
 	{	
 		try 
 		{
@@ -307,15 +377,32 @@ public class BookDetailController extends Controller implements EditableView
 			royaltyColumn.setOnEditCommit(
 					(CellEditEvent<AuthorBook, BigDecimal> t) -> 
 					{
+						BigDecimal oldVal = t.getTableView().getItems().get(
+		                        t.getTablePosition().getRow()).getRoyalty();
+						
 		                ((AuthorBook) t.getTableView().getItems().get(
 		                        t.getTablePosition().getRow())
 		                 ).setRoyalty(t.getNewValue());
+      
+		                BigDecimal newVal = t.getTableView().getItems().get(
+		                        t.getTablePosition().getRow()).getRoyalty();
+		                
+		                try {
+		                	book.setGateway(bookTableGateway);
+							book.updateAuditTrailEntry("Royalty changed from " + oldVal.toString() + " to "  + newVal.toString());
+						} catch (SQLException e) {
+							
+							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
+						} catch (Exception e) {
+							
+							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
+						}
 					});
 			
 			Tooltip.install(authorBookTable, new Tooltip("Hit Enter to submit changes"));
-		 
-			
+		    
 			// set the the table data
+			
 			tableData = FXCollections.observableArrayList(list);
 			
 			authorBookTable.setItems(tableData);

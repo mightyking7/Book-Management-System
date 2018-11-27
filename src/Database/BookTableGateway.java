@@ -353,6 +353,7 @@ public class BookTableGateway
 	
 	public void createNewAuditTrailEntry(Book book,String msg) throws SQLException
 	{
+		
 		ResultSet generatedKeys;	// id of the new ATE
 		
 		sql = "insert into book_audit_trail (book_id, entry_msg) values(?, ?)";

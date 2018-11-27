@@ -240,6 +240,11 @@ public class Book
 		gateway.deleteAuthor(authorBook);
 	}
 	
+	public void updateAuditViewWithMessage(String msg)
+	{
+		
+	}
+	
 	/**
 	 * Getters and setters below
 	 */
