@@ -1,6 +1,7 @@
 package Database;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -489,6 +490,68 @@ public class BookTableGateway
 			
 			conn.commit();
 			
+	}
+	
+	public void addAuthorToDB(Author author) throws SQLException
+	{
+		ResultSet generatedKeys;
+		
+		sql = "insert into author (first_name, last_name, dob, gender, web_site) values(?, ?, ?, ?, ?)";
+
+		stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+		
+		stmt.setString(1, author.getFirstName());
+		
+		stmt.setString(2, author.getLastName());
+		
+		stmt.setDate(3, Date.valueOf(author.getDateOfBirth()));
+
+		stmt.setString(4, author.getGender());
+		
+		stmt.setString(5, author.getLastName());
+		
+		stmt.executeUpdate();
+
+		generatedKeys = stmt.getGeneratedKeys();
+		
+		generatedKeys.next();
+		conn.commit();
+		
+	}
+	
+	public void deleteAuthorFromDB(Author author) throws SQLException
+	{
+			sql = "DELETE FROM author WHERE id = " + author.getId();
+			PreparedStatement preparedStmt = conn.prepareStatement(sql);
+			preparedStmt.executeUpdate();
+			conn.commit();
+	}
+	
+	public void updateAuthorInDB(Author author) throws SQLException
+	{
+		sql = "UPDATE author "
+	               + "SET first_name = ? "
+	               + ",last_name = ? "
+	               + ",dob = ? "
+	               + ",gender = ?"
+	               + ",web_site = ? "
+	               + "WHERE id =" + author.getId();
+
+			PreparedStatement preparedStmt = conn.prepareStatement(sql);
+			
+			preparedStmt.setString(1, author.getFirstName());
+			
+			preparedStmt.setString(2, author.getLastName());
+			
+			preparedStmt.setDate(3, Date.valueOf(author.getDateOfBirth()));
+
+			preparedStmt.setString(4, author.getGender());
+			
+			preparedStmt.setString(5, author.getLastName());
+			
+			preparedStmt.executeUpdate();
+			
+			conn.commit();
 	}
 	
 }

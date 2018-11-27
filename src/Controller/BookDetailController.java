@@ -88,7 +88,9 @@ public class BookDetailController extends Controller implements EditableView
 	
 	private AuthorBook selectedAuthor;
 	
-	ListView<AuthorBook> authorSelectList = new ListView<AuthorBook>(); 
+	private ListView<AuthorBook> authorSelectList = new ListView<AuthorBook>(); 
+	
+	private ObservableList<AuthorBook> Authbooks = null;
 	
 	@FXML
 	private TableView<AuthorBook> authorBookTable;
@@ -224,6 +226,11 @@ public class BookDetailController extends Controller implements EditableView
 				logger.info(String.format("%s selected", selectedAuthor));
 
 			}
+			else if(event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2)
+			{
+				UpdateAuthor(selectedAuthor.getAuthor());
+
+			}
 		}
 		
 	};
@@ -237,10 +244,9 @@ public class BookDetailController extends Controller implements EditableView
 		updateAuthor.setHeaderText("Please Update required Author fields:");
 		
         DialogPane dialogPane = updateAuthor.getDialogPane();
-        
-        dialogPane.getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
-        
-        ObservableList<AuthorBook> Authbooks = null;
+
+        dialogPane.getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CLOSE);
+   
 		try {
 			Authbooks = book.getAllAuthors(bookTableGateway);
 		} catch (SQLException e) {
@@ -252,7 +258,15 @@ public class BookDetailController extends Controller implements EditableView
 		authorSelectList.setMaxHeight(Control.USE_PREF_SIZE);
 		authorSelectList.setPrefWidth(150.0);
 		authorSelectList.addEventFilter(MouseEvent.MOUSE_CLICKED, selectAuthor);
-        dialogPane.setContent(new VBox(8, authorSelectList));
+		
+		Button createButton = new Button();
+		createButton.setText("Create Author");
+		createButton.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> CreateAuthor());
+		Button removeButton = new Button();
+		removeButton.setText("Delete Author");
+		removeButton.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> deleteAuthorFromDB());
+		
+        dialogPane.setContent(new VBox(8, authorSelectList,createButton,removeButton));
         
         updateAuthor.getDialogPane().setMinSize(400, 200);
        
@@ -260,7 +274,7 @@ public class BookDetailController extends Controller implements EditableView
         
         updateAuthor.showAndWait().ifPresent(bool -> {
         	
-    		if(bool.toString() == "true")
+    		if(bool.toString() == "true" && selectedAuthor != null)
     		{
     			Boolean shouldAdd = true;
     			
@@ -291,6 +305,154 @@ public class BookDetailController extends Controller implements EditableView
     			authorBookTable.setItems(tableData);
     			}
     			selectedAuthor = null;
+        	
+    		}
+            else
+            {
+            	selectedAuthor = null;
+            }
+    		
+    	});
+    }
+	
+	public void deleteAuthorFromDB()
+	{
+
+		if(selectedAuthor != null)
+		{
+		   Authbooks.remove(selectedAuthor);
+		   authorSelectList.setItems(Authbooks);
+		   
+		   try {
+				selectedAuthor.getAuthor().deleteAuthor(bookTableGateway);
+			} catch (SQLException e) {
+				
+				logger.error(String.format("%s (deleteAuthorFromDB method)", e.getMessage()));
+			} catch (Exception e) {
+				
+				logger.error(String.format("%s (deleteAuthorFromDB method)", e.getMessage()));
+			}
+		   
+		   selectedAuthor = null;
+
+		}
+	}
+	
+	public void CreateAuthor() 
+	{
+		Dialog<Object> updateAuthor = new Dialog<>();
+		
+		updateAuthor.setTitle("Create Author");
+		
+		updateAuthor.setHeaderText("Please insert required Author fields:");
+		
+        DialogPane dialogPane = updateAuthor.getDialogPane();
+        
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        
+        Label firstNameLabel = new Label("First name:");
+        TextField firstName = new TextField();
+        Label lastNameLabel = new Label("Last name:");
+        TextField lastName = new TextField();
+        Label DOBLabel = new Label("Date Of Birth:");
+        TextField DOB = new TextField();
+        Label genderLabel = new Label("Gender:");
+        TextField gender = new TextField();
+        Label websiteLabel = new Label("Website:");
+        TextField website = new TextField();
+        
+        dialogPane.setContent(new VBox(8, firstNameLabel,firstName,lastNameLabel,lastName,DOBLabel,DOB,genderLabel,gender,websiteLabel,website));
+        
+        updateAuthor.getDialogPane().setMinSize(400, 200);
+       
+        updateAuthor.setResultConverter(button -> button == ButtonType.OK);
+        
+        updateAuthor.showAndWait().ifPresent(bool -> {
+        	
+    		if(bool.toString() == "true")
+    		{
+    			Author author = new Author();
+    			author.setFirstName(firstName.getText());
+    			author.setLastName(lastName.getText());
+    			LocalDate date = LocalDate.parse(DOB.getText());
+    			author.setDateOfBirth(date);
+    			author.setGender(gender.getText());
+    			author.setWebSite(website.getText());
+    			
+    			try {
+					author.addAuthor(bookTableGateway);
+				} catch (SQLException e) {
+					logger.error(String.format("%s (In CreateAuthor method)", e.getMessage()));
+				}
+    		
+    			AuthorBook authorBook = new AuthorBook();
+    			authorBook.setAuthor(author);
+    		
+    			Authbooks.add(authorBook);
+    			authorSelectList.setItems(Authbooks);
+        	
+    		}
+            else
+            {
+            	selectedAuthor = null;
+            }
+    		
+    	});
+    }
+	
+	public void UpdateAuthor(Author author) 
+	{
+		Dialog<Object> updateAuthor = new Dialog<>();
+		
+		updateAuthor.setTitle("Create Author");
+		
+		updateAuthor.setHeaderText("Please insert required Author fields:");
+		
+        DialogPane dialogPane = updateAuthor.getDialogPane();
+        
+        dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        
+        Label firstNameLabel = new Label("First name:");
+        TextField firstName = new TextField(author.getFirstName());
+        Label lastNameLabel = new Label("Last name:");
+        TextField lastName = new TextField(author.getLastName());
+        Label DOBLabel = new Label("Date Of Birth:");
+        TextField DOB = new TextField(author.getDateOfBirth().toString());
+        Label genderLabel = new Label("Gender:");
+        TextField gender = new TextField(author.getGender());
+        Label websiteLabel = new Label("Website:");
+        TextField website = new TextField(author.getWebSite());
+        
+        dialogPane.setContent(new VBox(8, firstNameLabel,firstName,lastNameLabel,lastName,DOBLabel,DOB,genderLabel,gender,websiteLabel,website));
+        
+        updateAuthor.getDialogPane().setMinSize(400, 200);
+       
+        updateAuthor.setResultConverter(button -> button == ButtonType.OK);
+        
+        updateAuthor.showAndWait().ifPresent(bool -> {
+        	
+    		if(bool.toString() == "true")
+    		{
+    			author.setFirstName(firstName.getText());
+    			author.setLastName(lastName.getText());
+    			LocalDate date = LocalDate.parse(DOB.getText());
+    			author.setDateOfBirth(date);
+    			author.setGender(gender.getText());
+    			author.setWebSite(website.getText());
+    			
+    			try {
+					author.updateAuthor(bookTableGateway);
+				} catch (SQLException e) {
+					logger.error(String.format("%s (In updateAuthor method)", e.getMessage()));
+				}
+    			
+    			try {
+    				Authbooks = book.getAllAuthors(bookTableGateway);
+    			} catch (SQLException e) {
+    				logger.error(String.format("%s : %s", this.getClass().getName(), e.getMessage()));
+    			}
+    			
+    			authorSelectList.setItems(Authbooks);
         	
     		}
             else

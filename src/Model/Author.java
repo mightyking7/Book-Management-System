@@ -1,6 +1,9 @@
 package Model;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
+
+import Database.BookTableGateway;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Author 
@@ -26,6 +29,21 @@ public class Author
 		dateOfBirth = null;
 		gender = null;
 		webSite = null;
+	}
+	
+	public void addAuthor(BookTableGateway gateway) throws SQLException
+	{
+		gateway.addAuthorToDB(this);
+	}
+	
+	public void deleteAuthor(BookTableGateway gateway) throws SQLException
+	{
+		gateway.deleteAuthorFromDB(this);
+	}
+	
+	public void updateAuthor(BookTableGateway gateway) throws SQLException
+	{
+		gateway.updateAuthorInDB(this);
 	}
 	
 	public int getId() 
