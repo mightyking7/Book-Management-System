@@ -3,8 +3,10 @@ package Controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -552,7 +554,36 @@ public class BookDetailController extends Controller implements EditableView
 			// set royalty cell factory and value
 			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, BigDecimal>("royalty"));
 			
-			royaltyColumn.setCellFactory(TextFieldTableCell.<AuthorBook, BigDecimal>forTableColumn( new BigDecimalStringConverter()));
+			royaltyColumn.setCellFactory(new Callback<TableColumn<AuthorBook, BigDecimal>, TableCell<AuthorBook, BigDecimal>>()
+			{
+
+				@Override
+				public TableCell<AuthorBook, BigDecimal> call(TableColumn<AuthorBook, BigDecimal> param) 
+				{
+					return new TableCell<AuthorBook, BigDecimal>()
+					{
+								@Override
+								protected void updateItem(BigDecimal item, boolean empty) 
+								{
+									
+									NumberFormat formatter = NumberFormat.getPercentInstance();
+									
+									// TODO Auto-generated method stub
+									super.updateItem(item, empty);
+									
+									setText(null);
+									
+									if(item != null)
+									{
+										setText(formatter.format(item));
+									}
+								}
+					};
+					
+				}
+				
+				
+			});
 			
 			royaltyColumn.setOnEditCommit(
 					(CellEditEvent<AuthorBook, BigDecimal> t) -> 

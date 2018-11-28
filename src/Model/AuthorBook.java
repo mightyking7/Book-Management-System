@@ -37,7 +37,7 @@ public class AuthorBook {
 	
 	public BigDecimal getRoyalty() {
 		
-		return BigDecimal.valueOf(royalty).movePointLeft(3);
+		return BigDecimal.valueOf(royalty).movePointLeft(5);
 	}
 
 	public void setRoyalty(int royalty) {
