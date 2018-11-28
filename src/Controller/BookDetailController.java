@@ -52,6 +52,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -102,6 +103,8 @@ public class BookDetailController extends Controller implements EditableView
 	private TableColumn<AuthorBook, BigDecimal> royaltyColumn;
 	
 	private ObservableList<AuthorBook> tableData;
+	
+	private ObservableList<AuthorBook> authors = null;	// synchronized list of authors 
 	
 	@FXML
 	private Button AddAuthorid;
@@ -198,7 +201,6 @@ public class BookDetailController extends Controller implements EditableView
 		ViewAuditTrailButton.addEventFilter(MouseEvent.MOUSE_CLICKED, viewAuditTrail);
 		
 		// disable the viewAuditTrailButton for new Books
-		
 		if(book.getId() == 0)
 		{
 			ViewAuditTrailButton.setDisable(true);
@@ -207,8 +209,6 @@ public class BookDetailController extends Controller implements EditableView
 		saveButtonID.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> save());
 		
 		initializeAuthorBookTable();
-		
-		
 	}
 	
 	EventHandler<MouseEvent> selectAuthor = new EventHandler<MouseEvent>()
@@ -288,7 +288,8 @@ public class BookDetailController extends Controller implements EditableView
     			
     			if(shouldAdd)
     			{
-    				try {
+    				try 
+    				{
     					selectedAuthor.setBook(book);
     					book.setGateway(bookTableGateway);
     					book.addAuthor(selectedAuthor);
@@ -302,7 +303,7 @@ public class BookDetailController extends Controller implements EditableView
 					}
     				
     			tableData.add(selectedAuthor);
-    			authorBookTable.setItems(tableData);
+    			
     			}
     			selectedAuthor = null;
         	
@@ -525,14 +526,27 @@ public class BookDetailController extends Controller implements EditableView
     	});
     }
 	
+	
+	/**
+	 * Defines the data to be displayed in the author and royalty columns as well
+	 * as the event handlers for editing of data in cells.
+	 */
 	public void initializeAuthorBookTable()
 	{	
 		try 
 		{
 			
-			ObservableList<AuthorBook> list = book.getAuthors(book.getId(), bookTableGateway);
+			// fetch authors for current book
+			tableData = book.getAuthors(book.getId(), bookTableGateway);
 			
-			// set data properties to columns
+			// set the the table data
+			authorBookTable.setItems(tableData);
+			
+			
+			authorColumn.setCellFactory( c -> new ComboBoxTableCell(tableData));
+			// display a combo box in the author column
+			
+			// display an author full name
 			authorColumn.setCellValueFactory( new PropertyValueFactory<Author, String>("author"));
 			
 			// set royalty cell factory and value
@@ -571,12 +585,6 @@ public class BookDetailController extends Controller implements EditableView
 					});
 			
 			Tooltip.install(authorBookTable, new Tooltip("Hit Enter to submit changes"));
-		    
-			// set the the table data
-			
-			tableData = FXCollections.observableArrayList(list);
-			
-			authorBookTable.setItems(tableData);
 			
 		} catch (SQLException e) {
 			logger.error(String.format("%s (In loadAuthorList method)", e.getMessage()));
@@ -647,7 +655,7 @@ public class BookDetailController extends Controller implements EditableView
 			   }
 			   
 			   // copy values to original model for existing books only
-			   book.updateBookModel(bookTitle,summary,yearPublished,isbn, selectedPublisher);
+			   book.updateBookModel(bookTitle, summary, yearPublished, isbn, selectedPublisher);
 			   
 			   // save the book
 			   book.save();
