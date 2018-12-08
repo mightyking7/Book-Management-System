@@ -104,5 +104,25 @@ public abstract class Controller implements Initializable
 		
 	}
 	
+	/**
+	 * Handles user input errors.
+	 * 
+	 * @param e exception returned from a Gateway
+	 */
+	public void handleInputError(Exception e)
+	{	
+		// log the error
+		logger.error(e.getMessage());
+		
+		// show the Alert
+		errorAlert.setTitle("Error");
+		
+		errorAlert.setHeaderText("Input Error");
+		
+	    errorAlert.setContentText(e.getMessage());
+	    
+	    errorAlert.showAndWait();
+	}
+	
 
 }

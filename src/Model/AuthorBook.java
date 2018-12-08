@@ -1,22 +1,31 @@
 package Model;
 
 import java.math.BigDecimal;
-import javafx.beans.property.SimpleIntegerProperty;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class AuthorBook {
+public class AuthorBook 
+{
 
 	private Author author;
 	private Book book;
 	private int royalty;
+	private String royaltyFormatted;
 	private boolean newRecord = true;
 	
 	public final static int ROYALTY_PRECISION = 100000;  // precision for royalty
+	public final static int DECIMAL_POINTS = 5;
+	public final static int HUNDRED_SCALE = 100;
 	
 	public AuthorBook()
 	{
 		author = null;
 		book = null;
 		royalty = 0;
+		royaltyFormatted = new String();
 	}
 
 	public Author getAuthor() {
@@ -35,13 +44,13 @@ public class AuthorBook {
 		this.book = book;
 	}
 	
-	public BigDecimal getRoyalty() {
-		
-		return BigDecimal.valueOf(royalty).movePointLeft(5);
+	public BigDecimal getRoyalty()
+	{	
+		return BigDecimal.valueOf(royalty).movePointLeft(DECIMAL_POINTS);
 	}
-
-	public void setRoyalty(int royalty) {
-		
+	
+	public void setRoyalty(int royalty) 
+	{
 		this.royalty = royalty;
 	}
 	
@@ -58,6 +67,43 @@ public class AuthorBook {
 		this.newRecord = newRecord;
 	}
 	
+	public String getRoyaltyFormatted()
+	{
+		this.royaltyFormatted = NumberFormat.getPercentInstance().format(this.getRoyalty());
+		
+		return royaltyFormatted;
+	}
+	
+	// Parses a formatted string for royalty
+	public void setRoyaltyFormatted(String royaltyFormatted) throws Exception
+	{
+		// trim white space and the percent symbol
+		String royalty = royaltyFormatted.trim().replaceAll("%", "");
+		
+		// validate input
+		if(royalty.matches("[^\\d\\.]"))
+		{
+			throw new Exception("Invalid Royalty: Can only contain digits and percentage symbols");
+		}
+		
+		// parse royalty numerical value
+		Pattern royaltyPattern = Pattern.compile("(\\d+).(\\d+)");
+		
+		Matcher match = royaltyPattern.matcher(royalty);
+		
+		if(match.find())
+		{
+			// parse hundreds digits
+			int hundred = Integer.parseInt(match.group(1));
+			
+			// parse tens digits
+			int tens = Integer.parseInt(match.group(2));
+			
+			// set the new royalty
+			this.royalty = (hundred * HUNDRED_SCALE) + tens;
+		}
+	}
+
 	/**
 	 * Used to return the string representation of a Book
 	 */

@@ -17,12 +17,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import javax.swing.text.NumberFormatter;
+
 import org.apache.logging.log4j.LogManager;
 import Database.PublisherTableGateway;
 import Model.Author;
 import Model.AuthorBook;
 import Model.Book;
 import Model.Publisher;
+import Model.StringStringConverter;
 import View.ViewManager;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
@@ -102,7 +106,7 @@ public class BookDetailController extends Controller implements EditableView
 	private TableColumn<Author, String> authorColumn;
 	
 	@FXML
-	private TableColumn<AuthorBook, BigDecimal> royaltyColumn;
+	private TableColumn<AuthorBook, String> royaltyColumn;
 	
 	private ObservableList<AuthorBook> tableData;
 	
@@ -544,72 +548,46 @@ public class BookDetailController extends Controller implements EditableView
 			// set the the table data
 			authorBookTable.setItems(tableData);
 			
-			
-			authorColumn.setCellFactory( c -> new ComboBoxTableCell(tableData));
-			// display a combo box in the author column
+			authorColumn.setCellFactory(c -> new ComboBoxTableCell(tableData));
 			
 			// display an author full name
 			authorColumn.setCellValueFactory( new PropertyValueFactory<Author, String>("author"));
 			
 			// set royalty cell factory and value
-			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, BigDecimal>("royalty"));
+			royaltyColumn.setCellValueFactory(new PropertyValueFactory<AuthorBook, String>("royaltyFormatted"));
 			
-			royaltyColumn.setCellFactory(new Callback<TableColumn<AuthorBook, BigDecimal>, TableCell<AuthorBook, BigDecimal>>()
-			{
-
-				@Override
-				public TableCell<AuthorBook, BigDecimal> call(TableColumn<AuthorBook, BigDecimal> param) 
-				{
-					return new TableCell<AuthorBook, BigDecimal>()
-					{
-								@Override
-								protected void updateItem(BigDecimal item, boolean empty) 
-								{
-									
-									NumberFormat formatter = NumberFormat.getPercentInstance();
-									
-									// TODO Auto-generated method stub
-									super.updateItem(item, empty);
-									
-									setText(null);
-									
-									if(item != null)
-									{
-										setText(formatter.format(item));
-									}
-								}
-					};
-					
-				}
-				
-				
-			});
+			royaltyColumn.setCellFactory(TextFieldTableCell.<AuthorBook, String>forTableColumn(new StringStringConverter()));
 			
 			royaltyColumn.setOnEditCommit(
-					(CellEditEvent<AuthorBook, BigDecimal> t) -> 
+					(CellEditEvent<AuthorBook, String> t) -> 
 					{
-						BigDecimal oldVal = t.getTableView().getItems().get(
-		                        t.getTablePosition().getRow()).getRoyalty();
-						
-		                ((AuthorBook) t.getTableView().getItems().get(
-		                        t.getTablePosition().getRow())
-		                 ).setRoyalty(t.getNewValue());
-      
-		                BigDecimal newVal = t.getTableView().getItems().get(
-		                        t.getTablePosition().getRow()).getRoyalty();
-		                
-		                try {
-		                	t.getTableView().getItems().get(
-			                        t.getTablePosition().getRow()).setBook(book);
+						 try 
+			             {  
+							 
+							String oldVal = t.getTableView().getItems().get(t.getTablePosition().getRow()).getRoyaltyFormatted();
+							
+			                ((AuthorBook) t.getTableView().getItems().get(t.getTablePosition().getRow())).setRoyaltyFormatted(t.getNewValue());
+	      
+			                String newVal = t.getTableView().getItems().get(t.getTablePosition().getRow()).getRoyaltyFormatted();
+	
+			                AuthorBook ab = t.getTableView().getItems().get(t.getTablePosition().getRow());
+			                	
+		                	ab.setBook(book);
+		                	
 		                	book.setGateway(bookTableGateway);
+		                	
 							book.updateAuditTrailEntry("Royalty changed from " + oldVal.toString() + " to "  + newVal.toString());
-							book.updateRoyalty((AuthorBook) t.getTableView().getItems().get(
-		                        t.getTablePosition().getRow()));
+							
+							book.updateRoyalty((AuthorBook) ab);
+							
 							selectedAuthor = null;
+							
 						} catch (SQLException e) {
 							
 							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
-						} catch (Exception e) {
+						} catch (Exception e) 
+						 {
+							handleInputError(e);
 							
 							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
 						}
@@ -617,7 +595,8 @@ public class BookDetailController extends Controller implements EditableView
 			
 			Tooltip.install(authorBookTable, new Tooltip("Hit Enter to submit changes"));
 			
-		} catch (SQLException e) {
+		} catch (SQLException e) 
+		{
 			logger.error(String.format("%s (In loadAuthorList method)", e.getMessage()));
 		}
 		
