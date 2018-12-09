@@ -149,7 +149,7 @@ public class AuthorBook
 			}
 					
 			// validate that th is <= 100 and d <= 999.
-			if(!(th <= HUNDRED && d == 0) || !(th <= HUNDRED) || ! (d <= MAX_DECIMAL))
+			if((th == HUNDRED && d != 0) || ! (th <= HUNDRED) || ! (d <= MAX_DECIMAL))
 				throw new NumberFormatException(String.format("Royalty must be less than or equal to %d\n and contain a maximum of 3 digits of precision.", HUNDRED));	
 		}
 		else
