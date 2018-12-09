@@ -583,13 +583,17 @@ public class BookDetailController extends Controller implements EditableView
 							selectedAuthor = null;
 							
 						} catch (SQLException e) {
-							
 							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
-						} catch (Exception e) 
-						 {
+							
+						} catch (NumberFormatException e) {
+							
 							handleInputError(e);
+							logger.error(e.getMessage());
 							
-							logger.error(String.format("%s (In Royalty change method)", e.getMessage()));
+						} catch (Exception e) {
+							
+							handleInputError(e);
+							logger.error(e.getMessage());
 						}
 					});
 			

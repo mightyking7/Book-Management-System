@@ -1,12 +1,17 @@
 package Model;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.logging.Logger;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Represents Many to Many association between Books
+ * and their associated author.
+ *
+ * @author isaacbuitrago
+ */
 public class AuthorBook 
 {
 
@@ -16,9 +21,13 @@ public class AuthorBook
 	private String royaltyFormatted;
 	private boolean newRecord = true;
 	
+	// constants related to displaying the royalty
 	public final static int ROYALTY_PRECISION = 100000;  // precision for royalty
-	public final static int DECIMAL_POINTS = 5;
-	public final static int HUNDRED_SCALE = 100;
+	public final static int MAX_DECIMAL= 999;
+	public final static int DECIMAL_POINTS_LEFT= 5;
+	public final static int DECIMAL_POINTS_RIGHT= 3;
+	public final static int DECIMAL_POINTS_PERCENT= 3;
+	public final static int HUNDRED = 100;
 	
 	public AuthorBook()
 	{
@@ -46,7 +55,7 @@ public class AuthorBook
 	
 	public BigDecimal getRoyalty()
 	{	
-		return BigDecimal.valueOf(royalty).movePointLeft(DECIMAL_POINTS);
+		return BigDecimal.valueOf(royalty).movePointLeft(DECIMAL_POINTS_LEFT);
 	}
 	
 	public void setRoyalty(int royalty) 
@@ -69,41 +78,86 @@ public class AuthorBook
 	
 	public String getRoyaltyFormatted()
 	{
-		this.royaltyFormatted = NumberFormat.getPercentInstance().format(this.getRoyalty());
+		DecimalFormat df = new DecimalFormat("00.000");
+		
+		BigDecimal big = BigDecimal.valueOf(this.royalty).movePointLeft(DECIMAL_POINTS_PERCENT);
+		
+		df.setRoundingMode(RoundingMode.DOWN);
+		
+		this.royaltyFormatted = String.format("%s %%", df.format(big.doubleValue()));
 		
 		return royaltyFormatted;
 	}
 	
 	// Parses a formatted string for royalty
-	public void setRoyaltyFormatted(String royaltyFormatted) throws Exception
+	public void setRoyaltyFormatted(String royaltyFormatted) throws NumberFormatException
 	{
 		// trim white space and the percent symbol
-		String royalty = royaltyFormatted.trim().replaceAll("%", "");
+		String royalty = royaltyFormatted.replaceAll("%", "").trim();
 		
-		// validate input
-		if(royalty.matches("[^\\d\\.]"))
+		// validate the royalty amount
+		validateRoyalty(royalty);
+			
+		BigDecimal big = new BigDecimal(royalty);
+			
+		this.royalty = big.movePointRight(DECIMAL_POINTS_RIGHT).intValue();
+	}
+	
+	
+	/**
+	 * Validates digits received from input 
+	 * 
+	 * @param royalty received from input with symbols and spaces stripped
+	 * 
+	 * @throws NumberFormatException if royalty contains invalid characters,
+	 * 								 is larger than 100, or has more than three 
+	 * 								 digits of precision.
+	 */
+	private void validateRoyalty(String royalty) throws NumberFormatException
+	{
+		// throw exception if royalty contains anything other than a number or period
+		if(royalty.matches(".+[^\\d\\.]"))
 		{
-			throw new Exception("Invalid Royalty: Can only contain digits and percentage symbols");
+			throw new NumberFormatException("Royalty can only contain digits");
 		}
-		
+				
 		// parse royalty numerical value
-		Pattern royaltyPattern = Pattern.compile("(\\d+).(\\d+)");
-		
+		Pattern royaltyPattern = Pattern.compile("(\\d+)\\.?(\\d+)?");
+				
 		Matcher match = royaltyPattern.matcher(royalty);
-		
+				
 		if(match.find())
 		{
 			// parse hundreds digits
-			int hundred = Integer.parseInt(match.group(1));
-			
-			// parse tens digits
-			int tens = Integer.parseInt(match.group(2));
-			
-			// set the new royalty
-			this.royalty = (hundred * HUNDRED_SCALE) + tens;
+			String tenOrHundred = match.group(1);
+					
+			String decimal = match.group(2);
+					
+			int th = Integer.parseInt(tenOrHundred);
+					
+			int d;
+					
+			// parse decimal digits if given
+			if(decimal != null)
+			{
+				d = Integer.parseInt(decimal);
+			}
+			else
+			{
+				decimal = "0";
+				d = 0;
+			}
+					
+			// validate that th is <= 100 and d <= 999.
+			if(!(th <= HUNDRED && d == 0) || !(th <= HUNDRED) || ! (d <= MAX_DECIMAL))
+				throw new NumberFormatException(String.format("Royalty must be less than or equal to %d\n and contain a maximum of 3 digits of precision.", HUNDRED));	
+		}
+		else
+		{
+			throw new NumberFormatException("Invalid royalty");
 		}
 	}
-
+	
 	/**
 	 * Used to return the string representation of a Book
 	 */
