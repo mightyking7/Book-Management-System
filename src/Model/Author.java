@@ -6,6 +6,13 @@ import java.time.LocalDate;
 import Database.BookTableGateway;
 import javafx.beans.property.SimpleStringProperty;
 
+
+/**
+ * Author model which has the author information used by the AuthorBook
+ * @author HercHja
+ *
+ */
+
 public class Author 
 {
 

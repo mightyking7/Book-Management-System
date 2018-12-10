@@ -116,9 +116,9 @@ public class AuthorBook
 	private void validateRoyalty(String royalty) throws NumberFormatException
 	{
 		// throw exception if royalty contains anything other than a number or period
-		if(royalty.matches(".+[^\\d\\.]"))
+		if(royalty.matches(".+[^\\d\\.]") || royalty.startsWith("-"))
 		{
-			throw new NumberFormatException("Royalty can only contain digits");
+			throw new NumberFormatException("Royalty can only contain positive digits");
 		}
 				
 		// parse royalty numerical value

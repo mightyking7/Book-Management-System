@@ -217,6 +217,12 @@ public class BookDetailController extends Controller implements EditableView
 		initializeAuthorBookTable();
 	}
 	
+	/**
+	 * Event which selects the author selected by the user in a listview of authors
+	 * Assigns the author to global AuthorBook model to be used by other methods
+	 * If selection double clicked invokes the update Author method
+	 */
+	
 	EventHandler<MouseEvent> selectAuthor = new EventHandler<MouseEvent>()
 	{
 		/**
@@ -241,13 +247,22 @@ public class BookDetailController extends Controller implements EditableView
 		
 	};
 	
+	/**
+	 * Add author method which dynamically creates a java FX dialog box and pane
+	 * Fetches all authors from the DB and displays them in a listview in the pane
+	 * Creates two buttons for selecting an author and exiting out of the window
+	 * uses the global selectedAuthor to pass the selection
+	 * Checks if Author is already added to the book
+	 * Adds the author to the view, updates the DB and AuditTrail
+	 */
+	
 	public void AddAuthor() 
 	{
 		Dialog<Object> updateAuthor = new Dialog<>();
 		
-		updateAuthor.setTitle("Update Author");
+		updateAuthor.setTitle("Author Manager");
 		
-		updateAuthor.setHeaderText("Please Update required Author fields:");
+		updateAuthor.setHeaderText("Single click and Apply to add Author to book. Double click to edit the Author.");
 		
         DialogPane dialogPane = updateAuthor.getDialogPane();
 
@@ -322,6 +337,10 @@ public class BookDetailController extends Controller implements EditableView
     	});
     }
 	
+	/**
+	 * Delete author method that removes an AuthorBook entry from the view and also deletes the Author from the database
+	 */
+	
 	public void deleteAuthorFromDB()
 	{
 
@@ -344,6 +363,13 @@ public class BookDetailController extends Controller implements EditableView
 
 		}
 	}
+	
+	/**
+	 * Create author method which dynamically creates a java FX dialog box and pane
+	 * Creates fields for author information to be inputted by the user
+	 * Creates two buttons for selecting an author and exiting out of the window
+	 * Adds the author to the database and updates the list displayed to the user of authors
+	 */
 	
 	public void CreateAuthor() 
 	{
@@ -407,13 +433,20 @@ public class BookDetailController extends Controller implements EditableView
     	});
     }
 	
+	/**
+	 * Update Author method which dynamically creates a java FX dialog box and pane
+	 * similar to above however gets the author information passed by the parameter
+	 * so the user can update it 
+	 * Sends the update to the database and updates the listview for the user
+	 */
+	
 	public void UpdateAuthor(Author author) 
 	{
 		Dialog<Object> updateAuthor = new Dialog<>();
 		
-		updateAuthor.setTitle("Create Author");
+		updateAuthor.setTitle("Update Author");
 		
-		updateAuthor.setHeaderText("Please insert required Author fields:");
+		updateAuthor.setHeaderText("Please update required Author fields:");
 		
         DialogPane dialogPane = updateAuthor.getDialogPane();
         
@@ -470,13 +503,22 @@ public class BookDetailController extends Controller implements EditableView
     	});
     }
 	
+	/**
+	 * Delete author method which dynamically creates a java FX dialog box and pane
+	 * Fetches all authors currently attached to the book from the DB
+	 * Creates two buttons for selecting an author and exiting out of the window
+	 * uses the global selectedAuthor to pass the selection
+	 * removes the author connect to the book from the DB and checks if the book at least has 1 author
+	 * deletes the entry in the listview for the user
+	 */
+	
 	public void DeleteAuthor() 
 	{
 		Dialog<Object> updateAuthor = new Dialog<>();
 		
-		updateAuthor.setTitle("Update Author");
+		updateAuthor.setTitle("Remove Author");
 		
-		updateAuthor.setHeaderText("Please Update required Author fields:");
+		updateAuthor.setHeaderText("Please select an Author and click apply to remove from book:");
 		
         DialogPane dialogPane = updateAuthor.getDialogPane();
         

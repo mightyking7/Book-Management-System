@@ -323,6 +323,13 @@ public class BookTableGateway
 			preparedStmt.executeUpdate();
 	}
 	
+	/**
+	 * Gets the audit trail for a specific book
+	 * @param book
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public ArrayList<AuditTrailEntry> fetchAuditTrail(Book book) throws SQLException
 	{
 		sql = "SELECT * FROM book_audit_trail"
@@ -352,6 +359,13 @@ public class BookTableGateway
 		return AtrailEntries;
 	}
 	
+	/**
+	 * Creates a audit trail for a specific book
+	 * @param book
+	 * @param msg
+	 * @throws SQLException
+	 */
+	
 	public void createNewAuditTrailEntry(Book book,String msg) throws SQLException
 	{
 		
@@ -374,6 +388,12 @@ public class BookTableGateway
 		generatedKeys.next();
 	}
 	
+	/**
+	 * Adds an author book connection to the database
+	 * @param authorBook
+	 * @throws SQLException
+	 */
+	
 	public void addAuthor(AuthorBook authorBook) throws SQLException
 	{
 		sql = "INSERT INTO author_book(author_id, book_id, royalty) VALUES((select id from author where id = ? ), (select id from Books where id = ? ), ? )";
@@ -387,6 +407,12 @@ public class BookTableGateway
 
 	}
 	
+	/**
+	 * Deletes an authors book connection from the database
+	 * @param authorBook
+	 * @throws SQLException
+	 */
+	
 	public void deleteAuthor(AuthorBook authorBook) throws SQLException
 	{
 		sql = "DELETE FROM author_book WHERE author_id = " + authorBook.getAuthor().getId() + " AND " + "book_id = " + authorBook.getBook().getId();
@@ -394,6 +420,13 @@ public class BookTableGateway
 		preparedStmt.executeUpdate();
 		conn.commit();
 	}
+	
+	/**
+	 * Gets the authors connected to a specific book and returns it as a list
+	 * @param bookId
+	 * @return
+	 * @throws SQLException
+	 */
 	
 	public List<AuthorBook> getAuthorsForBook(int bookId) throws SQLException
 	{
@@ -439,6 +472,12 @@ public class BookTableGateway
 		return AuthorBooks;
 	}
 	
+	/**
+	 * Gets all authors in DB table and returns it as a list
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public List<AuthorBook> getAllAuthors() throws SQLException
 	{
 
@@ -476,6 +515,12 @@ public class BookTableGateway
 		return AuthorBooks;
 	}
 	
+	/**
+	 * Updates the royalty of an author book connection
+	 * @param authorBook
+	 * @throws SQLException
+	 */
+	
 	public void updateRoyalty(AuthorBook authorBook) throws SQLException
 	{
 		sql = "UPDATE author_book "
@@ -491,6 +536,12 @@ public class BookTableGateway
 			conn.commit();
 			
 	}
+	
+	/**
+	 * Adds and author to the database
+	 * @param author
+	 * @throws SQLException
+	 */
 	
 	public void addAuthorToDB(Author author) throws SQLException
 	{
@@ -519,6 +570,12 @@ public class BookTableGateway
 		
 	}
 	
+	/**
+	 * Removes the author from the database
+	 * @param author
+	 * @throws SQLException
+	 */
+	
 	public void deleteAuthorFromDB(Author author) throws SQLException
 	{
 			sql = "DELETE FROM author WHERE id = " + author.getId();
@@ -526,6 +583,13 @@ public class BookTableGateway
 			preparedStmt.executeUpdate();
 			conn.commit();
 	}
+	
+	/**
+	 * Method which updates the information passed by the user input
+	 * Gets the input through the BookDetailController and passes the author object with the updated values
+	 * @param author
+	 * @throws SQLException
+	 */
 	
 	public void updateAuthorInDB(Author author) throws SQLException
 	{

@@ -37,7 +37,7 @@ public class Launcher extends Application
 		
 		Scene scene = new Scene(root);
 		
-		stage.setTitle("Assignment 3");
+		stage.setTitle("Assignment 4");
 		
 		stage.setScene(scene);
 		
